@@ -7,6 +7,7 @@ type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
 type RouteConfig={code:string;country:string;region:string;mode:'LCL'|'FCL';delivery:'pickup'|'door';requests_enabled:boolean;service_verified:boolean;checkout_enabled:boolean;price_published:boolean};
+type RightBalance={right_id:string;order_id:string;source_kind:string;purchased_cbm:number;active_cbm:number;total_released_cbm:number;acquired_at:string;tracking_due_at:string;cancel_until:string};
 type CargoPiece={id:string;order_id:string;piece_reference:string;description:string|null;declared_category:string|null;declared_value_usd:number|null;declared_cbm:number;measured_cbm:number|null;measured_kg:number|null;received_at:string|null};
 type PieceTracking={piece_id:string;tracking_number:string;status:string;first_carrier_scan_at:string|null};
 type PaidBooking={id:string;status:string;physical_entitlement_cbm:number|null;paid_cents:number;accepted_scope:Record<string,unknown>};
@@ -37,7 +38,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [content,setContent]=useState<Record<string,string>>({});
  const [routes,setRoutes]=useState<RouteConfig[]|null>(null);
  const [paidBookings,setPaidBookings]=useState<PaidBooking[]>([]),[serviceRequests,setServiceRequests]=useState<ServiceRequest[]>([]);
- const [pieces,setPieces]=useState<CargoPiece[]>([]),[pieceTracking,setPieceTracking]=useState<PieceTracking[]>([]);
+ const [pieces,setPieces]=useState<CargoPiece[]>([]),[pieceTracking,setPieceTracking]=useState<PieceTracking[]>([]),[rightBalances,setRightBalances]=useState<RightBalance[]>([]);
  const [pieceRef,setPieceRef]=useState(''),[pieceDescription,setPieceDescription]=useState(''),[pieceCategory,setPieceCategory]=useState('general');
  const [pieceValue,setPieceValue]=useState(''),[pieceVolume,setPieceVolume]=useState(''),[activePiece,setActivePiece]=useState<string|null>(null),[pieceTrack,setPieceTrack]=useState('');
  const [requestOrder,setRequestOrder]=useState<string|null>(null),[requestKind,setRequestKind]=useState<'refund'|'return'|'alternative_service'|'claim'>('refund'),[requestReason,setRequestReason]=useState('');
@@ -130,15 +131,16 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
   if(error)setNotice(error.message);else{setQuotes(data||[]);setStep('quotes')}setBusy(false)};
  const loadServiceRequests=async(force=false)=>{
   if(busy&&!force)return;setBusy(true);setNotice('');try{
-   const [orders,requests,cargo,tracking]=await Promise.all([
+   const [orders,requests,cargo,tracking,rights]=await Promise.all([
     supabase.from('konsoliss_booking_orders').select('id,status,physical_entitlement_cbm,paid_cents,accepted_scope').in('status',['reserved','held','fulfilling','ready']).order('created_at',{ascending:false}).limit(30),
     supabase.from('konsoliss_customer_service_requests').select('id,order_id,request_kind,description,status,decision_note').order('created_at',{ascending:false}).limit(50),
     supabase.from('konsoliss_consignment_pieces').select('id,order_id,piece_reference,description,declared_category,declared_value_usd,declared_cbm,measured_cbm,measured_kg,received_at').order('created_at',{ascending:false}).limit(100),
-    supabase.from('konsoliss_piece_carrier_records').select('piece_id,tracking_number,status,first_carrier_scan_at').limit(100)
+    supabase.from('konsoliss_piece_carrier_records').select('piece_id,tracking_number,status,first_carrier_scan_at').limit(100),
+    supabase.from('konsoliss_rights_balance').select('right_id,order_id,source_kind,purchased_cbm,active_cbm,total_released_cbm,acquired_at,tracking_due_at,cancel_until').limit(100)
    ]);
-   if(orders.error||requests.error||cargo.error||tracking.error)throw new Error(orders.error?.message||requests.error?.message||cargo.error?.message||tracking.error?.message);
+   if(orders.error||requests.error||cargo.error||tracking.error||rights.error)throw new Error(orders.error?.message||requests.error?.message||cargo.error?.message||tracking.error?.message||rights.error?.message);
    setPaidBookings((orders.data||[]) as PaidBooking[]);setServiceRequests((requests.data||[]) as ServiceRequest[]);
-   setPieces((cargo.data||[]) as CargoPiece[]);setPieceTracking((tracking.data||[]) as PieceTracking[]);setStep('serviceRequests');
+   setPieces((cargo.data||[]) as CargoPiece[]);setPieceTracking((tracking.data||[]) as PieceTracking[]);setRightBalances((rights.data||[]) as RightBalance[]);setStep('serviceRequests');
   }catch(e){setNotice(e instanceof Error?e.message:'Could not load your requests')}finally{setBusy(false)}
  };
  const sendServiceRequest=async()=>{
@@ -321,7 +323,11 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      {box(<>{heading(tx('myRequests','My shipment requests'))}{text(tx('requestExplanation','Request a refund, cargo return or alternative service only for a confirmed paid booking. Requests do not automatically move funds or cargo.'),11,muted)}</>)}
      {paidBookings.length?paidBookings.map(b=><View key={b.id}>{box(<>
        {text('Booking '+b.id.slice(0,8)+' · '+b.status,12,ink,true)}
-       {text('Paid '+cash(b.paid_cents)+' · Reserved '+(b.physical_entitlement_cbm??'—')+' CBM',11,muted)}
+       {text('Paid '+cash(b.paid_cents)+' · Server active entitlement '+rightBalances.filter(r=>r.order_id===b.id).reduce((total,r)=>total+Number(r.active_cbm),0).toFixed(3)+' CBM',11,muted)}
+       {rightBalances.filter(r=>r.order_id===b.id).map(r=><View key={r.right_id} style={{paddingVertical:4}}>
+        {text(r.source_kind+' · purchased '+r.purchased_cbm+' CBM · active '+r.active_cbm+' CBM',11)}
+        {text('Tracking due '+new Date(r.tracking_due_at).toLocaleDateString()+' · cancellation '+new Date(r.cancel_until).toLocaleDateString(),10,muted)}
+       </View>)}
        {footer(tx('declarePiece','Declare goods'),()=>{setRequestOrder(b.id);setPieceRef('');setPieceDescription('');setPieceCategory('general');setPieceValue('');setPieceVolume('');setStep('pieceDeclaration')})}
        {pieces.filter(p=>p.order_id===b.id).map(p=><View key={p.id} style={{borderTopWidth:.5,borderColor:line,paddingVertical:7}}>
          {text(p.piece_reference+' · '+(p.description||'Goods not described'),11,ink,true)}
