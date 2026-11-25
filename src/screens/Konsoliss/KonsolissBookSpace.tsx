@@ -6,6 +6,7 @@ type Palette={bg:string;tx:string;mu:string;ac:string;inp:string;bd:string};
 type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void};
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
+type RouteConfig={code:string;country:string;region:string;mode:'LCL'|'FCL';delivery:'pickup'|'door';requests_enabled:boolean;service_verified:boolean;checkout_enabled:boolean;price_published:boolean};
 type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;quote_version:number;expires_at:string|null;review_note:string|null;created_at:string};
 const R='#A90E02',C='#FFFBD4',GOLD='#F2D179',COPPER='#E8935A',GREEN='#5FD38A';
 const presets=[.02,.10,.30,.50,1],factors={cm:.01,mm:.001,m:1,in:.0254,ft:.3048},units=['cm','mm','m','in','ft'] as const;
@@ -30,6 +31,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
  const [quotes,setQuotes]=useState<Quote[]>([]),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[backend,setBackend]=useState<Record<string,any>|null>(null);
  const [content,setContent]=useState<Record<string,string>>({});
+ const [routes,setRoutes]=useState<RouteConfig[]|null>(null);
  const submitLock=useRef(false);
  const requestIdentity=useRef<{signature:string;key:string}>({signature:'',key:''});
  const tx=useCallback((key:string,fallback:string)=>content['bookspace.'+key]||copy['bookspace.'+key]||fallback,[content,copy]);
@@ -41,6 +43,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    if(active&&!res.error&&res.data&&typeof res.data==='object')setContent(res.data as Record<string,string>);
   }catch{/* English defaults remain usable. */}
  })();return()=>{active=false}},[locale]);
+ useEffect(()=>{let active=true;void (async()=>{try{const {data,error}=await supabase.rpc('konsoliss_booking_config');if(active)setRoutes(error?[]:Array.isArray(data)?data as RouteConfig[]:[])}catch{if(active)setRoutes([])}})();return()=>{active=false}},[]);
  const updatePack=(id:number,key:keyof Pack,v:string)=>{setPacks(xs=>xs.map(p=>p.id===id?{...p,[key]:v}:p));bump()};
  const calc=useMemo(()=>{
   const lines=packs.map(p=>{const q=num(p.q),volume=p.kind==='dims'?num(p.l)*num(p.w)*num(p.h)*factors[dimUnit]**3:num(p.v);
@@ -52,9 +55,16 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
   const validKg=kg==null||(Number.isFinite(kg)&&kg>0&&kg<=80000);
   return{physical,kg,valid,validKg,lines};
  },[packs,dimUnit,method,space,weightUnknown,weightUnit,weight]);
- const route=mode==='FCL'?(country==='HT'?'HT-REQUEST-FCL-PICKUP':country==='US'?(door?'US-REQUEST-FCL-DOOR':'US-REQUEST-FCL-PICKUP'):(door?'DO-REQUEST-FCL-DOOR':'DO-REQUEST-FCL-PICKUP')):
- country==='HT'?(region==='PAP'?'HT-PAP-LCL-PICKUP':region==='CAP'?'HT-CAP-LCL-PICKUP':region==='CAY'?'HT-CAY-LCL-PICKUP':'HT-OTHER-LCL-PICKUP'):
- country==='US'?(door?'US-REQUEST-LCL-DOOR':'US-REQUEST-LCL-PICKUP'):(door?'DO-REQUEST-LCL-DOOR':'DO-REQUEST-LCL-PICKUP');
+
+ const countryOptions:string[][]=routes&&routes.length?[...new Set(routes.map(r=>r.country))].map(code=>{
+  const known=countries.find(x=>x[0]===code);return [code,known?known[1]:code];
+ }):countries;
+ const regionOptions:string[][]=routes&&routes.length?[...new Set(routes.filter(r=>r.country===country&&r.mode===mode&&r.delivery==='pickup').map(r=>r.region))].map(code=>{
+  const known=regions.find(x=>x[0]===code);return [code,known?known[1]:code];
+ }):regions;
+ const routeRecord=routes?.find(r=>r.country===country&&r.mode===mode&&r.delivery===(door?'door':'pickup')&&r.region===(country==='HT'?region:'OTHER'));
+ const route=routeRecord?.code||'';
+
  const unsupported=category==='battery'&&battery==='damaged';
  const countValid=Number.isInteger(num(fclCount))&&num(fclCount)>0&&num(fclCount)<=100;
  const valid=mode==='FCL'?countValid:calc.valid&&calc.validKg;
@@ -88,9 +98,10 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const pill=(...children:React.ReactNode[])=><View style={{flexDirection:'row',gap:6,marginBottom:8}}>{children}</View>;
  const footer=(label:string,onPress:()=>void,disabled=false)=><Pressable disabled={disabled||busy} onPress={onPress} accessibilityRole="button" style={{paddingVertical:13,paddingHorizontal:18,backgroundColor:disabled||busy?'#B5A891':R,borderRadius:9,alignItems:'center',marginTop:12}}>
   {busy?<ActivityIndicator color={C}/>:text(label,12,C,true)}</Pressable>;
- const review=()=>{if(!valid||unsupported||(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))){setNotice('Check the shipment details and merchandise value before continuing.');return}setNotice('');setStep('review')};
+ const review=()=>{if(!route||routes===null||!valid||unsupported||(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))){setNotice('Check the shipment details and merchandise value before continuing.');return}setNotice('');setStep('review')};
  const submit=async()=>{if(submitLock.current||busy)return;submitLock.current=true;setBusy(true);setNotice('');
   try{
+   if(!route)throw new Error('This destination and delivery option is not accepting quote requests.');
    const user=await supabase.auth.getUser();if(!user.data.user)throw new Error('Sign in to submit a reservation or quotation request.');
    if(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))throw new Error('Enter a valid merchandise value or choose unknown value.');
    const signature=JSON.stringify({route,mode,cbm:calc.physical,kg:calc.kg,count:fclCount,category,battery,description,value:valueUnknown?null:value,address:door?address:null,packs:method==='dims'?packs:[]});
@@ -131,8 +142,8 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    {step==='edit'?<>
     {pill(btn('LCL · Shared space',true,mode==='LCL',()=>{setMode('LCL');bump()}),btn('FCL · Full container',true,mode==='FCL',()=>{setMode('FCL');bump()}))}
     <View style={{marginTop:10}}>{heading(tx('destination','Destination'))}
-     {select('country',tx('destination','Destination'),country,countries)}
-     {country==='HT'?select('region',tx('region','Pickup region'),region,regions):text(tx('unpublished','Pricing for this destination is confirmed by quotation.'),11,muted)}
+     {select('country',tx('destination','Destination'),country,countryOptions)}
+     {country==='HT'?select('region',tx('region','Pickup region'),region,regionOptions):text(tx('unpublished','Pricing for this destination is confirmed by quotation.'),11,muted)}
      {pill(btn('⌂  Warehouse pickup',true,!door,()=>{setDoor(false);bump()}),btn(country==='HT'?'♧  Door delivery 🔒':'♧  Door delivery',country!=='HT',door,()=>{setDoor(true);bump()}))}
     </View>
     <View style={{height:.5,backgroundColor:line,marginVertical:13}}/>
@@ -205,7 +216,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    </>:null}
    {step==='review'?<>
     {box(<>{heading(category==='unknown'?'Your provisional space request':'Shipping quote request')}
-     {text('Shipping: '+mode+' · '+(countries.find(x=>x[0]===country)?.[1]||country),12)}
+     {text('Shipping: '+mode+' · '+(countryOptions.find(x=>x[0]===country)?.[1]||country),12)}
      {text('Destination: '+(country==='HT'?regions.find(x=>x[0]===region)?.[1]:door?'Door delivery':'Warehouse pickup'),12)}
      {mode==='LCL'?text('Physical space: '+fmt(calc.physical)+' CBM',12):text('Full containers: '+fclCount+' × 40HQ',12)}
      {text('Gross weight: '+(calc.kg==null?'Not known yet':fmt(calc.kg)+' kg'),12)}
@@ -251,7 +262,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
       <View>{text('Indicative freight · not payable yet',10,muted)}{text(unsupported?'Not available':amount==null?'Quote required':cash(amount),18,ink,true)}</View>
       <View style={{minWidth:145}}>{footer(unsupported?'Unavailable':tx('requestQuote','Review shipping quote'),review,
-       !valid||unsupported||!terms||!truth||(door&&address.trim().length<8))}</View>
+       !route||routes===null||!valid||unsupported||!terms||!truth||(door&&address.trim().length<8))}</View>
      </View>
     </View>:null}
  </View>;
