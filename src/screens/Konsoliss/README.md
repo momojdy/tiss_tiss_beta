@@ -136,6 +136,8 @@
 
 **Consumer/Admin synchronization:** `scripts/sync-konsoliss-preview.cjs` now also copies `konsolissPreviewScenarios.ts` and `useKonsolissPreviewController.ts`. Run `npm run sync:konsoliss-preview` then `npm run check:konsoliss-preview` after any homepage change.
 
+**Git commits:** consumer `momojdy/tiss_tiss_beta` `5c40d95` (feature, tests, README) + the follow-up commit that refreshes the renderer-contract hash and records these IDs (`git log -2`); admin `momojdy/tiss-admin` `e223097` (generated preview sync).
+
 **Files:** consumer - `konsolissHomeScreen.tsx`, `konsolissPreviewScenarios.ts`, `useKonsolissPreviewController.ts`, `scripts/sync-konsoliss-preview.cjs`, `tests/konsoliss-preview-states.test.cjs` (new), `tests/konsoliss-homepage.test.cjs`, `tests/konsoliss-renderer-contract.json`, `package.json`. Admin - generated files under `src/features/admin/screens/content/konsolissPreview/`.
 
 **Tests run (2026-11-25, plain Node; dependencies are not installed in the authoring sandbox):** `konsoliss`, `konsoliss-homepage`, `konsoliss-preview-states`, `konsoliss-language-hook`, `konsoliss-lifecycle` all PASS; `check:konsoliss-preview` PASS; admin `tests/konsoliss.test.cjs` PASS (8). Covered: all 23 scenarios selectable and any-to-any switching, replay remount, autoplay stop-at-last, exit restoring live data, top-left arithmetic, C4/C5 independence, 0.020 CBM, split containers + unassigned view, third-party, expiry, unavailable/loading (no canvas), 99%/100% occupancy, rotated view, reduced motion, demo-module isolation. Every scenario was also drawn in headless Chromium and inspected as screenshots (HTML canvas only, not a native device).
