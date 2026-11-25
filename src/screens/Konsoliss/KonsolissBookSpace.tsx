@@ -263,6 +263,12 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      {box(<>{heading('Approved service and price')}
        {text(quote.shipping_mode+' · '+quote.country+' · '+quote.region+' · '+quote.delivery,13)}
        {text('Quote version '+quote.quote_version,11,muted)}
+       {text('Approved route '+quoteScope('route_code')+' · '+quoteScope('country')+' · '+quoteScope('region'),11,ink,true,{marginTop:7})}
+       {text('Equipment '+quoteScope('equipment')+' · '+quoteScope('shipping_mode'),11)}
+       {text('Delivery method '+quoteScope('delivery_method'),11)}
+       {quote.approved_scope?.destination_address?text('Destination '+quoteScope('destination_address'),11):text('Pickup area '+quoteScope('pickup_region'),11)}
+       {text('Quote validity '+quoteScope('validity_days')+' days from approval',11,muted)}
+
        {text('Reviewed price '+cash(quote.approved_total_cents),20,ink,true,{marginVertical:7})}
        {text('Included services',11,ink,true)}{text(quoteScope('services_included'),11)}
        {text('Excluded services',11,ink,true,{marginTop:9})}{text(quoteScope('services_excluded'),11)}
