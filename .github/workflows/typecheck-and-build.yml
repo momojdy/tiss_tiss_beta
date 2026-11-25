@@ -15,9 +15,10 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
-      - name: TypeScript check
-        run: npx tsc --noEmit
       - name: Konsoliss homepage and data integrity tests
         run: npm run test:konsoliss
+      - name: TypeScript check
+        if: ${{ !cancelled() }}
+        run: npx tsc --noEmit
       - name: Expo web export
         run: npx expo export --platform web --output-dir /tmp/wantiss-web-export
