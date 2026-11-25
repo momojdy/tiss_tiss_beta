@@ -10,6 +10,7 @@ import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type Konso
 import {sendKonsolissSupport,supportRequestId} from './supportApi';
 import {useKonsolissLoadProgress, type KonsolissLoadProgress} from './useKonsolissLoadProgress';
 import {trackingCountdown,verifiedContainerInbound,liveLoadCallout,liveHomeStatus} from './konsolissLoadModel';
+import {formatContainerFillPercent} from './konsolissOccupancyModel';
 import {useKonsolissContainerOccupancy, type KonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
 import {useKonsolissAssignedContainers} from './useKonsolissAssignedContainers';
 import {type KonsolissSelectableContainer} from './konsolissDemoContainers';
@@ -216,7 +217,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const visualMode=noCargoLoaded?'illustration':'sample';
   // Left: customer committed CBM / reserved CBM. Right: the shared 68 CBM container only.
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/containerOccupancy.capacityCbm:0;
-  const containerPercent=containerOccupancy?(containerRatio>0&&containerRatio<0.01?(containerRatio*100).toFixed(2):String(Math.round(containerRatio*100)))+'%':'—';
+  const containerPercent=containerOccupancy?formatContainerFillPercent(containerOccupancy.loadedCbm,containerOccupancy.capacityCbm):'—';
   const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):'—';
   const showEmptyLoadHint=!selectedContainer&&displayAssignmentState==='ready'&&liveContainers.length===0&&displayCurrentContainer.kind==='unassigned'&&(
     displayLoadState.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));

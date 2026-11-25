@@ -120,3 +120,22 @@ test('atomic homepage projection rejects conflicting snapshots and preserves com
  const label=parseSnapshot(unsent);assert.equal(label.kind,'recorded');assert.equal(label.progress.sentCbm,0);assert.equal(liveHomeStatus(label.snapshot,{}),'Label created');
  assert.equal(label.trackingDueAt,'2026-12-20T00:00:00Z');
 });
+
+test('all 68,001 physical occupancy values at 0.001 CBM precision display strictly increasing accurate percentages',()=>{
+ const {formatContainerFillPercent:format,parseKonsolissOccupancy:parse}=load("src/screens/Konsoliss/konsolissOccupancyModel.ts");
+ let previous=-1;
+ for(let milli=0;milli<=68000;milli++){
+  const loaded=milli/1000,free=(68000-milli)/1000,own=Math.min(milli,20)/1000,other=(milli-Math.min(milli,20))/1000;
+  const value=parse({container_id:'verified',container_type:'40HQ',capacity_cbm:68,loaded_cbm:loaded,your_loaded_cbm:own,other_cargo_cbm:other,free_cbm:free,your_allocated_cbm:own},'verified');
+  assert.ok(value,'valid '+milli);const label=format(value.loadedCbm,value.capacityCbm),percent=Number(label.slice(0,-1));
+  const expected=Number((BigInt(milli)*100000n+34000n)/68000n)/1000;
+  assert.equal(percent,expected,'percent '+milli);assert.ok(percent>previous,'strict monotonic '+milli);
+  assert.equal(percent===0,milli===0);assert.equal(percent===100,milli===68000);
+  assert.ok(Math.abs(percent-loaded/68*100)<=.000500001);
+  assert.equal(Math.round((value.loadedCbm+value.freeCbm)*1000),68000);
+  previous=percent;
+ }
+ for(const [loaded,label] of [[0,'0%'],[.001,'0.001%'],[.02,'0.029%'],[34,'50%'],[51.7,'76.029%'],[67.32,'99%'],[67.9,'99.853%'],[67.999,'99.999%'],[68,'100%']])assert.equal(format(loaded,68),label);
+ for(const value of [-.001,68.001,NaN,Infinity,.0001])assert.equal(format(value,68),'—');
+ assert.equal(format(34,67),'—');
+});

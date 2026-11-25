@@ -127,3 +127,11 @@ test('production homepage renders a single verified snapshot, not legacy mock da
  test('all five homepage catalogs have every label and preserve placeholders; drafts and unreviewed labels do not override bundled locale',()=>{
  for(const locale of locales){const labels=konsolissLocaleDefaults(locale);assert.deepEqual(Object.keys(labels).sort(),Object.keys(defaults).sort());assert.deepEqual(publicationErrors({v:2,labels,reviewed:Object.keys(labels),images:{}}),[],locale);assert.equal(resolveHomepage([],locale).copy['load.labelCreated'],labels['load.labelCreated']);const row={content_key:'konsoliss.content',locale,version:1,status:'published',payload:{v:2,labels:{...labels,'load.labelCreated':'Reviewed publication'},reviewed:['load.labelCreated'],images:{}}};assert.equal(resolveHomepage([row],locale).copy['load.labelCreated'],'Reviewed publication');assert.equal(resolveHomepage([{...row,status:'draft'}],locale).copy['load.labelCreated'],labels['load.labelCreated']);assert.equal(resolveHomepage([{...row,payload:{...row.payload,reviewed:[]}}],locale).copy['load.labelCreated'],labels['load.labelCreated']);}
  });
+
+test('top-right percentage uses actual verified 68 CBM occupancy at exact endpoints',()=>{
+ for(const [total,label] of [[0,'0%'],[.001,'0.001%'],[.02,'0.029%'],[51.7,'76.029%'],[67.999,'99.999%'],[68,'100%']]){
+ const own=Math.min(.02,total),reserved=1;
+ const snapshot={kind:'recorded',progress:{reserved_cbm:reserved,sent_cbm:own,loaded_cbm:own,inbound_to_container_cbm:0,allocated_cbm:own,at_warehouse_or_in_transit_cbm:0,reserved_not_sent_cbm:Math.round((reserved-own)*1000)/1000,not_allocated_cbm:Math.round((reserved-own)*1000)/1000,allocated_percent:own*100},warehouse_cbm:own,transit_cbm:0,containers:[{id:'c',number:'VERIFIED',status:'filling',occupancy:{container_id:'c',container_type:'40HQ',capacity_cbm:68,loaded_cbm:total,your_loaded_cbm:own,other_cargo_cbm:Math.round((total-own)*1000)/1000,free_cbm:Math.round((68-total)*1000)/1000,your_allocated_cbm:own}}]};
+ const app=harness({snapshot});assert.ok(app.text().includes(label+' filled'),total+' '+app.text());
+ }
+});
