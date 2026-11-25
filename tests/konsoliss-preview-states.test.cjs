@@ -145,10 +145,10 @@ test('renderer draws every scenario view without error and with truthful callout
  const c5=runRenderer(attrs(byCode('C5'))).texts;assert.ok(c5.includes('My current loaded space 0.500 CBM'));assert.ok(!c5.some(t=>/CBM free$/.test(t)),'sealed container shows no free-space label');
  const c6=runRenderer(attrs(byCode('C6'))).texts;assert.ok(c6.includes('My current loaded space 0.020 CBM'));
  const b3=runRenderer(attrs(byCode('B3'))).texts;assert.ok(b3.includes('0.500 CBM reserved here · not loaded yet'));assert.ok(!b3.some(t=>t.startsWith('My current loaded space')),'nothing loaded, so no loaded callout');
- const c1u=runRenderer(attrs(byCode('C1'),1)).texts;assert.ok(c1u.includes('Not assigned to a container yet: 0.200 CBM'));assert.ok(c1u.includes('Illustration · not a real container'));assert.ok(!c1u.some(t=>t.startsWith('My current loaded space')));
- const a2=runRenderer(attrs(byCode('A2'))).texts;assert.ok(a2.includes('Goods sent 0 CBM'));assert.ok(a2.some(t=>t.startsWith('Space preview: 1.000 CBM')));
- const a4=runRenderer(attrs(byCode('A4'))).texts;assert.ok(a4.includes('Label created · carrier acceptance not confirmed'));
- const b2=runRenderer(attrs(byCode('B2'))).texts;assert.ok(b2.includes('At warehouse 0.700 CBM · not in a container'));
+ const c1u=runRenderer(attrs(byCode('C1'),1)).texts;assert.ok(!c1u.some(t=>/unassigned|Not assigned|Illustration|My current loaded space/.test(t)));
+ const a2=runRenderer(attrs(byCode('A2'))).texts;assert.ok(!a2.includes('Goods sent 0 CBM'));assert.ok(a2.some(t=>t.startsWith('Space preview: 1.000 CBM')));
+ const a4=runRenderer(attrs(byCode('A4'))).texts;assert.ok(!a4.some(t=>/Label created|carrier/i.test(t)));
+ const b2=runRenderer(attrs(byCode('B2'))).texts;assert.ok(!b2.some(t=>/At warehouse|not in a container/.test(t)));
 });
 
 test('99% and 100% physical container occupancy, tiny load and original empty animation render',()=>{
@@ -170,9 +170,9 @@ test('HTML-reference flight and proportional allocation geometry are used outsid
 
 test('requested customer-facing captions and discreet shipment status',()=>{
  const c1=byCode('C1'),c7=byCode('C7'),a5=byCode('A5'),d1=byCode('D1');
- assert.equal(S.previewRender(c1,S.previewViews(c1)[0]).caption,'Partly loaded · rest unassigned');
+ assert.equal(S.previewRender(c1,S.previewViews(c1)[0]).caption,'0.3 CBM loaded • 0.2 CBM unassigned');
  for(const v of S.previewViews(c7).filter(v=>v.kind==='container'))assert.equal(S.previewRender(c7,v).caption,'Split into 2 containers');
- assert.match(a5.caption2,/Inbound to warehouse/);assert.doesNotMatch(JSON.stringify(d1),/partner|third.party|forwarder/i);
+ assert.match(a5.caption2,/Inbound to warehouse/);assert.equal(S.previewLoadStatus(byCode('A4'),null),'Label created');assert.equal(S.previewLoadStatus(a5,null),'Inbound to warehouse • 0.7 CBM');assert.doesNotMatch(JSON.stringify(d1),/partner|third.party|forwarder/i);
  assert.equal(S.previewProgress(byCode('A2')).loadedCbm,0);assert.equal(S.previewProgress(byCode('A3')).sentCbm,0);
 });
 test('reservation parcel lands once, remains visible, and never updates physical load',()=>{
@@ -183,6 +183,12 @@ test('reservation parcel lands once, remains visible, and never updates physical
  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
  const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(r.reservationLanded(),false);
  const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[0]==='gradient'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
- const alpha=[];for(const t of [1750,3100,7000,12000]){now=t;ops=[];timers.forEach(f=>f());flush();alpha.push(ops.find(x=>x[1]===doc.documentElement.dataset.warning)?.[2]);if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}}
- assert.ok(new Set(alpha).size>1);
+ for(const t of [1750,3100,7000,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}}
+});
+
+
+test('compact status is computed from actual fixture quantities, not the label',()=>{
+ const c1=byCode('C1');assert.equal(S.previewLoadStatus(c1,S.previewViews(c1)[0]),'0.3 CBM loaded • 0.2 CBM unassigned');
+ const changed={...c1,purchased:1.3,containers:[{...c1.containers[0],loaded:.4,here:.4}]};assert.equal(S.previewLoadStatus(changed,null),'0.4 CBM loaded • 0.9 CBM unassigned');
+ const home=src('konsolissHomeScreen.tsx');assert.match(home,/loadStatus\?<Tx/);assert.match(home,/demoWarning\?<DeadlineReminder/);assert.match(home,/function DeadlineReminder/);assert.match(home,/reduceMotionChanged/);assert.doesNotMatch(rendererScript(),/data\.warning|data\.caption2/);
 });

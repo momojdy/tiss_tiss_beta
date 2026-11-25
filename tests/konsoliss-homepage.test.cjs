@@ -54,7 +54,7 @@ test('reserved CBM with no loaded cargo gets an illustrative 3D preview, not the
  assert.match(html,/data-reserved="1"/);
  assert.match(html,/data-loaded="0"/);
  assert.match(html,/Space preview: /);
- assert.match(html,/Loaded 0 CBM/);
+ assert.match(purchased.text(),/No goods sent yet/);
  assert.match(purchased.text(),/0.0.*1.0 CBM/);
  const empty=harness({empty:true});
  const emptyHtml=empty.webviews()[0].props.source.html;
