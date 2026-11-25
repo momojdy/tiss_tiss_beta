@@ -112,7 +112,10 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   ];
   const extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale);
   const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/> }));
-  const rows=selectHomepageRows([...nativeRows.filter(r=>{const entry=effectiveLayout.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,Date.now());}),...extraRows],effectiveLayout,profile,displayMode);
+  const eligibleNative=(l:HomeLayout,now:number)=>nativeRows.filter(r=>{const entry=l.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,now);});
+  const rows=selectHomepageRows([...eligibleNative(effectiveLayout,Date.now()),...extraRows],effectiveLayout,profile,displayMode);
+  // The layout editor uses the same actual profile, mode, eligibility and budget as the rendered homepage.
+  function visibleSectionIdsForLayout(value:HomeLayout){const l=validateLayout(value),now=Date.now();return selectHomepageRows([...eligibleNative(l,now).map(r=>({id:r.id})),...selectDiscovery(l,profile,displayMode,region,locale,now).map(d=>({id:d.id}))],l,profile,displayMode).map(r=>r.id);}
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
   function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;scroll.current.scrollToIndex({index:target.index,animated:!reducedMotion,viewPosition:0});}
   function jumpToSection(id:string){
@@ -149,6 +152,6 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </View>
       </View>
     </View>
-    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }

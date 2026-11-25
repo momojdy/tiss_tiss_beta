@@ -1,13 +1,13 @@
 {
   "v10-study-ochre": {
     "file": "v10/study-ochre.jpg",
-    "sha256": "8fb5b7f157fbbe3dec21b0351375267c2f19d1be051872db65e071d2d11bd6f3",
-    "bytes": 25753,
+    "sha256": "13c88cdef056e4c633ab402b7311477f09179c6b43e183313d0d5ac1b73bff9b",
+    "bytes": 58910,
     "width": 480,
     "height": 600,
-    "label": "Painting study",
+    "label": "Ochre and form — composed still life",
     "kind": "painting",
-    "origin": "Original procedural illustration, produced for this design preview; no third-party image used",
+    "origin": "Original procedural illustration, revised V10.1 composed still life with pigment texture; no third-party image used",
     "rightsStatus": "original-preview-art; production review pending",
     "isSample": true
   },

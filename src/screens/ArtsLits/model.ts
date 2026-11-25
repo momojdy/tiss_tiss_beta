@@ -1,4 +1,5 @@
 import { BOOKS, catalog, creators, exhibitions, floors, future, museums, works } from './catalog';
+import { previewRouteTitle } from './homeRegistry';
 export type Profile = 'returning' | 'new' | 'reader' | 'collector' | 'museum' | 'member' | 'comics';
 export type Connection = 'live' | 'loading' | 'offline' | 'error' | 'empty';
 export type Language = 'normal' | 'long';
@@ -63,8 +64,8 @@ export const destinations: Record<string,readonly string[]> = {
   'Poetry contest':['Words without walls. The competition is illustrative; rules, eligibility, prizes and dates must be approved. No submission is accepted here.'],
   'Walk through the museum':['The actual 3D experience is the next design phase. This preview does not render a navigable building.','Museum map'],
   'Browse as gallery':['The full scrollable gallery is the next design phase. Select a floor to inspect its access state.','Museum map'],
-  'Image credits':['Embedded visual references extracted byte-for-byte from V8. See the reference asset manifest and original source attribution before production. These images are not actual venue, creator or product photographs.'],
+  'Image credits':['V8: 19 original bundled visual files preserved byte-for-byte, with legacy source attribution and rights review pending (assets-manifest.json). V10/V10.1: 19 original design illustrations, including the revised Ochre and form still life; no third-party images used in these illustrations (v10-assets-manifest.json). All are design references, not actual listings, venue or creator photographs. Production licensing, accuracy and attribution review remain required.'],
 };
-export function titleFor(id:string){return catalog.find(x=>x[0]===id)?.[1]??id;}
+export function titleFor(id:string){return previewRouteTitle(id)??catalog.find(x=>x[0]===id)?.[1]??id;}
 export function searchCatalog(query:string){const records: [string,string][] = [...Object.keys(destinations).map(x=>[x,x] as [string,string]),...BOOKS.map(x=>[x[0],`${x[0]} · ${x[1]}`] as [string,string]),...works.map(x=>[x[0],`${x[0]} · ${x[1]}`] as [string,string]),...creators.map(x=>[x[0],`${x[0]} · ${x[1]}`] as [string,string]),...exhibitions.map(x=>[x[0],x[0]] as [string,string]),...future.map(x=>[x[0],x[0]] as [string,string]),...museums.map(x=>[x[0],x[0]] as [string,string]),...catalog.map(x=>[x[0],x[1]] as [string,string])];const q=query.trim().toLowerCase();const seen=new Set<string>();return records.filter(([id,label])=>label.toLowerCase().includes(q)&&!seen.has(id)&&!!seen.add(id));}
 export type PreviewPreferences={theme:Theme;saved:string[];reminders:string[];following:string[]};
