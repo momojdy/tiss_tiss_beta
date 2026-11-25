@@ -47,12 +47,12 @@ export default function KonsolissBookSpace({t,copy,onClose}:Props){
    return{volume:volume*q,weight:gross*q,valid:q>0&&Number.isInteger(q)&&Number.isFinite(volume)&&volume>0&&Number.isFinite(gross)&&gross>0}});
   const physical=method==='dims'?lines.reduce((a,x)=>a+x.volume,0):num(space);
   const kg=weightUnknown?null:method==='dims'?lines.reduce((a,x)=>a+x.weight,0):num(weight)*(weightUnit==='lb'?.45359237:1);
-  const valid=Number.isFinite(physical)&&physical>=.02&&physical<=68&&(method!=='dims'||lines.every(p=>p.valid));
-  const validKg=kg==null||Number.isFinite(kg)&&kg>0&&kg<=80000;
+  const valid=Number.isFinite(physical)&&physical>=.02&&physical<=68&&(method!=='dims'||lines.every(p=>p.valid||(weightUnknown&&p.volume>0)));
+  const validKg=kg==null||(Number.isFinite(kg)&&kg>0&&kg<=80000);
   return{physical,kg,valid,validKg,lines};
  },[packs,dimUnit,method,space,weightUnknown,weightUnit,weight]);
  const route=mode==='FCL'?(country==='HT'?'HT-REQUEST-FCL-PICKUP':country==='US'?(door?'US-REQUEST-FCL-DOOR':'US-REQUEST-FCL-PICKUP'):(door?'DO-REQUEST-FCL-DOOR':'DO-REQUEST-FCL-PICKUP')):
- country==='HT'?(region==='PAP'?'HT-PAP-LCL-PICKUP':region==='CAP'?'HT-CAP-LCL-PICKUP':'HT-CAY-LCL-PICKUP'):
+ country==='HT'?(region==='PAP'?'HT-PAP-LCL-PICKUP':region==='CAP'?'HT-CAP-LCL-PICKUP':region==='CAY'?'HT-CAY-LCL-PICKUP':'HT-OTHER-LCL-PICKUP'):
  country==='US'?(door?'US-REQUEST-LCL-DOOR':'US-REQUEST-LCL-PICKUP'):(door?'DO-REQUEST-LCL-DOOR':'DO-REQUEST-LCL-PICKUP');
  const unsupported=category==='battery'&&battery==='damaged';
  const countValid=Number.isInteger(num(fclCount))&&num(fclCount)>0&&num(fclCount)<=100;
@@ -84,7 +84,7 @@ export default function KonsolissBookSpace({t,copy,onClose}:Props){
    {choices.map(([k,label])=><Pressable key={k} onPress={()=>{if(name==='country'){setCountry(k);setRegion('PAP');setDoor(false)}else setRegion(k);setDrop('');bump()}} style={{paddingVertical:12,paddingHorizontal:11,borderBottomWidth:.5,borderColor:line}}>{text(label,12,k===value?accent:ink,k===value)}</Pressable>)}
   </View>:null}
  </View>;
- const pill=(children:React.ReactNode)=><View style={{flexDirection:'row',gap:6,marginBottom:8}}>{children}</View>;
+ const pill=(...children:React.ReactNode[])=><View style={{flexDirection:'row',gap:6,marginBottom:8}}>{children}</View>;
  const footer=(label:string,onPress:()=>void,disabled=false)=><Pressable disabled={disabled||busy} onPress={onPress} accessibilityRole="button" style={{paddingVertical:13,paddingHorizontal:18,backgroundColor:disabled||busy?'#B5A891':R,borderRadius:9,alignItems:'center',marginTop:12}}>
   {busy?<ActivityIndicator color={C}/>:text(label,12,C,true)}</Pressable>;
  const review=()=>{if(!valid||unsupported){setNotice('Check the shipment details before continuing.');return}setNotice('');setStep('review')};
