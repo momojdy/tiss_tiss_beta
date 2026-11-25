@@ -107,9 +107,9 @@ test('exiting preview restores genuine account data and demo carries no real act
  // Book Space is inert while the demo is on, so no support/checkout request can be created from fixtures.
  app.click(app.find('Preview Konsoliss demo states')[0]);
  const book=app.buttons(copy['home.book.title']+copy['home.book.subtitle'])[0];assert.ok(book,'Book Space card found');app.click(book);
- const sheetText=formatCopy(copy,'book.capacity',{capacity:68});assert.ok(!app.text().includes(sheetText),'Book sheet does not open during demo');
+ assert.equal(app.find('Konsoliss booking screen test boundary').length,0,'Book sheet does not open during demo');
  app.click(app.find('Return to live data')[0]);app.click(app.buttons(copy['home.book.title']+copy['home.book.subtitle'])[0]);
- assert.ok(app.text().includes(sheetText),'Book sheet opens normally on live data');
+ assert.equal(app.find('Konsoliss booking screen test boundary').length,1,'Book sheet opens normally on live data');
 });
 
 test('demo modules are frontend-only: no Supabase, network, storage or write APIs',()=>{
@@ -180,7 +180,7 @@ test('reservation parcel resets each cycle, lands, and never updates physical lo
  const ctx=new Proxy(state,{get(t,k){if(k==='fillText'||k==='strokeText')return x=>ops.push(['text',x,t.globalAlpha]);if(k==='createRadialGradient')return()=>{ops.push(['gradient']);return{addColorStop(){}}};if(k==='fill')return()=>ops.push(['fill',t.fillStyle]);return typeof t[k]==='undefined'?()=>{}:t[k]},set(t,k,v){t[k]=v;return true}});
  const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width:390,height:300}),addEventListener(){}};
  const doc={documentElement:{dataset:{theme:'light',reserved:'1',free:'-',sent:'0',warning:'Send goods or upload tracking before Day 25'}},querySelector:()=>cv};
- const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
+ const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
  const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(r.reservationLanded(),false);
  const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[1]==='rgba(30,12,8,0.012)'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
  for(const t of [1750,3100,5650,10250,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));const landed=(t-1000)%4600>=1932;assert.equal(r.reservationLanded(),landed);assert.equal(r.V.ld,0);assert.equal(ops.some(x=>x[1]==='#F0B0A8'),landed);if(t===5650||t===10250){assert.ok(ops.some(x=>x[1]==='#cda874'));assert.ok(ops.some(x=>x[1]==='rgba(30,12,8,0.012)'));}}
@@ -211,7 +211,7 @@ test('every flight-eligible state resets and lands, including sent and allocated
   const ctx=new Proxy(state,{get(t,k){if(k==='fill')return()=>fills.push(t.fillStyle);if(k==='createRadialGradient')return()=>({addColorStop(){}});if(k==='measureText')return x=>({width:x.length*5.8});return typeof t[k]==='undefined'?()=>{}:t[k]},set(t,k,v){t[k]=v;return true}});
   const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width:390,height:300}),addEventListener(){}};
   const doc={documentElement:{dataset:{theme:'light',...Object.fromEntries(Object.entries(data).map(([k,v])=>[k,String(v)]))}},querySelector:()=>cv};
-  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>time});
+  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>time});
   const flush=()=>{while(frames.length)frames.shift()()};
   for(const [ms,landed] of [[0,false],[1900,false],[1932,true],[4000,true],[4600,false],[6500,false],[6532,true],[9200,false],[11132,true]]){time=1000+ms;fills=[];timers.forEach(f=>f());flush();assert.equal(r.reservationLanded(),landed,code+' '+ms);assert.equal(fills.includes('#F0B0A8'),landed,code+' landed pixels '+ms);assert.equal(r.V.ld,0);}
  }
@@ -241,7 +241,7 @@ test('all 23 fixtures and 27 renderable views survive 324 theme/width/motion com
     const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width,height:300}),addEventListener:(k,f)=>pointer[k]=f,setPointerCapture(){},style:{}};
     const els={},doc={documentElement:{dataset:{theme,...Object.fromEntries(Object.entries(data).map(([k,v])=>[k,String(v)]))}},querySelector:q=>q==='#cv'?cv:(els[q]??={style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelector:()=>null}),getElementById:q=>doc.querySelector('#'+q)};
     const code=rendererScript(data.empty===true);
-    const result=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date','clearInterval','cancelAnimationFrame','window',code+(data.empty?'\\nreturn {};':'\\nreturn {V,reservationLanded};'))(doc,2,f=>{frames.push(f);return frames.length;},f=>{timers.push(f);return 1;},(k,f)=>events[k]=f,()=>({matches:reduced}),{now:()=>now},()=>{},()=>{},{});
+    const result=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date','clearInterval','cancelAnimationFrame','window',code+(data.empty?'\nreturn {};':'\nreturn {V,reservationLanded};'))(doc,2,f=>{frames.push(f);return frames.length;},f=>{timers.push(f);return 1;},(k,f)=>events[k]=f,()=>({matches:reduced}),{now:()=>now},()=>{},()=>{},{});
     const flush=()=>{let n=frames.length;while(n-->0)frames.shift()();};
     for(const ms of [0,1000,1900,1932,3000,4599,4600,6532,8600,9200,11132,13599,13600]){now=1000+ms;timers.forEach(f=>f());flush();}
     if(pointer.pointerdown&&pointer.pointermove){pointer.pointerdown({clientX:10,clientY:10,pointerId:1});pointer.pointermove({clientX:118,clientY:85,pointerId:1});flush();pointer.pointerup?.({pointerId:1});pointer.pointercancel?.({pointerId:1});}
