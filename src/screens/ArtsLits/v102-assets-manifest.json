@@ -1,0 +1,32 @@
+{
+  "v102-vangogh-wheatfield": {
+    "file": "v102/vangogh-wheatfield.jpg",
+    "title": "Wheat Field with Cypresses",
+    "artist": "Vincent van Gogh",
+    "date": "1889",
+    "objectId": 436535,
+    "source": "https://www.metmuseum.org/art/collection/search/436535",
+    "mirror": "https://github.com/HuiYingChung/Openhall/blob/main/public/demo/vangogh-wheatfield.jpg",
+    "license": "CC0 / Met Open Access public domain",
+    "gitBlobSha": "44fb2155e61a6256d5abd43354318a10f19f058c",
+    "width": 599,
+    "height": 477,
+    "bytes": 125763,
+    "isSample": true
+  },
+  "v102-degas-dance-class": {
+    "file": "v102/degas-dance-class.jpg",
+    "title": "The Dance Class",
+    "artist": "Edgar Degas",
+    "date": "1874",
+    "objectId": 438817,
+    "source": "https://www.metmuseum.org/art/collection/search/438817",
+    "mirror": "https://github.com/HuiYingChung/Openhall/blob/main/public/demo/degas-dance-class.jpg",
+    "license": "CC0 / Met Open Access public domain",
+    "gitBlobSha": "d9257d376f7d97bfd3718975d3d640827672c4aa",
+    "width": 579,
+    "height": 624,
+    "bytes": 124833,
+    "isSample": true
+  }
+}
