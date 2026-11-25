@@ -39,7 +39,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    const res=await supabase.rpc('konsoliss_public_booking_copy',{p_locale:locale});
    if(active&&!res.error&&res.data&&typeof res.data==='object')setContent(res.data as Record<string,string>);
   }catch{/* English defaults remain usable. */}
- })();return()=>{active=false}},[]);
+ })();return()=>{active=false}},[locale]);
  const updatePack=(id:number,key:keyof Pack,v:string)=>{setPacks(xs=>xs.map(p=>p.id===id?{...p,[key]:v}:p));bump()};
  const calc=useMemo(()=>{
   const lines=packs.map(p=>{const q=num(p.q),volume=p.kind==='dims'?num(p.l)*num(p.w)*num(p.h)*factors[dimUnit]**3:num(p.v);
