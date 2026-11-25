@@ -165,17 +165,17 @@ test('reduced motion freezes preview and pulse animation without breaking drawin
  assert.match(rendererScript(),/if\(!RM&&V\.here>0\)/);
 });
 
-test('HTML-reference flight and proportional allocation geometry are used outside the original empty animation',()=>{const script=rendererScript();assert.match(script,/function fly\(\)/);assert.match(script,/\/4\.6/);assert.match(script,/function geo\(h\)/);assert.match(script,/function subtract\(b,o\)/);assert.match(rendererScript(true),/%13600/);});
+test('HTML-reference flight and proportional allocation geometry are used outside the original empty animation',()=>{const script=rendererScript();assert.match(script,/function fly\(p\)/);assert.match(script,/flightCycleMs=4600/);assert.match(script,/function geo\(h\)/);assert.match(script,/function subtract\(b,o\)/);assert.match(rendererScript(true),/%13600/);});
 
 
 test('requested customer-facing captions and discreet shipment status',()=>{
  const c1=byCode('C1'),c7=byCode('C7'),a5=byCode('A5'),d1=byCode('D1');
  assert.equal(S.previewRender(c1,S.previewViews(c1)[0]).caption,'0.3 CBM loaded • 0.2 CBM unassigned');
- for(const v of S.previewViews(c7).filter(v=>v.kind==='container'))assert.equal(S.previewRender(c7,v).caption,'');assert.equal(S.previewLoadStatus(c7,null),'Split into 2 containers');
+ for(const v of S.previewViews(c7).filter(v=>v.kind==='container'))assert.equal(S.previewRender(c7,v).caption,'My current loaded space 0.500 CBM');assert.equal(S.previewLoadStatus(c7,null),'Split into 2 containers');
  assert.match(a5.caption2,/Inbound to warehouse/);assert.equal(S.previewLoadStatus(byCode('A4'),null),'Label created');assert.equal(S.previewLoadStatus(a5,null),'Inbound to warehouse • 0.7 CBM');assert.doesNotMatch(JSON.stringify(d1),/partner|third.party|forwarder/i);
  assert.equal(S.previewProgress(byCode('A2')).loadedCbm,0);assert.equal(S.previewProgress(byCode('A3')).sentCbm,0);
 });
-test('reservation parcel repeats, remains visible, and never updates physical load',()=>{
+test('reservation parcel resets each cycle, lands, and never updates physical load',()=>{
  const script=rendererScript();let now=1000,frames=[],timers=[],ops=[],state={};
  const ctx=new Proxy(state,{get(t,k){if(k==='fillText'||k==='strokeText')return x=>ops.push(['text',x,t.globalAlpha]);if(k==='createRadialGradient')return()=>{ops.push(['gradient']);return{addColorStop(){}}};if(k==='fill')return()=>ops.push(['fill',t.fillStyle]);return typeof t[k]==='undefined'?()=>{}:t[k]},set(t,k,v){t[k]=v;return true}});
  const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width:390,height:300}),addEventListener(){}};
@@ -183,7 +183,7 @@ test('reservation parcel repeats, remains visible, and never updates physical lo
  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
  const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(r.reservationLanded(),false);
  const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[1]==='rgba(30,12,8,0.012)'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
- for(const t of [1750,3100,5650,10250,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}if(t===5650||t===10250){assert.ok(ops.some(x=>x[1]==='#cda874'));assert.ok(ops.some(x=>x[1]==='rgba(30,12,8,0.012)'));}}
+ for(const t of [1750,3100,5650,10250,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));const landed=(t-1000)%4600>=1932;assert.equal(r.reservationLanded(),landed);assert.equal(r.V.ld,0);assert.equal(ops.some(x=>x[1]==='#F0B0A8'),landed);if(t===5650||t===10250){assert.ok(ops.some(x=>x[1]==='#cda874'));assert.ok(ops.some(x=>x[1]==='rgba(30,12,8,0.012)'));}}
 });
 
 
@@ -194,12 +194,25 @@ test('compact status is computed from actual fixture quantities, not the label',
 });
 
 
-test('C1-C3 arrow labels carry actual quantities and C7 retains selected-container load',()=>{
+test('C1-C3 arrow labels carry actual quantities and C7 shows total loaded volume',()=>{
  for(const [code,expected] of [['C1',['0.3 CBM loaded','0.2 CBM unassigned']],['C2',['0.3 CBM loaded','0.1 CBM inbound','0.1 CBM remaining']],['C3',['0.7 CBM loaded','0.3 CBM unused']]]){const s=byCode(code);const texts=runRenderer(attrs(s)).texts;for(const part of expected)assert.ok(texts.some(x=>x.includes(part)),code+' '+part);assert.equal(S.previewLoadStatus(s,null),'');}
- for(const [i,cbm] of [[0,'0.400'],[1,'0.100']])assert.ok(runRenderer(attrs(byCode('C7'),i)).texts.includes('My current loaded space '+cbm+' CBM'));
+ for(const i of [0,1]){const texts=runRenderer(attrs(byCode('C7'),i)).texts;assert.ok(texts.includes('My current loaded space 0.500 CBM'));assert.ok(!texts.some(x=>x==='My current loaded space 0.400 CBM'||x==='My current loaded space 0.100 CBM'));}
 });
 test('countdown is calculated from absolute deadline, not hardcoded day count',()=>{
  const {trackingCountdown}=load('src/screens/Konsoliss/konsolissLoadModel.ts');const start=Date.parse('2026-11-25T03:00:00Z'),due=start+259200000;
  assert.equal(trackingCountdown(due,start).label,'3d 00h 00m 00s left');assert.equal(trackingCountdown(due,start+1000).label,'2d 23h 59m 59s left');assert.equal(trackingCountdown(due,due-1000).label,'00h 00m 01s left');assert.equal(trackingCountdown(due,due).label,'Deadline reached');assert.equal(trackingCountdown(due,due+1000).label,'Deadline reached');assert.equal(trackingCountdown(NaN,start),null);
  const home=src('konsolissHomeScreen.tsx'),hook=src('useKonsolissLoadProgress.ts');assert.match(home,/Send goods and upload tracking/);assert.match(hook,/konsoliss_rights_balance/);assert.match(hook,/tracking_due_at/);assert.match(hook,/customer_id',auth.user.id/);
+});
+
+
+test('every flight-eligible state resets and lands, including sent and allocated reservations',()=>{
+ for(const code of ['A2','A3','A4','A5','B1','B2','B3','D1']){
+  const data=attrs(byCode(code)),script=rendererScript();let time=1000,frames=[],timers=[],fills=[],state={};
+  const ctx=new Proxy(state,{get(t,k){if(k==='fill')return()=>fills.push(t.fillStyle);if(k==='createRadialGradient')return()=>({addColorStop(){}});if(k==='measureText')return x=>({width:x.length*5.8});return typeof t[k]==='undefined'?()=>{}:t[k]},set(t,k,v){t[k]=v;return true}});
+  const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width:390,height:300}),addEventListener(){}};
+  const doc={documentElement:{dataset:{theme:'light',...Object.fromEntries(Object.entries(data).map(([k,v])=>[k,String(v)]))}},querySelector:()=>cv};
+  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>time});
+  const flush=()=>{while(frames.length)frames.shift()()};
+  for(const [ms,landed] of [[0,false],[1900,false],[1932,true],[4000,true],[4600,false],[6500,false],[6532,true],[9200,false],[11132,true]]){time=1000+ms;fills=[];timers.forEach(f=>f());flush();assert.equal(r.reservationLanded(),landed,code+' '+ms);assert.equal(fills.includes('#F0B0A8'),landed,code+' landed pixels '+ms);assert.equal(r.V.ld,0);}
+ }
 });
