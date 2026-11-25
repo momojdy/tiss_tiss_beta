@@ -1,4 +1,4 @@
-import React,{useCallback,useEffect,useMemo,useState} from 'react';
+import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Pressable,ScrollView,Text,TextInput,View,useWindowDimensions} from 'react-native';
 import {supabase} from '../../lib/supabase';
 
@@ -30,6 +30,8 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
  const [quotes,setQuotes]=useState<Quote[]>([]),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[backend,setBackend]=useState<Record<string,any>|null>(null);
  const [content,setContent]=useState<Record<string,string>>({});
+ const submitLock=useRef(false);
+ const requestIdentity=useRef<{signature:string;key:string}>({signature:'',key:''});
  const tx=useCallback((key:string,fallback:string)=>content['bookspace.'+key]||copy['bookspace.'+key]||fallback,[content,copy]);
  const dark=t.bg!=='#FFFBD4',paper=dark?'#241a18':'#FFF9DF',line=dark?'rgba(255,251,212,.18)':'rgba(169,14,2,.16)',ink=t.tx,muted=t.mu,accent=R;
  const bump=useCallback(()=>{setTerms(false);setTruth(false);setNotice('');setBackend(null)},[]);
@@ -87,11 +89,13 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const footer=(label:string,onPress:()=>void,disabled=false)=><Pressable disabled={disabled||busy} onPress={onPress} accessibilityRole="button" style={{paddingVertical:13,paddingHorizontal:18,backgroundColor:disabled||busy?'#B5A891':R,borderRadius:9,alignItems:'center',marginTop:12}}>
   {busy?<ActivityIndicator color={C}/>:text(label,12,C,true)}</Pressable>;
  const review=()=>{if(!valid||unsupported||(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))){setNotice('Check the shipment details and merchandise value before continuing.');return}setNotice('');setStep('review')};
- const submit=async()=>{if(busy)return;setBusy(true);setNotice('');
+ const submit=async()=>{if(submitLock.current||busy)return;submitLock.current=true;setBusy(true);setNotice('');
   try{
    const user=await supabase.auth.getUser();if(!user.data.user)throw new Error('Sign in to submit a reservation or quotation request.');
    if(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))throw new Error('Enter a valid merchandise value or choose unknown value.');
-   const payload={p_key:idempotency(),p_route:route,p_cbm:mode==='LCL'?calc.physical:null,p_weight:calc.kg,p_containers:mode==='FCL'?num(fclCount):null,
+   const signature=JSON.stringify({route,mode,cbm:calc.physical,kg:calc.kg,count:fclCount,category,battery,description,value:valueUnknown?null:value,address:door?address:null,packs:method==='dims'?packs:[]});
+   if(requestIdentity.current.signature!==signature)requestIdentity.current={signature,key:idempotency()};
+   const payload={p_key:requestIdentity.current.key,p_route:route,p_cbm:mode==='LCL'?calc.physical:null,p_weight:calc.kg,p_containers:mode==='FCL'?num(fclCount):null,
     p_category:category==='battery'?'battery':category,p_description:description,p_value:valueUnknown?null:(value.trim()?num(value):null),
     p_address:door?address:null,p_packages:method==='dims'?packs:[]};
    const {data,error}=await supabase.rpc('konsoliss_booking_request',payload);
@@ -99,7 +103,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    const {data:record,error:readErr}=await supabase.from('konsoliss_booking_quotes').select('*').eq('id',data.id).single();
    if(readErr)throw readErr;
    setQuote(record);setStep('sent');
-  }catch(e){setNotice(e instanceof Error?e.message:'Could not submit your request. Please retry.')}finally{setBusy(false)}
+  }catch(e){setNotice(e instanceof Error?e.message:'Could not submit your request. Please retry.')}finally{submitLock.current=false;setBusy(false)}
  };
  const loadQuotes=async()=>{setBusy(true);const {data,error}=await supabase.from('konsoliss_booking_quotes').select('*').order('created_at',{ascending:false}).limit(30);
   if(error)setNotice(error.message);else{setQuotes(data||[]);setStep('quotes')}setBusy(false)};
