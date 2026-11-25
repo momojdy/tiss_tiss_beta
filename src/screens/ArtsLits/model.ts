@@ -48,7 +48,7 @@ export const destinations: Record<string,readonly string[]> = {
   Audiobooks:['Audiobook catalog and player are upcoming.','The Waves'],
   'New literary releases':['Illustrative new edition placements.','p02','p09','The Waves'],
   'Free to read':['Public-domain titles are illustrative; actual edition and territory rights must be validated.',...BOOKS.slice(5).map(x=>x[0])],
-  Explore:['Browse cultural discovery and commercial categories.','Artworks','Literature','Exhibitions','Creators','Marketplace','Commissions'],
+  Explore:['Browse cultural discovery and commercial categories.','Artworks','Literature','Exhibitions','Creators','Editor’s picks','Marketplace','Commissions'],
   Artworks:['Reference artworks.',...works.map(x=>x[0])], Literature:['Browse publications.','Public library','Audiobooks','New literary releases'],
   Me:['Your personal cultural space.','My Bookshelf','Saved','Art collection','Museum passes','Memberships','Reminders','Preview controls'],
   Exhibitions:['Current and upcoming sample exhibitions.',...exhibitions.map(x=>x[0]),...future.map(x=>x[0])],
