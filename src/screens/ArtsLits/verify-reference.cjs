@@ -1,0 +1,10 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const assert = require('node:assert/strict');
+const bytes = fs.readFileSync(path.join(__dirname, 'homepage-v8.html'));
+assert.equal(bytes.length, 2287291, 'Import the exact approved offline V8 HTML before merging.');
+assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), 'b4a0f5e1b70aac4cf77cc04a1538f67eadc61018b9bcebfad3a89d8e7ecaed99', 'V8 source changed.');
+const html = bytes.toString('utf8');
+assert.equal((html.match(/data:image\//g)||[]).length, 47);
+console.log('Verified exact V8 offline homepage and all 47 embedded image references.');
