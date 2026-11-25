@@ -87,7 +87,7 @@ test('assigned customer with zero physically loaded CBM sees reservation animati
 
 test('demo selector is preview-only; real data hooks never query a demo container (full scenario coverage: konsoliss-preview-states.test.cjs)',()=>{
  const source=fs.readFileSync(path.resolve(__dirname,'../src/screens/Konsoliss/konsolissHomeScreen.tsx'),'utf8');
- assert.match(source,/useKonsolissContainerOccupancy\(!isDemo&&selectedContainer/);
+ assert.match(source,/useKonsolissContainerOccupancy\(!snapshotMode&&!isDemo&&selectedContainer/);
  assert.match(source,/const containerOccupancy=isDemo\?/);
  assert.match(source,/const progress=displayLoadState.kind==='recorded'/);
  assert.match(source,/pointerEvents=\{isDemo\?'none':'auto'\}/);

@@ -117,7 +117,7 @@ test('demo modules are frontend-only: no Supabase, network, storage or write API
   assert.doesNotMatch(code,/supabase|fetch\(|XMLHttpRequest|AsyncStorage|\.insert\(|\.update\(|\.upsert\(|\.rpc\(|sendKonsolissSupport/i,name);}
  const home=src('konsolissHomeScreen.tsx');
  assert.match(home,/const setSh=\(value:typeof sh\)=>\{if\(isDemo&&value!==null\)return;/);
- assert.match(home,/useKonsolissContainerOccupancy\(!isDemo&&selectedContainer/);
+ assert.match(home,/useKonsolissContainerOccupancy\(!snapshotMode&&!isDemo&&selectedContainer/);
  assert.match(home,/konsolissDemoEnabled\(\)/);
  assert.match(S.konsolissDemoEnabled.toString(),/EXPO_PUBLIC_KONSOLISS_DEMO/);
  process.env.EXPO_PUBLIC_KONSOLISS_DEMO='0';assert.equal(S.konsolissDemoEnabled(),false);delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;assert.equal(S.konsolissDemoEnabled(),false);process.env.EXPO_PUBLIC_KONSOLISS_DEMO='1';assert.equal(S.konsolissDemoEnabled(),true);delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;
