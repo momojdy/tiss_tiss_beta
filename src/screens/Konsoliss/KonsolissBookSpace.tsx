@@ -3,7 +3,7 @@ import {ActivityIndicator,Pressable,ScrollView,Text,TextInput,View,useWindowDime
 import {supabase} from '../../lib/supabase';
 
 type Palette={bg:string;tx:string;mu:string;ac:string;inp:string;bd:string};
-type Props={t:Palette;copy:Record<string,string>;onClose:()=>void};
+type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void};
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
 type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;review_note:string|null;created_at:string};
@@ -17,7 +17,7 @@ const newPack=(id:number):Pack=>({id,kind:'dims',l:'100',w:'100',h:'50',v:'0.5',
 const countries=[['HT','🇭🇹 Haiti'],['US','🇺🇸 United States'],['DO','🇩🇴 Dominican Republic']];
 const regions=[['PAP','Port-au-Prince'],['CAP','Cap-Haïtien'],['CAY','Les Cayes'],['OTHER','Other region']];
 const cover='#FFF9C2';
-export default function KonsolissBookSpace({t,copy,onClose}:Props){
+export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const {height}=useWindowDimensions();
  const [country,setCountry]=useState('HT'),[region,setRegion]=useState('PAP'),[mode,setMode]=useState<'LCL'|'FCL'>('LCL'),[door,setDoor]=useState(false);
  const [drop,setDrop]=useState<''|'country'|'region'>('');
@@ -36,8 +36,8 @@ export default function KonsolissBookSpace({t,copy,onClose}:Props){
  const bump=useCallback(()=>{setTerms(false);setTruth(false);setNotice('');setBackend(null)},[]);
  useEffect(()=>{let active=true;void (async()=>{
   try{
-   const res=await supabase.from('konsoliss_booking_copy').select('copy_key,published_text').not('published_text','is',null);
-   if(active&&!res.error)setContent(Object.fromEntries((res.data||[]).filter(x=>x.published_text).map(x=>[x.copy_key,x.published_text])));
+   const res=await supabase.rpc('konsoliss_public_booking_copy',{p_locale:locale});
+   if(active&&!res.error&&res.data&&typeof res.data==='object')setContent(res.data as Record<string,string>);
   }catch{/* English defaults remain usable. */}
  })();return()=>{active=false}},[]);
  const updatePack=(id:number,key:keyof Pack,v:string)=>{setPacks(xs=>xs.map(p=>p.id===id?{...p,[key]:v}:p));bump()};
