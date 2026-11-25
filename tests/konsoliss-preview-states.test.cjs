@@ -182,8 +182,8 @@ test('reservation parcel repeats, remains visible, and never updates physical lo
  const doc={documentElement:{dataset:{theme:'light',reserved:'1',free:'-',sent:'0',warning:'Send goods or upload tracking before Day 25'}},querySelector:()=>cv};
  const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
  const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(r.reservationLanded(),false);
- const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[1]==='rgba(30,12,8,.20)'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
- for(const t of [1750,3100,5650,10250,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}if(t===5650||t===10250){assert.ok(ops.some(x=>x[1]==='#cda874'));assert.ok(ops.some(x=>x[1]==='rgba(30,12,8,.20)'));}}
+ const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[1]==='rgba(30,12,8,0.012)'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
+ for(const t of [1750,3100,5650,10250,12000]){now=t;ops=[];timers.forEach(f=>f());flush();assert.ok(!ops.some(x=>x[0]==='text'&&x[1]===doc.documentElement.dataset.warning));if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}if(t===5650||t===10250){assert.ok(ops.some(x=>x[1]==='#cda874'));assert.ok(ops.some(x=>x[1]==='rgba(30,12,8,0.012)'));}}
 });
 
 
