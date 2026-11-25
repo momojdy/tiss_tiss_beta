@@ -7,6 +7,8 @@ type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
 type RouteConfig={code:string;country:string;region:string;mode:'LCL'|'FCL';delivery:'pickup'|'door';requests_enabled:boolean;service_verified:boolean;checkout_enabled:boolean;price_published:boolean};
+type CargoPiece={id:string;order_id:string;piece_reference:string;description:string|null;declared_category:string|null;declared_value_usd:number|null;declared_cbm:number;measured_cbm:number|null;measured_kg:number|null;received_at:string|null};
+type PieceTracking={piece_id:string;tracking_number:string;status:string;first_carrier_scan_at:string|null};
 type PaidBooking={id:string;status:string;physical_entitlement_cbm:number|null;paid_cents:number;accepted_scope:Record<string,unknown>};
 type ServiceRequest={id:string;order_id:string;request_kind:string;description:string;status:string;decision_note:string|null};
 type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;quote_version:number;expires_at:string|null;review_note:string|null;created_at:string};
@@ -30,11 +32,14 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [value,setValue]=useState(''),[valueUnknown,setValueUnknown]=useState(true),[description,setDescription]=useState(''),[address,setAddress]=useState('');
  const [cargoOpen,setCargoOpen]=useState(false),[inspectionOpen,setInspectionOpen]=useState(false),[guaranteeOpen,setGuaranteeOpen]=useState(true);
  const [terms,setTerms]=useState(false),[truth,setTruth]=useState(false);
- const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'|'serviceRequests'|'serviceRequestForm'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
+ const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'|'serviceRequests'|'serviceRequestForm'|'pieceDeclaration'|'pieceTracking'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
  const [quotes,setQuotes]=useState<Quote[]>([]),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[backend,setBackend]=useState<Record<string,any>|null>(null);
  const [content,setContent]=useState<Record<string,string>>({});
  const [routes,setRoutes]=useState<RouteConfig[]|null>(null);
  const [paidBookings,setPaidBookings]=useState<PaidBooking[]>([]),[serviceRequests,setServiceRequests]=useState<ServiceRequest[]>([]);
+ const [pieces,setPieces]=useState<CargoPiece[]>([]),[pieceTracking,setPieceTracking]=useState<PieceTracking[]>([]);
+ const [pieceRef,setPieceRef]=useState(''),[pieceDescription,setPieceDescription]=useState(''),[pieceCategory,setPieceCategory]=useState('general');
+ const [pieceValue,setPieceValue]=useState(''),[pieceVolume,setPieceVolume]=useState(''),[activePiece,setActivePiece]=useState<string|null>(null),[pieceTrack,setPieceTrack]=useState('');
  const [requestOrder,setRequestOrder]=useState<string|null>(null),[requestKind,setRequestKind]=useState<'refund'|'return'|'alternative_service'|'claim'>('refund'),[requestReason,setRequestReason]=useState('');
  const requestId=useRef<string|null>(null);
  const submitLock=useRef(false);
@@ -123,14 +128,17 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  };
  const loadQuotes=async()=>{setBusy(true);const {data,error}=await supabase.from('konsoliss_booking_quotes').select('*').order('created_at',{ascending:false}).limit(30);
   if(error)setNotice(error.message);else{setQuotes(data||[]);setStep('quotes')}setBusy(false)};
- const loadServiceRequests=async()=>{
-  if(busy)return;setBusy(true);setNotice('');try{
-   const [orders,requests]=await Promise.all([
+ const loadServiceRequests=async(force=false)=>{
+  if(busy&&!force)return;setBusy(true);setNotice('');try{
+   const [orders,requests,cargo,tracking]=await Promise.all([
     supabase.from('konsoliss_booking_orders').select('id,status,physical_entitlement_cbm,paid_cents,accepted_scope').in('status',['reserved','held','fulfilling','ready']).order('created_at',{ascending:false}).limit(30),
-    supabase.from('konsoliss_customer_service_requests').select('id,order_id,request_kind,description,status,decision_note').order('created_at',{ascending:false}).limit(50)
+    supabase.from('konsoliss_customer_service_requests').select('id,order_id,request_kind,description,status,decision_note').order('created_at',{ascending:false}).limit(50),
+    supabase.from('konsoliss_consignment_pieces').select('id,order_id,piece_reference,description,declared_category,declared_value_usd,declared_cbm,measured_cbm,measured_kg,received_at').order('created_at',{ascending:false}).limit(100),
+    supabase.from('konsoliss_piece_carrier_records').select('piece_id,tracking_number,status,first_carrier_scan_at').limit(100)
    ]);
-   if(orders.error||requests.error)throw new Error(orders.error?.message||requests.error?.message);
-   setPaidBookings((orders.data||[]) as PaidBooking[]);setServiceRequests((requests.data||[]) as ServiceRequest[]);setStep('serviceRequests');
+   if(orders.error||requests.error||cargo.error||tracking.error)throw new Error(orders.error?.message||requests.error?.message||cargo.error?.message||tracking.error?.message);
+   setPaidBookings((orders.data||[]) as PaidBooking[]);setServiceRequests((requests.data||[]) as ServiceRequest[]);
+   setPieces((cargo.data||[]) as CargoPiece[]);setPieceTracking((tracking.data||[]) as PieceTracking[]);setStep('serviceRequests');
   }catch(e){setNotice(e instanceof Error?e.message:'Could not load your requests')}finally{setBusy(false)}
  };
  const sendServiceRequest=async()=>{
@@ -141,8 +149,30 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
     p_order_id:requestOrder,p_kind:requestKind,p_reason:requestReason.trim(),p_key:requestId.current
    });
    if(e)throw new Error(e.message);
-   requestId.current=null;setRequestReason('');await loadServiceRequests();
+   requestId.current=null;setRequestReason('');await loadServiceRequests(true);
   }catch(e){setNotice(e instanceof Error?e.message:'Could not send this request. Retry using the same request.')}finally{setBusy(false)}
+ };
+ const declarePiece=async()=>{
+  if(busy||!requestOrder||pieceRef.trim().length<4||pieceDescription.trim().length<3||
+    !Number.isFinite(Number(pieceValue))||Number(pieceValue)<0||!Number.isFinite(Number(pieceVolume))||Number(pieceVolume)<=0){
+   setNotice('Enter a piece reference, description, declared value and physical CBM.');return;
+  }
+  setBusy(true);setNotice('');try{
+   const {error:e}=await supabase.rpc('konsoliss_customer_declare_piece',{
+    p_order_id:requestOrder,p_piece_reference:pieceRef.trim(),p_description:pieceDescription.trim(),
+    p_category:pieceCategory,p_value_usd:Number(pieceValue),p_cbm:Number(pieceVolume)
+   });if(e)throw new Error(e.message);
+   setPieceRef('');setPieceDescription('');setPieceValue('');setPieceVolume('');await loadServiceRequests(true);
+  }catch(e){setNotice(e instanceof Error?e.message:'Could not declare this piece')}finally{setBusy(false)}
+ };
+ const submitTracking=async()=>{
+  if(busy||!activePiece||pieceTrack.trim().length<6){setNotice('Enter your complete carrier tracking number.');return}
+  setBusy(true);setNotice('');try{
+   const {error:e}=await supabase.rpc('konsoliss_customer_submit_piece_tracking',{
+    p_piece_id:activePiece,p_tracking_number:pieceTrack.trim()
+   });if(e)throw new Error(e.message);
+   setPieceTrack('');await loadServiceRequests(true);
+  }catch(e){setNotice(e instanceof Error?e.message:'Could not submit carrier tracking')}finally{setBusy(false)}
  };
  const reset=()=>{setStep('edit');setNotice('');setScopeAgreed(false);bump()};
  const quoteScope=(key:string):string=>{const v=quote?.approved_scope?.[key];return Array.isArray(v)?v.join(' · '):typeof v==='string'?v:v==null?'Not specified':String(v)};
@@ -292,6 +322,12 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      {paidBookings.length?paidBookings.map(b=><View key={b.id}>{box(<>
        {text('Booking '+b.id.slice(0,8)+' · '+b.status,12,ink,true)}
        {text('Paid '+cash(b.paid_cents)+' · Reserved '+(b.physical_entitlement_cbm??'—')+' CBM',11,muted)}
+       {footer(tx('declarePiece','Declare goods'),()=>{setRequestOrder(b.id);setPieceRef('');setPieceDescription('');setPieceCategory('general');setPieceValue('');setPieceVolume('');setStep('pieceDeclaration')})}
+       {pieces.filter(p=>p.order_id===b.id).map(p=><View key={p.id} style={{borderTopWidth:.5,borderColor:line,paddingVertical:7}}>
+         {text(p.piece_reference+' · '+(p.description||'Goods not described'),11,ink,true)}
+         {text('Declared '+p.declared_cbm+' CBM · '+(p.declared_category||'unknown')+' · '+(p.received_at?'Warehouse received':'Not warehouse-received'),11,muted)}
+         {pieceTracking.find(x=>x.piece_id===p.id)?text('Tracking: '+pieceTracking.find(x=>x.piece_id===p.id)?.tracking_number+' · '+pieceTracking.find(x=>x.piece_id===p.id)?.status,11,muted):footer(tx('addTracking','Add carrier tracking'),()=>{setRequestOrder(b.id);setActivePiece(p.id);setPieceTrack('');setStep('pieceTracking')})}
+       </View>)}
        {footer(tx('createRequest','Create service request'),()=>{setRequestOrder(b.id);setRequestKind('refund');setRequestReason('');requestId.current=null;setStep('serviceRequestForm')})}
      </>)}</View>):box(text(tx('noPaidBookings','No eligible paid shipping bookings yet. Quotation requests are not reservations.'),12,muted))}
      {serviceRequests.map(r=><View key={r.id}>{box(<>
@@ -302,6 +338,37 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      {notice?text(notice,11,accent):null}
      {footer(tx('refreshRequests','Refresh requests'),()=>{void loadServiceRequests()})}
      {footer('‹ Book Space',reset)}
+   </>:null}
+   {step==='pieceDeclaration'?<>
+     {box(<>{heading(tx('declarePiece','Declare goods'))}
+       {text('Booking '+(requestOrder?.slice(0,8)||'—'),11,muted)}
+       {text(tx('pieceReference','Parcel / piece reference'),11,ink,true,{marginTop:9})}
+       <TextInput value={pieceRef} onChangeText={setPieceRef} autoCapitalize="characters" placeholder="e.g. CARTON-01" placeholderTextColor={muted} style={{borderWidth:.5,borderColor:line,color:ink,backgroundColor:paper,borderRadius:6,padding:10}}/>
+       {text(tx('pieceDescription','Goods description'),11,ink,true,{marginTop:9})}
+       <TextInput value={pieceDescription} onChangeText={setPieceDescription} placeholder="What is inside this parcel?" placeholderTextColor={muted} style={{borderWidth:.5,borderColor:line,color:ink,backgroundColor:paper,borderRadius:6,padding:10}}/>
+       <View style={{flexDirection:'row',gap:6,flexWrap:'wrap',marginVertical:9}}>
+         {(['general','electronics','battery','special','unknown'] as const).map(k=><Pressable key={k} onPress={()=>setPieceCategory(k)} style={{borderWidth:.5,borderColor:line,backgroundColor:pieceCategory===k?R:paper,padding:8,borderRadius:6}}>{text(k,11,pieceCategory===k?C:ink)}</Pressable>)}
+       </View>
+       {text(tx('pieceValue','Declared item value (USD)'),11,ink,true)}
+       <TextInput value={pieceValue} keyboardType="decimal-pad" onChangeText={setPieceValue} placeholder="e.g. 80.00" placeholderTextColor={muted} style={{borderWidth:.5,borderColor:line,color:ink,backgroundColor:paper,borderRadius:6,padding:10}}/>
+       {text(tx('pieceCBM','Physical volume (CBM)'),11,ink,true,{marginTop:8})}
+       <TextInput value={pieceVolume} keyboardType="decimal-pad" onChangeText={setPieceVolume} placeholder="e.g. 0.020" placeholderTextColor={muted} style={{borderWidth:.5,borderColor:line,color:ink,backgroundColor:paper,borderRadius:6,padding:10}}/>
+       {text(tx('pieceDocuments','Some goods require documents or specialist review. No file is uploaded from this screen; do not send restricted cargo until approved.'),11,muted,false,{marginTop:9})}
+     </>)}
+     {notice?text(notice,11,accent):null}
+     {footer(tx('saveDeclaration','Save declaration'),()=>{void declarePiece()},busy||pieceRef.trim().length<4||pieceDescription.trim().length<3)}
+     {footer('‹ My bookings',()=>{void loadServiceRequests()})}
+   </>:null}
+   {step==='pieceTracking'?<>
+     {box(<>{heading(tx('addTracking','Add carrier tracking'))}
+       {text('Piece '+(pieces.find(p=>p.id===activePiece)?.piece_reference||'—'),12,muted)}
+       {text(tx('carrierTracking','Carrier tracking number'),11,ink,true,{marginTop:9})}
+       <TextInput value={pieceTrack} onChangeText={setPieceTrack} autoCapitalize="characters" placeholder="Full China-domestic tracking number" placeholderTextColor={muted} style={{borderWidth:.5,borderColor:line,color:ink,backgroundColor:paper,borderRadius:6,padding:10}}/>
+       {text(tx('trackingNeedsScan','A submitted tracking number is not carrier acceptance. Staff verifies the first carrier scan separately.'),11,muted,false,{marginTop:9})}
+     </>)}
+     {notice?text(notice,11,accent):null}
+     {footer(tx('submitTracking','Submit tracking'),()=>{void submitTracking()},busy||pieceTrack.trim().length<6)}
+     {footer('‹ My bookings',()=>{void loadServiceRequests()})}
    </>:null}
    {step==='serviceRequestForm'?<>
      {box(<>{heading(tx('createRequest','Create service request'))}
