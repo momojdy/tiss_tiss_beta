@@ -2,11 +2,15 @@
 const fs=require('fs'),path=require('path'),ts=require('typescript');
 module.exports=function homepageHarness(options={}){
  const slots=new Map(),cache=new Map(),events=[];let frame,index=0,root;let mode='light';
- const React={createElement:(type,props,...children)=>({type,props:props||{},children:children.length===1?children[0]:children.length?children:props?.children??[]}),createContext:value=>{const ctx={value};ctx.Provider={context:ctx};return ctx;},useContext:ctx=>ctx.value,useState:initial=>{const owner=frame,key=index++;if(!slots.has(owner))slots.set(owner,[]);const list=slots.get(owner);if(!(key in list))list[key]=typeof initial==='function'?initial():initial;return [list[key],value=>{list[key]=typeof value==='function'?value(list[key]):value;}];},useRef:initial=>React.useState(()=>({current:initial}))[0],useEffect:()=>{},useMemo:fn=>fn(),useCallback:fn=>fn};
+ const effects=new Map(),timers=new Map();let pending=[],seen=new Set(),clock=0,nextTimer=0,dirty=false,disposed=false;
+ const schedule=(fn,delay,repeat=false)=>{const id=++nextTimer;timers.set(id,{fn,due:clock+delay,delay,repeat});return id;};
+ const clear=id=>timers.delete(id);
+ const effect=(fn,deps)=>{if(!options.timers)return;const key=frame+':'+index++;seen.add(key);const prior=effects.get(key);if(!prior||!deps||!prior.deps||deps.length!==prior.deps.length||deps.some((v,i)=>!Object.is(v,prior.deps[i])))pending.push(()=>{prior?.cleanup?.();effects.set(key,{deps,cleanup:fn()});});};
+ const React={createElement:(type,props,...children)=>({type,props:props||{},children:children.length===1?children[0]:children.length?children:props?.children??[]}),createContext:value=>{const ctx={value};ctx.Provider={context:ctx};return ctx;},useContext:ctx=>ctx.value,useState:initial=>{const owner=frame,key=index++;if(!slots.has(owner))slots.set(owner,[]);const list=slots.get(owner);if(!(key in list))list[key]=typeof initial==='function'?initial():initial;return [list[key],value=>{const next=typeof value==='function'?value(list[key]):value;if(!Object.is(next,list[key])){list[key]=next;dirty=true;}}];},useRef:initial=>React.useState(()=>({current:initial}))[0],useEffect:effect,useMemo:fn=>fn(),useCallback:fn=>fn};
  const rn={};for(const name of ['View','Text','Pressable','Image','TextInput','ScrollView','Modal','StatusBar','KeyboardAvoidingView'])rn[name]=name;
  rn.StyleSheet={create:x=>x,absoluteFill:{}};rn.Platform={OS:'ios'};rn.useWindowDimensions=()=>({width:390,height:844});rn.Animated={Value:class{interpolate(){return 0;}},View:'AnimatedView',timing:()=>({start:done=>done?.({finished:true})})};rn.Easing={in:x=>x,out:x=>x,cubic:()=>0};
  function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);const source=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,target:ts.ScriptTarget.ES2020}}).outputText;
- new Function('require','module','exports',source)(name=>{
+ new Function('require','module','exports','setTimeout','clearTimeout','setInterval','clearInterval',source)(name=>{
   if(name==='react')return {...React,__esModule:true,default:React};if(name==='react-native')return rn;
   if(name==='react-native-safe-area-context')return {SafeAreaProvider:({children})=>children,useSafeAreaInsets:()=>({top:0,bottom:0,left:0,right:0})};
   if(name==='react-native-webview')return {WebView:'WebView'};
@@ -24,7 +28,7 @@ module.exports=function homepageHarness(options={}){
   if(name.endsWith('.png'))return name;
   if(name.startsWith('.')){const full=path.resolve(path.dirname(file),name);return load(fs.existsSync(full+'.tsx')?full+'.tsx':full+'.ts');}
   throw Error('Unexpected dependency '+name);
- },module,module.exports);return module.exports;
+ },module,module.exports,options.timers?(fn,delay)=>schedule(fn,delay):setTimeout,options.timers?clear:clearTimeout,options.timers?(fn,delay)=>schedule(fn,delay,true):setInterval,options.timers?clear:clearInterval);return module.exports;
  }
  const base=path.resolve(__dirname,'../../src/screens/Konsoliss');const catalog=load(path.join(base,'cms/catalog.ts'));const oldDemo=process.env.EXPO_PUBLIC_KONSOLISS_DEMO;process.env.EXPO_PUBLIC_KONSOLISS_DEMO='1';let Homepage;try{Homepage=load(path.join(base,'konsolissHomeScreen.tsx')).default;}finally{if(oldDemo===undefined)delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;else process.env.EXPO_PUBLIC_KONSOLISS_DEMO=oldDemo;}
  function render(node,where='root'){
@@ -37,6 +41,9 @@ module.exports=function homepageHarness(options={}){
  }
  const text=node=>node==null?'':Array.isArray(node)?node.map(text).join(''):typeof node==='object'?text(node.children):String(node);
  const all=(node,predicate)=>node==null?[]:Array.isArray(node)?node.flatMap(n=>all(n,predicate)):typeof node==='object'?[...(predicate(node)?[node]:[]),...all(node.children,predicate)]:[];
- const update=()=>{const node=React.createElement(Homepage,{onBack:()=>events.push('back'),onUniversalAction:action=>events.push(action)});if(options.previewIndex===undefined){root=render(node);return;}const ctx=load(path.join(base,'KonsolissContent.tsx')).KonsolissContentContext;root=render(React.createElement(ctx.Provider,{value:{copy:options.copy??catalog.konsolissLocaleDefaults(options.locale??'en'),images:{},previewIndex:options.previewIndex}},node));};update();
- return {events,webviews:()=>all(root,n=>n.type==='WebView'),text:()=>text(root),find:(label)=>all(root,n=>n.props.accessibilityLabel===label),buttons:label=>all(root,n=>n.type==='Pressable'&&text(n).trim()===label),click:node=>{if(!node)throw Error('Control not found');node.props.onPress({stopPropagation(){}});update();},type:(label,value)=>{const node=all(root,n=>n.type==='TextInput'&&n.props.accessibilityLabel===label)[0];if(!node)throw Error('Input not found '+label);node.props.onChangeText(value);update();},update};
+ const renderRoot=()=>{const node=React.createElement(Homepage,{onBack:()=>events.push('back'),onUniversalAction:action=>events.push(action)});if(options.previewIndex===undefined){root=render(node);return;}const ctx=load(path.join(base,'KonsolissContent.tsx')).KonsolissContentContext;root=render(React.createElement(ctx.Provider,{value:{copy:options.copy??catalog.konsolissLocaleDefaults(options.locale??'en'),images:{},previewIndex:options.previewIndex}},node));};
+ const update=()=>{if(disposed)return;let passes=0;do{if(++passes>20)throw Error('Effect render loop');dirty=false;seen=new Set();pending=[];renderRoot();if(options.timers){for(const [key,value] of effects)if(!seen.has(key)){value.cleanup?.();effects.delete(key);}const run=pending;pending=[];run.forEach(fn=>fn());}}while(options.timers&&dirty);};
+ const advance=ms=>{const end=clock+ms;for(;;){const next=[...timers.entries()].filter(([,v])=>v.due<=end).sort((a,b)=>a[1].due-b[1].due||a[0]-b[0])[0];if(!next)break;const [id,t]=next;clock=t.due;if(t.repeat)t.due+=t.delay;else timers.delete(id);t.fn();update();}clock=end;};
+ const dispose=()=>{disposed=true;for(const v of effects.values())v.cleanup?.();effects.clear();};update();
+ return {events,advance,dispose,timerCount:()=>timers.size,byId:id=>all(root,n=>n.props.testID===id),webviews:()=>all(root,n=>n.type==='WebView'),text:()=>text(root),find:(label)=>all(root,n=>n.props.accessibilityLabel===label),buttons:label=>all(root,n=>n.type==='Pressable'&&text(n).trim()===label),click:node=>{if(!node)throw Error('Control not found');node.props.onPress({stopPropagation(){}});update();},type:(label,value)=>{const node=all(root,n=>n.type==='TextInput'&&n.props.accessibilityLabel===label)[0];if(!node)throw Error('Input not found '+label);node.props.onChangeText(value);update();},update};
 };

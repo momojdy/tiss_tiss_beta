@@ -135,3 +135,33 @@ test('top-right percentage uses actual verified 68 CBM occupancy at exact endpoi
  const app=harness({snapshot});assert.ok(app.text().includes(label+' filled'),total+' '+app.text());
  }
 });
+
+const widths=(app,...ids)=>ids.map(id=>Number(app.byId('konsoliss-'+id)[0].props.style.width.slice(0,-1)));
+const nearWidths=(actual,expected)=>{assert.equal(actual.length,expected.length);actual.forEach((x,i)=>assert.ok(Math.abs(x-expected[i])<1e-9,x+' vs '+expected[i]));};
+const activeBar=app=>app.byId('konsoliss-customer-progress').length?'customer':'container';
+const switchBar=app=>app.click(app.find(defaults['a11y.progress'])[0]);
+test('real homepage segment widths, no fixed gaps, unknown track distinct from measured zero',()=>{
+ const app=harness({timers:true});nearWidths(widths(app,'customer-loaded','customer-inbound','customer-remaining'),[25,15,60]);assert.equal(app.byId('konsoliss-customer-progress')[0].props.style.gap,undefined);
+ switchBar(app);nearWidths(widths(app,'container-loaded','container-own','container-free'),[51.2/68*100,.5/68*100,16.3/68*100]);app.dispose();
+ for(const options of [{empty:true},{reservedOnly:true},{unverified:true},{failed:true}]){
+  const x=harness({...options,timers:true});switchBar(x);const track=x.byId('konsoliss-container-progress')[0];assert.equal(track.props.style.borderStyle,'dashed');assert.equal(track.props.style.backgroundColor,'transparent');assert.equal(track.props.accessibilityLabel,defaults['load.unavailable']);assert.equal(x.byId('konsoliss-container-free').length,0);assert.match(x.text(),/Free —/);x.dispose();
+ }
+ const make=(reserved,loaded,inbound,containers)=>({kind:'recorded',progress:{reserved_cbm:reserved,sent_cbm:loaded+inbound,loaded_cbm:loaded,inbound_to_container_cbm:inbound,allocated_cbm:loaded+inbound,at_warehouse_or_in_transit_cbm:0,reserved_not_sent_cbm:reserved-loaded-inbound,not_allocated_cbm:reserved-loaded-inbound,allocated_percent:reserved?(loaded+inbound)/reserved*100:0},warehouse_cbm:loaded+inbound,transit_cbm:0,containers,status_code:null});
+ const c=(id,total,own,allocated)=>({id,number:'BAR-'+id,status:'filling',occupancy:{container_id:id,container_type:'40HQ',capacity_cbm:68,loaded_cbm:total,your_loaded_cbm:own,other_cargo_cbm:Math.round((total-own)*1000)/1000,free_cbm:Math.round((68-total)*1000)/1000,your_allocated_cbm:allocated}});
+ const zero=harness({timers:true,snapshot:make(1,0,0,[c('a',0,0,0)])});nearWidths(widths(zero,'customer-loaded','customer-inbound','customer-remaining'),[0,0,100]);switchBar(zero);nearWidths(widths(zero,'container-loaded','container-own','container-free'),[0,0,100]);assert.equal(zero.byId('konsoliss-container-progress')[0].props.style.borderWidth,0);zero.dispose();
+ const full=harness({timers:true,snapshot:make(1,.5,.5,[c('a',68,.5,1)])});nearWidths(widths(full,'customer-loaded','customer-inbound','customer-remaining'),[50,50,0]);switchBar(full);nearWidths(widths(full,'container-loaded','container-own','container-free'),[67.5/68*100,.5/68*100,0]);full.dispose();
+ const split=harness({timers:true,snapshot:make(1,.5,.1,[c('a',48.4,.4,.4),c('b',22.6,.1,.2)])});nearWidths(widths(split,'customer-loaded','customer-inbound','customer-remaining'),[50,10,40]);switchBar(split);nearWidths(widths(split,'container-loaded','container-free'),[48.4/68*100,19.6/68*100]);assert.equal(split.byId('konsoliss-container-own').length,0);
+ split.click(split.find(defaults['a11y.chooseContainer'])[0]);split.click(split.find(formatCopy(defaults,'a11y.selectContainer',{number:'BAR-b'}))[0]);assert.equal(activeBar(split),'customer');nearWidths(widths(split,'customer-loaded','customer-inbound','customer-remaining'),[50,10,40]);split.advance(7000);nearWidths(widths(split,'container-loaded','container-free'),[22.6/68*100,45.4/68*100]);split.dispose();
+});
+test('actual React homepage effects rotate every seven seconds, manual switch restarts dwell, cleanup cancels timers',()=>{
+ for(const options of [{},{empty:true},{reservedOnly:true},{unverified:true},{failed:true}]){
+  const app=harness({...options,timers:true});assert.equal(activeBar(app),'customer');
+  app.advance(6999);assert.equal(activeBar(app),'customer');app.advance(1);assert.equal(activeBar(app),'container');
+  app.advance(6999);assert.equal(activeBar(app),'container');app.advance(1);assert.equal(activeBar(app),'customer');
+  app.advance(5000);switchBar(app);assert.equal(activeBar(app),'container');
+  app.advance(2000);assert.equal(activeBar(app),'container','old timer cancelled');
+  app.advance(4999);assert.equal(activeBar(app),'container');app.advance(1);assert.equal(activeBar(app),'customer');
+  switchBar(app);app.advance(10);switchBar(app);app.advance(6999);assert.equal(activeBar(app),'customer');app.advance(1);assert.equal(activeBar(app),'container');
+  app.dispose();assert.equal(app.timerCount(),0);app.advance(14000);assert.equal(activeBar(app),'container');
+ }
+});
