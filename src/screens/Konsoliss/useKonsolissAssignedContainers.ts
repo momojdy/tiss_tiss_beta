@@ -21,6 +21,7 @@ export function useKonsolissAssignedContainers(){
         .from('konsoliss_container_assignments')
         .select('container_id,is_current,assigned_at')
         .eq('user_id',auth.user.id)
+        .eq('is_current',true)
         .order('assigned_at',{ascending:false});
       if(assignmentError)throw assignmentError;
       const ids=[...new Set((assignments??[]).map(a=>a.container_id).filter((id):id is string=>typeof id==='string'))];

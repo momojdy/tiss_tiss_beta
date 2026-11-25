@@ -216,3 +216,44 @@ test('every flight-eligible state resets and lands, including sent and allocated
   for(const [ms,landed] of [[0,false],[1900,false],[1932,true],[4000,true],[4600,false],[6500,false],[6532,true],[9200,false],[11132,true]]){time=1000+ms;fills=[];timers.forEach(f=>f());flush();assert.equal(r.reservationLanded(),landed,code+' '+ms);assert.equal(fills.includes('#F0B0A8'),landed,code+' landed pixels '+ms);assert.equal(r.V.ld,0);}
  }
 });
+
+
+// Explicit renderer acceptance matrix: same production JavaScript, deterministic frame clock,
+// no network, no database, no fabricated customer records. This is not pixel/device approval.
+test('all 23 fixtures and 27 renderable views survive 324 theme/width/motion combinations',()=>{
+ let views=0,checks=0;
+ for(const sc of S.PREVIEW_SCENARIOS){
+  assert.deepEqual(S.previewScenarioErrors(sc),[],sc.code);
+  const available=S.previewViews(sc);
+  if(sc.data){assert.deepEqual(available,[]);continue;}
+  available.forEach((view,i)=>{
+   views++;
+   const data=attrs(sc,i);
+   for(const theme of ['light','dark'])for(const reduced of [false,true])for(const width of [320,390,430]){
+    let now=1000,frames=[],timers=[],events={},pointer={},texts=[],fills=[],state={};
+    const ctx=new Proxy(state,{get(t,k){
+     if(k==='fillText'||k==='strokeText')return (x,...args)=>{assert.ok(args.every(n=>typeof n!=='number'||Number.isFinite(n)),sc.code+' finite text');texts.push(String(x));};
+     if(k==='measureText')return x=>({width:String(x).length*5.8});
+     if(k==='fill')return()=>fills.push(t.fillStyle);
+     if(k==='createRadialGradient'||k==='createLinearGradient')return (...args)=>{assert.ok(args.every(Number.isFinite));return {addColorStop(){}};};
+     return typeof t[k]==='undefined'?(...args)=>{assert.ok(args.every(n=>typeof n!=='number'||Number.isFinite(n)),sc.code+' finite canvas '+String(k));}:t[k];
+    },set(t,k,v){t[k]=v;return true;}});
+    const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width,height:300}),addEventListener:(k,f)=>pointer[k]=f,setPointerCapture(){},style:{}};
+    const els={},doc={documentElement:{dataset:{theme,...Object.fromEntries(Object.entries(data).map(([k,v])=>[k,String(v)]))}},querySelector:q=>q==='#cv'?cv:(els[q]??={style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelector:()=>null}),getElementById:q=>doc.querySelector('#'+q)};
+    const code=rendererScript(data.empty===true);
+    const result=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date','clearInterval','cancelAnimationFrame','window',code+(data.empty?'\\nreturn {};':'\\nreturn {V,reservationLanded};'))(doc,2,f=>{frames.push(f);return frames.length;},f=>{timers.push(f);return 1;},(k,f)=>events[k]=f,()=>({matches:reduced}),{now:()=>now},()=>{},()=>{},{});
+    const flush=()=>{let n=frames.length;while(n-->0)frames.shift()();};
+    for(const ms of [0,1000,1900,1932,3000,4599,4600,6532,8600,9200,11132,13599,13600]){now=1000+ms;timers.forEach(f=>f());flush();}
+    if(pointer.pointerdown&&pointer.pointermove){pointer.pointerdown({clientX:10,clientY:10,pointerId:1});pointer.pointermove({clientX:118,clientY:85,pointerId:1});flush();pointer.pointerup?.({pointerId:1});pointer.pointercancel?.({pointerId:1});}
+    if(!data.empty){
+     assert.ok(Math.abs(result.V.ld-Number(data.yourLoaded))<.0001,sc.code+' loaded');
+     if(data.sealed)assert.ok(!texts.some(t=>/CBM free$/.test(t)),sc.code+' sealed free');
+     if(data.caption&&result.V.k==='c')for(const part of data.caption.split(' • '))assert.ok(texts.some(t=>t.includes(part)),sc.code+' '+part);
+     if(data.free!=='-'&&!data.sealed&&Number(data.free)>0)assert.ok(texts.some(t=>/CBM free$/.test(t)),sc.code+' free');
+    }
+    checks++;
+   }
+  });
+ }
+ assert.equal(S.PREVIEW_SCENARIOS.length,23);assert.equal(views,27);assert.equal(checks,324);
+});

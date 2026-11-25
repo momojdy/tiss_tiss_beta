@@ -8,6 +8,10 @@
 
 > **Read this section first in every new ChatGPT/Codex conversation.** It records the founder's latest decisions, rules, exact tariff examples, system architecture, implementation gaps and preservation requirements. Older review documents and the historical technical notes below may propose conflicting alternatives; the latest explicit founder decisions here take precedence. Check the *actual current* repository and live schema before changing code. Never claim a feature, test, payment, customer shipment or partner integration is working solely because it appears in this document.
 
+## Latest 3D acceptance gate — 2026-11-25
+
+**HOLD: 3D container is not production-ready.** Read the full [3D acceptance audit](../../../docs/konsoliss/3d-acceptance.md) before proceeding to the next button. It supersedes older visual-review claims with actual baseline CI failure evidence, live PostgreSQL catalog checks, all 23 scenario dispositions and the remaining production gates. The narrow audit corrections preserve the approved design and do not mutate the database or deploy the app.
+
 ## 0. Decision status and change discipline
 
 - **AGREED / OWNER DECISION:** The intended product behavior. Implement it unless it is technically unsafe or conflicts with applicable law; surface those constraints instead of silently changing the product.
@@ -566,3 +570,7 @@ The deadline reminder says Send goods and upload tracking and ticks down to the 
 ## 2026-11-25 — Replay reset and split shipment presentation
 
 The flight and landed illustration share the same 4.6-second phase: each cycle starts with the reserved area empty, lands after 1.932 seconds and holds until the next cycle. Every flight-eligible nonempty state uses this lifecycle, including A5/B1/B2/D1 and B3; verified loaded cargo is never erased or increased. Assigned-but-unloaded B3 remains translucent and outlined to avoid implying verified cargo. Reduced motion shows a settled illustration. The previously softened carton shadow is unchanged. Split shipments display the aggregate physically loaded volume on both actual-container callouts; the alternate shared-container bar displays total fill and free space rather than disclosing the individual customer allocation. Actual per-container geometry and server quantities remain unchanged. C7 demo total 0.500 CBM on both, with 0.600 committed including inbound. Focused mock canvas: 40 combinations across eight flying states and two C7 views, light/dark and reduced motion, including three replay cycles and landing transitions. Full native/CI tests remain unverified. No database or deployment changes.
+
+## 2026-11-25 — 3D production acceptance audit
+
+See [full 3D acceptance audit](../../../docs/konsoliss/3d-acceptance.md) (mirrored in Tiss Admin as KONSOLISS-3D-ACCEPTANCE.md). 23 fixture invariants and 324 mocked-canvas combinations passed; 27 renderable views; D6/D6b no view. Consumer baseline TypeScript passed but homepage suite failed; admin baseline TypeScript failed. Narrow corrections repair adapter and test boundary, live inbound, active assignment filtering, safe callouts and zero-other-cargo edge. Live database contains zero operational records and zero published homepage rows; proof of authenticated cargo/CMS lifecycle remains unavailable without legitimate records. Production HOLD; no UI redesign, database mutation, deployment or next button work. See audit for exact backend gaps and mandatory acceptance gates.

@@ -95,3 +95,16 @@ test('demo selector is preview-only; real data hooks never query a demo containe
  assert.match(app.text(),/DEMO ONLY · New customer/);assert.match(app.webviews()[0].props.source.html,/data-empty="true"/);
  app.click(app.find('Return to live data')[0]);assert.doesNotMatch(app.text(),/DEMO ONLY/);assert.ok(app.text().includes('Loaded 0.5'));
 });
+
+test('live container input contains verified inbound, not a demo or guessed value',()=>{
+ const app=harness(),html=app.webviews()[0].props.source.html;
+ assert.match(html,/data-here-inbound="0.3"/);assert.match(html,/data-here="0.8"/);
+ assert.match(html,/data-caption="0.5 CBM loaded • 0.3 CBM inbound • 1.2 CBM remaining"/);
+ const {verifiedContainerInbound,liveLoadCallout}=load('src/screens/Konsoliss/konsolissLoadModel.ts');
+ const progress={reservedCbm:1,sentCbm:.5,loadedCbm:.3,inboundCbm:.1,allocatedCbm:.4};
+ assert.equal(verifiedContainerInbound({yourAllocatedCbm:.4,yourSpaceCbm:.3}),.1);
+ assert.equal(verifiedContainerInbound({yourAllocatedCbm:null,yourSpaceCbm:.3}),0);
+ assert.equal(liveLoadCallout(progress,{yourAllocatedCbm:.4,yourSpaceCbm:.3},false),'0.3 CBM loaded • 0.1 CBM inbound • 0.6 CBM remaining');
+ assert.equal(liveLoadCallout(progress,{yourAllocatedCbm:.7,yourSpaceCbm:.3},false),'');
+ assert.equal(liveLoadCallout(progress,{yourAllocatedCbm:.1,yourSpaceCbm:.1},true),'My current loaded space 0.300 CBM');
+});
