@@ -12,7 +12,7 @@ import { access, categories, connectionMessages, defaultFollowing, editorPicks, 
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard, type IconName } from './components';
 import PreviewSheet from './PreviewSheet';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
-import { arrangeRows, defaultLayout, discovery, sampleMoney, showDiscovery, validateLayout, type HomeLayout, type PreviewCurrency } from './homeRegistry';
+import { arrangeRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -32,12 +32,14 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const [prefs,setPrefs]=useState(initialPreferences), [loaded,setLoaded]=useState(false);
   const [profile,setProfile]=useState<Profile>('returning'),[connection,setConnection]=useState<Connection>('live'),[connected,setConnected]=useState<boolean|null>(null),[language,setLanguage]=useState<Language>('normal'),[sponsor,setSponsor]=useState(true);
   const [dockHeight,setDockHeight]=useState(65);
-  const [layout,setLayout]=useState<HomeLayout>(defaultLayout),[displayMode,setDisplayMode]=useState<'showcase'|'personalized'>('showcase'),[currency,setCurrency]=useState<PreviewCurrency>('USD');
+  const [layout,setLayout]=useState<HomeLayout>(defaultLayout),[displayMode,setDisplayMode]=useState<DisplayMode>('personalized'),[currency,setCurrency]=useState<PreviewCurrency>('USD');
+  const [draftLayout,setDraftLayout]=useState<HomeLayout|null>(null),[previousLayout,setPreviousLayout]=useState<HomeLayout|null>(null),[locale,setLocale]=useState<PreviewLocale>('en'),[region,setRegion]=useState<PreviewRegion>('HT');
+  const effectiveLayout=displayMode==='cms'&&draftLayout?draftLayout:layout;
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const scroll=useRef<FlatList<HomeRow>>(null); const jumpTimer=useRef<ReturnType<typeof setTimeout>|null>(null); const pendingJump=useRef<{index:number;attempts:number}|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsor);
-  const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){jumpToSection(name.slice(9));return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
+  const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){const id=name.slice(9);if(rows.some(r=>r.id===id))jumpToSection(id);else if(discovery.some(d=>d.id===id)&&!(id==='recently-viewed'&&profile==='new'))setStack(v=>[...v,'Explore section: '+id]);else setStack(['Section not shown']);return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
   function changeConnection(c:Connection){if(timer.current)clearTimeout(timer.current);setConnection(c);setLimit(6);if(c==='loading')timer.current=setTimeout(()=>setConnection('live'),1200);}
   function togglePref(key:'saved'|'reminders'|'following',value:string){setPrefs(prev=>({...prev,[key]:prev[key].includes(value)?prev[key].filter(v=>v!==value):[...prev[key],value]}));}
   useEffect(()=>{let alive=true;AsyncStorage.getItem(PREFS_KEY).then(raw=>{if(alive)setPrefs(readPreferences(raw));}).catch(()=>{}).finally(()=>{if(alive)setLoaded(true);});return()=>{alive=false;if(timer.current)clearTimeout(timer.current);if(jumpTimer.current)clearTimeout(jumpTimer.current)};},[]);
@@ -108,8 +110,9 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </Section>)},
     {id:'footer',content:(<View style={{marginTop:28,borderTopWidth:1,borderColor:p.line,paddingTop:12}}><Small p={p}>Design preview · Illustrative catalog, access and prices. Embedded visual references, not actual venue or product photographs. No real purchases or partnerships.</Small><TextLink p={p} label="Preview customer, layout & connection states" onPress={()=>open('Preview controls')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/><TextLink p={p} label="Image references & credits" onPress={()=>open('Image credits')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/></View>)},
   ];
-  const extraRows:HomeRow[]=discovery.filter(d=>showDiscovery(d,profile,displayMode)).map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} title={layout.sections.find(x=>x.id===d.id)?.title}/> }));
-  const rows=arrangeRows([...nativeRows,...extraRows],layout);
+  const extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale);
+  const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open}/> }));
+  const rows=arrangeRows([...nativeRows.filter(r=>{const entry=effectiveLayout.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,Date.now());}),...extraRows],effectiveLayout);
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
   function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;scroll.current.scrollToIndex({index:target.index,animated:!reducedMotion,viewPosition:0});}
   function jumpToSection(id:string){
@@ -133,7 +136,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
       <FlatList ref={scroll} testID="arts-lits-home-scroll" data={rows} keyExtractor={row=>row.id}
         renderItem={({item})=><View testID={`arts-lits-section-${item.id}`} collapsable={false} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>}
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
-        initialNumToRender={10} maxToRenderPerBatch={8} windowSize={11} removeClippedSubviews={false}
+        initialNumToRender={displayMode==='personalized'?rows.length:Math.min(rows.length,16)} maxToRenderPerBatch={displayMode==='personalized'?rows.length:12} windowSize={11} removeClippedSubviews={false}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={cancelJump}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
@@ -146,6 +149,6 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </View>
       </View>
     </View>
-    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} publishLayout={v=>setLayout(validateLayout(v))} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }
