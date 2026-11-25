@@ -12,7 +12,7 @@ function load(file){
  return module.exports;
 }
 const {parseCbm}=load('src/screens/Konsoliss/konsolissNumbers.ts');
-const {parseKonsolissLoadProgress:progress}=load('src/screens/Konsoliss/konsolissLoadModel.ts');
+const {parseKonsolissLoadProgress:progress,parseKonsolissHomeSnapshot:parseSnapshot,liveHomeStatus}=load('src/screens/Konsoliss/konsolissLoadModel.ts');
 const {parseKonsolissOccupancy:occupancy}=load('src/screens/Konsoliss/konsolissOccupancyModel.ts');
 const {featureColor,aggregateColor,collectPages,createRequestGate}=load('src/shared/inbox/unread.ts');
 const row={reserved_cbm:'0.3',sent_cbm:'0.3',loaded_cbm:'0.1',inbound_to_container_cbm:'0.2',allocated_cbm:'0.3',at_warehouse_or_in_transit_cbm:'0',reserved_not_sent_cbm:'0',not_allocated_cbm:'0',allocated_percent:'100'};
@@ -74,7 +74,7 @@ function hookHarness(file,method,args=[],options={}){
    read(){if(first){first=false;return pending;}return Promise.resolve({data:table==='konsoliss_customer_load_breakdown'?row:table==='konsoliss_container_assignments'?{container_id:owner}: {container_number:'B-container',status:'filling'},error:null});},
    then(resolve,reject){if(first){first=false;return pending.then(resolve,reject);}return Promise.resolve({data:table==='konsoliss_container_assignments'?[{container_id:owner,assigned_at:'now'}]:options.missing?[]:[{id:'B',container_number:'B-container',status:'filling'}],error:null}).then(resolve,reject);}};
   return builder;
- },rpc:()=>first?(first=false,pending):Promise.resolve({data:{container_id:'container',container_type:'40HQ',capacity_cbm:68,loaded_cbm:0.02,your_loaded_cbm:0.02,other_cargo_cbm:0,free_cbm:67.98,your_allocated_cbm:0.02},error:null})};
+ },rpc:(name)=>first?(first=false,pending):name==='konsoliss_homepage_snapshot'?Promise.resolve({data:{kind:'recorded',progress:row,status_code:null,warehouse_cbm:.3,transit_cbm:0,containers:[{id:'container',number:'B-container',status:'filling',occupancy:{container_id:'container',container_type:'40HQ',capacity_cbm:68,loaded_cbm:.1,your_loaded_cbm:.1,other_cargo_cbm:0,free_cbm:67.9,your_allocated_cbm:.3}}]},error:null}):Promise.resolve({data:{container_id:'container',container_type:'40HQ',capacity_cbm:68,loaded_cbm:0.02,your_loaded_cbm:0.02,other_cargo_cbm:0,free_cbm:67.98,your_allocated_cbm:0.02},error:null})};
  const source=fs.readFileSync(path.resolve(__dirname,'../src/screens/Konsoliss',file),'utf8');
  const module={exports:{}};
  const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
@@ -82,7 +82,7 @@ function hookHarness(file,method,args=[],options={}){
   if(name==='react')return {useState:initial=>{state=initial;return [initial,next=>{state=next;}];},useRef:value=>({current:value}),useCallback:fn=>fn};
   if(name.endsWith('/supabase'))return {supabase};
   if(name==='./useKonsolissRefresh')return {useKonsolissRefresh:(a,b)=>{refresh=a;invalidate=b;}};
-  if(name==='./konsolissLoadModel')return {parseKonsolissLoadProgress:progress};
+  if(name==='./konsolissLoadModel')return {parseKonsolissLoadProgress:progress,parseKonsolissHomeSnapshot:parseSnapshot};
   if(name==='./konsolissOccupancyModel')return {parseKonsolissOccupancy:occupancy};
   throw new Error('Unexpected hook import '+name);
  },module,module.exports);
@@ -107,4 +107,16 @@ for(const [file,method,args] of [
 
 test('a visible assignment with inaccessible container details is unavailable, never confirmed empty',async()=>{
  const hook=hookHarness('useKonsolissAssignedContainers.ts','useKonsolissAssignedContainers',[],{missing:true});const result=hook.refresh();await Promise.resolve();await Promise.resolve();hook.finishOld({data:[{container_id:'assigned'}],error:null});await result;assert.equal(hook.state(),'unavailable');
+});
+
+test('atomic homepage projection rejects conflicting snapshots and preserves complete source data',()=>{
+ const base={kind:'recorded',progress:row,status_code:null,warehouse_cbm:.3,transit_cbm:0,tracking_due_at:null,containers:[{id:'c',number:'KS-VERIFIED',status:'filling',occupancy:{container_id:'c',container_type:'40HQ',capacity_cbm:68,loaded_cbm:51.7,your_loaded_cbm:.1,other_cargo_cbm:51.6,free_cbm:16.3,your_allocated_cbm:.3}}]};
+ const snapshot=parseSnapshot(base);assert.equal(snapshot.kind,'recorded');assert.equal(snapshot.snapshot.containers[0].occupancy.freeCbm,16.3);
+ for(const bad of [{...base,warehouse_cbm:0},{...base,transit_cbm:1},{...base,status_code:'unknown'},{...base,status_code:'label_created'},{...base,tracking_due_at:'bad'},{...base,containers:[]},{...base,containers:[...base.containers,...base.containers]},{...base,containers:[{...base.containers[0],occupancy:{...base.containers[0].occupancy,your_allocated_cbm:.2}}]}])assert.equal(parseSnapshot(bad).kind,'unavailable');
+ assert.equal(parseSnapshot({...base,containers:[{...base.containers[0],occupancy:null}]}).kind,'recorded');
+ assert.equal(parseSnapshot({kind:'unrecorded',containers:[]}).kind,'unrecorded');
+ assert.equal(parseSnapshot({kind:'unrecorded',containers:base.containers}).kind,'unavailable');
+ const unsent={...base,progress:{reserved_cbm:1,sent_cbm:0,loaded_cbm:0,inbound_to_container_cbm:0,allocated_cbm:0,at_warehouse_or_in_transit_cbm:0,reserved_not_sent_cbm:1,not_allocated_cbm:1,allocated_percent:0},warehouse_cbm:0,containers:[],status_code:'label_created',tracking_due_at:'2026-12-20T00:00:00Z'};
+ const label=parseSnapshot(unsent);assert.equal(label.kind,'recorded');assert.equal(label.progress.sentCbm,0);assert.equal(liveHomeStatus(label.snapshot,{}),'Label created');
+ assert.equal(label.trackingDueAt,'2026-12-20T00:00:00Z');
 });

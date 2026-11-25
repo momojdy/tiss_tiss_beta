@@ -3,8 +3,9 @@ import {AppState} from 'react-native';
 import {supabase} from '../../lib/supabase';
 
 /** Clears sensitive data synchronously when the authenticated identity changes. */
-export function useKonsolissRefresh(refresh:()=>Promise<void>,invalidate:()=>void){
+export function useKonsolissRefresh(refresh:()=>Promise<void>,invalidate:()=>void,enabled=true){
   useEffect(()=>{
+    if(!enabled)return;
     let active=true;
     let timer:ReturnType<typeof setTimeout>|undefined;
     let identity:string|null|undefined;
@@ -25,5 +26,5 @@ export function useKonsolissRefresh(refresh:()=>Promise<void>,invalidate:()=>voi
       .on('postgres_changes',{event:'*',schema:'public',table:'konsoliss_customer_load_progress'},()=>{void refresh();})
       .subscribe(status=>{if(status==='SUBSCRIBED')void refresh();});
     return ()=>{active=false;invalidate();clearTimeout(timer);clearInterval(interval);app.remove();auth.data.subscription.unsubscribe();void supabase.removeChannel(channel);};
-  },[refresh,invalidate]);
+  },[refresh,invalidate,enabled]);
 }

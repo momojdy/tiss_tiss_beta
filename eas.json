@@ -7,7 +7,8 @@
       "env": {
         "APP_VARIANT": "production",
         "EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED": "true",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co",
+        "EXPO_PUBLIC_KONSOLISS_DEMO": "0"
       },
       "android": {
         "buildType": "app-bundle"
@@ -23,7 +24,8 @@
       "env": {
         "APP_VARIANT": "development",
         "EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED": "true",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co",
+        "EXPO_PUBLIC_KONSOLISS_DEMO": "1"
       },
       "android": {
         "buildType": "apk"

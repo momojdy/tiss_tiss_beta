@@ -22,7 +22,7 @@ export function useKonsolissContainerOccupancy(containerId:string|null):Konsolis
     }catch{commit(()=>setState({id:containerId,value:null}));}
   },[containerId]);
   const invalidate=useCallback(()=>{requestSequence.current++;setState(null);},[]);
-  useKonsolissRefresh(reload,invalidate);
+  useKonsolissRefresh(reload,invalidate,containerId!==null);
   // Prevent displaying data from the previously selected container while loading.
   return state?.id===containerId?state.value:null;
 }

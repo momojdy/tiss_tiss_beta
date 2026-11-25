@@ -7,7 +7,7 @@ import type {KonsolissSelectableContainer} from './konsolissDemoContainers';
 const validStatuses:KonsolissContainerStatus[]=['filling','filled','departed','arrived'];
 
 /** Read *all* user-owned container assignments; demo selections never reach this hook. */
-export function useKonsolissAssignedContainers(){
+export function useKonsolissAssignedContainers(enabled=true){
   const [containers,setContainers]=useState<KonsolissSelectableContainer[]>([]);
   const [state,setState]=useState<'loading'|'ready'|'unavailable'>('loading');
   const requestSequence=useRef(0);
@@ -41,6 +41,6 @@ export function useKonsolissAssignedContainers(){
     }catch{commit(()=>{setContainers([]);setState('unavailable');});}
   },[]);
   const invalidate=useCallback(()=>{requestSequence.current++;setContainers([]);setState('unavailable');},[]);
-  useKonsolissRefresh(refresh,invalidate);
+  useKonsolissRefresh(refresh,invalidate,enabled);
   return {containers,state,refresh};
 }

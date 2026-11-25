@@ -120,7 +120,7 @@ test('demo modules are frontend-only: no Supabase, network, storage or write API
  assert.match(home,/useKonsolissContainerOccupancy\(!isDemo&&selectedContainer/);
  assert.match(home,/konsolissDemoEnabled\(\)/);
  assert.match(S.konsolissDemoEnabled.toString(),/EXPO_PUBLIC_KONSOLISS_DEMO/);
- process.env.EXPO_PUBLIC_KONSOLISS_DEMO='0';assert.equal(S.konsolissDemoEnabled(),false);delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;assert.equal(S.konsolissDemoEnabled(),true);
+ process.env.EXPO_PUBLIC_KONSOLISS_DEMO='0';assert.equal(S.konsolissDemoEnabled(),false);delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;assert.equal(S.konsolissDemoEnabled(),false);process.env.EXPO_PUBLIC_KONSOLISS_DEMO='1';assert.equal(S.konsolissDemoEnabled(),true);delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;
 });
 
 // ---- renderer smoke with a recording canvas ----
@@ -201,7 +201,7 @@ test('C1-C3 arrow labels carry actual quantities and C7 shows total loaded volum
 test('countdown is calculated from absolute deadline, not hardcoded day count',()=>{
  const {trackingCountdown}=load('src/screens/Konsoliss/konsolissLoadModel.ts');const start=Date.parse('2026-11-25T03:00:00Z'),due=start+259200000;
  assert.equal(trackingCountdown(due,start).label,'3d 00h 00m 00s left');assert.equal(trackingCountdown(due,start+1000).label,'2d 23h 59m 59s left');assert.equal(trackingCountdown(due,due-1000).label,'00h 00m 01s left');assert.equal(trackingCountdown(due,due).label,'Deadline reached');assert.equal(trackingCountdown(due,due+1000).label,'Deadline reached');assert.equal(trackingCountdown(NaN,start),null);
- const home=src('konsolissHomeScreen.tsx'),hook=src('useKonsolissLoadProgress.ts');assert.match(home,/Send goods and upload tracking/);assert.match(hook,/konsoliss_rights_balance/);assert.match(hook,/tracking_due_at/);assert.match(hook,/customer_id',auth.user.id/);
+ const home=src('konsolissHomeScreen.tsx'),hook=src('useKonsolissLoadProgress.ts');assert.match(home,/Send goods and upload tracking/);assert.match(hook,/konsoliss_homepage_snapshot/);assert.match(src('konsolissLoadModel.ts'),/tracking_due_at/);assert.match(hook,/auth.user/);
 });
 
 

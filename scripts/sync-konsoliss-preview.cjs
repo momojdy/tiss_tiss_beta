@@ -8,6 +8,7 @@ let home=source('konsolissHomeScreen.tsx');
 // Keep the Admin visual-only preview isolated from live booking and payment actions.
 // The consumer opens the real booking sheet; the preview retains its safe placeholder.
 home=home.replace("import KonsolissBookSpace from './KonsolissBookSpace';\n",'').replace("<KonsolissBookSpace t={t} copy={copy} locale={content.locale} onClose={done}/>","<Book t={t} copy={copy} onClose={done} onRequest={volume=>{setSupportDraft({subject:copy['book.heading'],message:volume.toFixed(3)+' CBM'});setSh('support');}}/>");
+home=home.replace('const KONSOLISS_DEMO_TOUR_ENABLED = konsolissDemoEnabled();','const KONSOLISS_DEMO_TOUR_ENABLED = true;'); // isolated CMS preview is always illustrative
 for(const name of ['useKonsolissCopy','useCurrentKonsolissContainer','useKonsolissLoadProgress','useKonsolissContainerOccupancy','useKonsolissAssignedContainers','konsolissDemoContainers','supportApi'])home=home.replaceAll("'./"+name+"'","'./previewData'");
 home=home.replaceAll("'../../shared/quickMenu/useFeatureTheme'","'./previewData'").replaceAll("'./KonsolissQuickMenu'","'./PreviewQuickMenu'").replace(', Modal,',',');
 home=home.replace(/require\('\.\.\/\.\.\/assets\/konsoliss\/([^']+)'\)/g,(_match,file)=>{const bytes=fs.readFileSync(path.join(root,'src/assets/konsoliss',file));const hash=crypto.createHash('sha256').update(bytes).digest('hex');hashes['assets/'+file]=hash;return '{uri:'+JSON.stringify('https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/main/src/assets/konsoliss/'+file+'?v='+hash)+'}';});

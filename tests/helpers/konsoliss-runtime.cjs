@@ -26,7 +26,7 @@ module.exports=function homepageHarness(options={}){
   throw Error('Unexpected dependency '+name);
  },module,module.exports);return module.exports;
  }
- const base=path.resolve(__dirname,'../../src/screens/Konsoliss');const catalog=load(path.join(base,'cms/catalog.ts'));const Homepage=load(path.join(base,'konsolissHomeScreen.tsx')).default;
+ const base=path.resolve(__dirname,'../../src/screens/Konsoliss');const catalog=load(path.join(base,'cms/catalog.ts'));const oldDemo=process.env.EXPO_PUBLIC_KONSOLISS_DEMO;process.env.EXPO_PUBLIC_KONSOLISS_DEMO='1';let Homepage;try{Homepage=load(path.join(base,'konsolissHomeScreen.tsx')).default;}finally{if(oldDemo===undefined)delete process.env.EXPO_PUBLIC_KONSOLISS_DEMO;else process.env.EXPO_PUBLIC_KONSOLISS_DEMO=oldDemo;}
  function render(node,where='root'){
   if(node==null||typeof node==='boolean')return null;if(typeof node!=='object')return node;if(Array.isArray(node))return node.map((n,i)=>render(n,where+'.'+i));
   if(node.type?.context){const ctx=node.type.context,old=ctx.value;ctx.value=node.props.value;const output=render(node.children,where+'.provider');ctx.value=old;return output;}

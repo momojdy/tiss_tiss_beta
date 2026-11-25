@@ -12,7 +12,7 @@ type CurrentContainer =
 
 const VALID_STATUSES: KonsolissContainerStatus[] = ['filling', 'filled', 'departed', 'arrived'];
 
-export function useCurrentKonsolissContainer(): CurrentContainer {
+export function useCurrentKonsolissContainer(enabled=true): CurrentContainer {
   const [current, setCurrent] = useState<CurrentContainer>({kind: 'loading'});
 
   const requestSequence=useRef(0);
@@ -54,7 +54,7 @@ export function useCurrentKonsolissContainer(): CurrentContainer {
   }, []);
 
   const invalidate=useCallback(()=>{requestSequence.current++;setCurrent({kind:'unavailable'});},[]);
-  useKonsolissRefresh(refresh,invalidate);
+  useKonsolissRefresh(refresh,invalidate,enabled);
 
   return current;
 }
