@@ -124,8 +124,8 @@ test('demo modules are frontend-only: no Supabase, network, storage or write API
 });
 
 // ---- renderer smoke with a recording canvas ----
-function rendererScript(){
- const text=src('konsolissHomeScreen.tsx'),start=text.indexOf('const CONTAINER_JS = ['),end=text.indexOf('].join("\\n");',start);
+function rendererScript(empty=false){
+ const text=src('konsolissHomeScreen.tsx'),start=text.indexOf(empty?'const CONTAINER_JS = [':'const REFERENCE_CONTAINER_JS = ['),end=text.indexOf('].join("\\n");',start);
  return text.slice(start,end).split('\n').slice(1).map(l=>l.trim()).filter(Boolean).map(l=>JSON.parse(l.replace(/,$/,''))).join('\n');
 }
 function runRenderer(data,{yaw=0,pitch=10,reduced=false}={}){
@@ -133,7 +133,7 @@ function runRenderer(data,{yaw=0,pitch=10,reduced=false}={}){
  const state={};ctx=new Proxy(state,{get:(t,k)=>k==='fillText'||k==='strokeText'?(x)=>{texts.push(String(x));}:k==='createRadialGradient'?()=>({addColorStop(){}}):k==='fill'?()=>{fills.push(t.fillStyle);}:typeof t[k]==='undefined'?()=>{}:t[k],set:(t,k,v)=>{t[k]=v;return true;}});
  const dataset={};for(const[k,v]of Object.entries(data))dataset[k]=String(v);
  const doc={documentElement:{dataset:{theme:'light',empty:'false',preview:'false',demo:'true',...dataset}},querySelector:()=>cvs};
- new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia',rendererScript())(doc,1,fn=>{fn();return 1;},()=>0,()=>{},reduced?()=>({matches:true}):undefined);
+ new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia',rendererScript(data.empty===true))(doc,1,fn=>{fn();return 1;},()=>0,()=>{},reduced?()=>({matches:true}):undefined);
  return {texts,fills};
 }
 const attrs=(s,viewIndex=0)=>{const r=S.previewRender(s,S.previewViews(s)[viewIndex]);return {empty:r.empty,preview:r.preview,reserved:r.empty?68:r.reserved,loaded:r.loaded,yourLoaded:r.yourLoaded,free:r.free??'-',here:r.here,hereInbound:r.hereInbound,sealed:r.sealed,sent:r.sent,caption:r.caption,caption2:r.caption2};};
@@ -162,5 +162,7 @@ test('99% and 100% physical container occupancy, tiny load and original empty an
 test('reduced motion freezes preview and pulse animation without breaking drawing',()=>{
  assert.doesNotThrow(()=>runRenderer(attrs(byCode('A2')),{reduced:true}));assert.doesNotThrow(()=>runRenderer(attrs(byCode('C4')),{reduced:true}));
  assert.match(rendererScript(),/RM=typeof matchMedia==='function'&&matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches/);
- assert.match(rendererScript(),/if\(!RM&&\(PREVIEW\|\|\(!EMPTY&&YOUR_LOADED>0\)\)\)/);
+ assert.match(rendererScript(),/if\(!RM&&V\.here>0\)/);
 });
+
+test('HTML-reference flight and proportional allocation geometry are used outside the original empty animation',()=>{const script=rendererScript();assert.match(script,/function fly\(\)/);assert.match(script,/\/4\.6/);assert.match(script,/function geo\(h\)/);assert.match(script,/function subtract\(b,o\)/);assert.match(rendererScript(true),/%13600/);});
