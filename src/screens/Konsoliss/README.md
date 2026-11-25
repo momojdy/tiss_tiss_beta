@@ -148,6 +148,43 @@
 
 ---
 
+## 0E. V6→V7 financial integrity and connected request foundation (2026-11-25)
+
+**Latest implementation checkpoint, superseding older V6 simulation claims where they conflict.** This section records code/database work completed on 2026-11-25. It is **NOT** approval to enable real payment, customer shipping, live physical loading, automatic refunds or a production release.
+
+**Authoritative decisions [AGREED; unchanged]:** 0.020 CBM minimum; Haiti-only five-point tariff with versioned quotes; 412 kg per physical CBM billing divisor; per-purchase D12/D25/D32; 45–80 calendar days from verified China warehouse receipt to Haiti pickup readiness with binding Day 80 where the lawful adopted terms permit; USA/DR/FCL service-specific terms and manual quotes; accurate real-vs-demo cargo visualization; no forced partner surcharge; preserve the approved home/3D UI and customer aggregate display.
+
+**What was actually present first [IMPLEMENTED / previously verified]:**
+- Consumer Book Space already submitted authenticated real Supabase quotation requests and allowed customer acknowledgement of precisely approved service scope; it did not capture payment, reserve CBM, guarantee cargo receipt or create shipment status.
+- Tiss Admin already managed route quotation intake, scoped approvals and a separate booking wording editor. Existing `checkout_enabled=false` database constraint intentionally blocks unsupported real money/capacity activation.
+- The uploaded V6 HTML is a **separate local simulation**, not a portable payment provider or a live integration. Defects reproduced included independent +0.20 CBM rights being unusable after original 0.30, disputed $20 settlement booking $120.53 as freight, false HT Day-80 for FCL, split-piece tracking ambiguity, missing expiry movements and completion discounts combining unrelated rights.
+
+**Changes in GitHub and shared live Supabase [IMPLEMENTED]:**
+- Both repositories contain `supabase/migrations/20261125071000_konsoliss_reconciliation_and_custody_foundation.sql` (consumer commit `a4562da9`, Admin commit `ebcb1c62`). Applied in live project `ycbirmgppwavorwudlrv`. Creates per-right acquisition clocks/entitlement movements, itemized immutable adjustment versions, per-piece consignment/receipt identity, piece-scoped customs decisions, service-scoped due dates, partner-fulfillment case records and customer refund/return/alternative/claim requests. They have RLS and deny direct customer/Admin client writes to money, physical truth or provider events. **Their existence does not mean their operational write paths are wired.**
+- Both repositories contain `supabase/migrations/20261125071700_konsoliss_service_request_manual_triage.sql` (consumer `f7526c8d`, Admin `889e3fde`). Applied live; adds Super-Admin-only manual request review. The authenticated owner can submit a service request **only for an existing eligible paid booking**; quote-only users cannot fabricate a refund claim. Admin approval does not automatically pay a refund or release cargo.
+- Customer `KonsolissBookSpace.tsx` commit `f08852f4`: minimal additional customer screens for `My shipment requests`, eligible paid booking selection, request type/reason, status and Admin response, calling the same Supabase request RPC. Existing compact Book Space styling, homepage and 3D renderer were not modified.
+- Admin `KonsolissBookingOperations.tsx` commits `b44e9b4a` and `76394b36`: Super Admin service-request review UI and richer exact service scope snapshots for approved quotations (route, country, region, equipment, delivery, cargo). Existing quote review and route-intake workflows retained.
+- Admin `KonsolissBookingCopyEditor.tsx` commit `c5b880b7`: adds the new request-screen wording to the existing draft/publish CMS editor; original price and operational data remain outside copy CMS.
+
+**Verification performed [VERIFIED, with limits]:**
+- Live SQL confirmed the eight new data tables exist, have RLS on and owner/admin read policies; both migration applications returned success.
+- Separately corrected standalone HTML V7 simulator (not the React Native app): 8 focused executable Node engine assertions and 4 Chromium browser journey groups passed, including no document overflow at 320/390/1280 px. This does not prove a native app or real Supabase payment lifecycle. Earlier V5 93/55 vs V6 34/48 test totals were **not** reproduced: the old test suites were not supplied as executable sources. Counts cannot be legitimately treated as continuous coverage.
+- Installed React Native device pixel comparisons, two-repo full TypeScript/test/build commands, live authenticated role-based end-to-end tests, Supabase financial transactions, real payment callbacks, warehouse scans, signed partner SLA/quotes and production CMS publish propagation **are NOT verified**. No real payment, shipment or fake cargo was created by this checkpoint. Security advisor also reports legacy notices from unrelated modules, so a complete platform security signoff has not occurred.
+
+**Required next work [OPEN / BLOCKED]:**
+1. Atomic server-side signed-provider payment capture and reversible holds; quote acceptance→real paid booking→per-right entitlement ledger→top-left aggregate, no double sale, no fake physical loaded state. Provider onboarding/contract and provider webhook validation **BLOCK** live checkout.
+2. Per-piece carrier tracking verification, repeated/split receipts, photo/dimensions, declarations, dangerous-goods/documentation validation and China warehouse custody scans with authenticated staff roles; test customer ownership and actual load assignment.
+3. Immutable adjustment version acceptance + paid item allocation + exact charge refunds / credits with genuine provider evidence and row locking. No general customer/Admin direct write permission to financial events.
+4. Per-lot service-specific delivery obligations, China receipt Day80 only on approved Haiti LCL, early own-vs-partner cost/feasibility tasks, real carrier acceptance/custody transfer, incident evidence and claims.
+5. Customer standalone additional-space paid journey with separate independent rights; completion offer only on its eligible original booking/group; cancellation, reductions, one extension, expiry and audit-release with in-transit protection. Prototype behavior MUST be ported into the server, not simulated by local state.
+6. Complete native 320/390/1280 and iOS/Android parity checks of the approved compact Book Space with user-supplied HTML, without changing homepage 3D/carton geometry.
+7. CMS preview/publish/readback and all locale coverage; real external provider, logistics, customs, insurance/legal and margin underwriting before activating production sales.
+8. Manual service-request settlement needs evidence, exact financial entries and safe payout authorization; an `approved_pending_manual_settlement` request is **not** a completed refund.
+
+**Important policy distinction:** AGREED design is not proof of IMPLEMENTED backend code. Working provisional: 15% contribution screening, 2% risk provision, 20–25% target; correct direct-cost ceiling with fees and risk provision at $675 = $540, not $553.50. OPEN decisions include no-show retained fraction, completion window, extension fee/tolerance, duties exposure, carrier commitments, late remedies and multi-country tariffs. Do not silently freeze those values into customer contracts.
+
+---
+
 ## 1. Product, geography and promise [AGREED]
 
 1. Konsoliss is a **demand-driven China-to-Haiti shared LCL freight marketplace**. Initial destination is **pickup at the Konsoliss Haiti/Port-au-Prince warehouse**. Optional Woulib/home delivery is separately priced and is NOT included in the base LCL price.
