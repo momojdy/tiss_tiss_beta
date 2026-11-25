@@ -1,4 +1,4 @@
 {
-  "source": "approved homepage before CMS synchronization",
-  "sha256": "866dd141f04027c2f80a9a97f9a3997fe8a1fec6d703a64e2902c65da21b77c1"
+ "source": "approved homepage renderer + 2026-11-24 reserved/loaded previews (already diverged from the 866dd141 baseline at HEAD 66ae385) + 2026-11-25 multi-state preview additions: allocation overlay, sealed handling, captions, reduced motion. Geometry, materials, cartons, labels, empty animation unchanged.",
+ "sha256": "23027d999f7c409d72c80b43883ae07f0c7bb8a0026c5bffbf6c6fa9bd52f511"
 }

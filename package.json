@@ -83,7 +83,7 @@
     "check:goodies-native-config": "node scripts/check-goodies-native-config.cjs",
     "eas-build-pre-install": "node scripts/check-goodies-native-config.cjs",
     "check:goodies-client-secrets": "node scripts/check-goodies-client-secrets.cjs",
-    "test:konsoliss": "node tests/konsoliss.test.cjs && node tests/konsoliss-homepage.test.cjs && node tests/konsoliss-language-hook.test.cjs && node tests/konsoliss-lifecycle.test.cjs",
+    "test:konsoliss": "node tests/konsoliss.test.cjs && node tests/konsoliss-homepage.test.cjs && node tests/konsoliss-preview-states.test.cjs && node tests/konsoliss-language-hook.test.cjs && node tests/konsoliss-lifecycle.test.cjs",
     "sync:konsoliss-preview": "node scripts/sync-konsoliss-preview.cjs",
     "check:konsoliss-preview": "node scripts/sync-konsoliss-preview.cjs --check"
   },

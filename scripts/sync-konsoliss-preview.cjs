@@ -10,7 +10,7 @@ home=home.replaceAll("'../../shared/quickMenu/useFeatureTheme'","'./previewData'
 home=home.replace(/require\('\.\.\/\.\.\/assets\/konsoliss\/([^']+)'\)/g,(_match,file)=>{const bytes=fs.readFileSync(path.join(root,'src/assets/konsoliss',file));const hash=crypto.createHash('sha256').update(bytes).digest('hex');hashes['assets/'+file]=hash;return '{uri:'+JSON.stringify('https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/main/src/assets/konsoliss/'+file+'?v='+hash)+'}';});
 home="// Generated from the approved consumer homepage. Run sync-konsoliss-preview.cjs.\nimport {Modal} from './PreviewModal';\n"+home;
 put('konsolissHomeScreen.tsx',home);
-for(const name of ['KonsolissContent.tsx','cms/catalog.ts','cms/model.ts','konsolissNumbers.ts','konsolissLoadModel.ts','konsolissOccupancyModel.ts'])put(name,source(name));
+for(const name of ['KonsolissContent.tsx','cms/catalog.ts','cms/model.ts','konsolissNumbers.ts','konsolissLoadModel.ts','konsolissOccupancyModel.ts','konsolissPreviewScenarios.ts','useKonsolissPreviewController.ts'])put(name,source(name));
 put('ThinMenuIcon.tsx',fs.readFileSync(path.join(root,'src/shared/quickMenu/ThinMenuIcon.tsx')));
 put('KonsolissQuickMenuView.tsx',source('KonsolissQuickMenuView.tsx').replace("'../../shared/quickMenu/ThinMenuIcon'","'./ThinMenuIcon'").replace('{Modal,','{').replace(',Modal,',',').replace("import React,", "import {Modal} from './PreviewModal';\nimport React,"));
 put('source-manifest.json',JSON.stringify({generator:'sync-konsoliss-preview.cjs',sources:hashes,generated},null,2)+'\n');

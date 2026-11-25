@@ -85,61 +85,13 @@ test('assigned customer with zero physically loaded CBM sees reservation animati
  assert.match(app.text(),/0.0.*1.0 CBM/);
 });
 
-test('demo tour previews never-sent, carrier tracking, warehouse, loading, tiny cargo, partner and expiry without changing real records',()=>{
- const app=harness();const original=app.text();
- assert.equal(app.find('Preview Konsoliss demo states').length,1);
- app.click(app.find('Preview Konsoliss demo states')[0]);
- assert.match(app.text(),/DEMO ONLY · Empty container/);
- assert.match(app.webviews()[0].props.source.html,/data-empty="true"/);
- const checks=[
-  ['Purchased · nothing sent',/data-preview="true"/,/data-reserved="1"/,/data-loaded="0"/],
-  ['Goods sent · in transit',/data-preview="true"/,/data-loaded="0"/],
-  ['Received at China warehouse',/data-preview="true"/,/data-loaded="0"/],
-  ['Assigned · not yet loaded',/data-preview="true"/,/data-loaded="23"/,/data-your-loaded="0"/],
-  ['Partially loaded',/data-preview="false"/,/data-loaded="30.4"/,/data-your-loaded="0.4"/],
-  ['My cargo fully loaded',/data-preview="false"/,/data-loaded="55"/,/data-your-loaded="1"/],
-  ['Tiny 0.020 CBM loaded',/data-preview="false"/,/data-loaded="0.02"/,/data-your-loaded="0.02"/],
-  ['Third-party freight',/data-preview="true"/,/data-loaded="0"/],
-  ['Never sent · valid expiry',/data-empty="true"/,/data-reserved="68"/]
- ];
- for(const [title,...patterns] of checks){
-  app.click(app.find('Next demo state')[0]);
-  assert.ok(app.text().includes('DEMO ONLY · '+title),title);
-  const html=app.webviews()[0].props.source.html;
-  assert.match(html,/data-demo="true"/,title);
-  for(const pattern of patterns)assert.match(html,pattern,title);
- }
- app.click(app.find('Next demo state')[0]); // last wraps back to empty
- assert.match(app.text(),/DEMO ONLY · Empty container/);
- assert.match(app.webviews()[0].props.source.html,/data-empty="true"/);
- app.click(app.find('Exit Konsoliss demo')[0]);
- assert.doesNotMatch(app.text(),/DEMO ONLY/);
- assert.ok(app.find('Preview Konsoliss demo states').length);
- assert.ok(app.text().includes('Loaded 0.5'), 'original account data returns after exit');
- assert.ok(original.includes('Loaded 0.5'));
-});
-test('temporary tour is preview-only; real data hooks never query a demo container',()=>{
+test('demo selector is preview-only; real data hooks never query a demo container (full scenario coverage: konsoliss-preview-states.test.cjs)',()=>{
  const source=fs.readFileSync(path.resolve(__dirname,'../src/screens/Konsoliss/konsolissHomeScreen.tsx'),'utf8');
  assert.match(source,/useKonsolissContainerOccupancy\(!isDemo&&selectedContainer/);
  assert.match(source,/const containerOccupancy=isDemo\?/);
  assert.match(source,/const progress=displayLoadState.kind==='recorded'/);
- assert.match(source,/if\(demoIndex===KONSOLISS_DEMO_TOUR.length-1\)\{setDemoIndex\(0\);setDemoAutoplay\(false\);\}/);
  assert.match(source,/pointerEvents=\{isDemo\?'none':'auto'\}/);
-});
-
-test('paid-but-never-sent demo uses zero-sent ghost-carton semantics, not a physical shipment',()=>{
- const app=harness();
- app.click(app.find('Preview Konsoliss demo states')[0]);
- app.click(app.find('Next demo state')[0]);
- const unsent=app.webviews()[0].props.source.html;
- assert.match(unsent,/data-preview="true"/);
- assert.match(unsent,/data-sent="0"/);
- assert.match(unsent,/data-loaded="0"/);
- assert.match(unsent,/Goods sent 0 CBM/);
- assert.match(app.text(),/No 80-day warehouse-receipt clock has started/);
- app.click(app.find('Next demo state')[0]);
- const dispatched=app.webviews()[0].props.source.html;
- assert.match(dispatched,/data-sent="0.7"/);
- assert.match(dispatched,/data-loaded="0"/);
- assert.doesNotMatch(app.text(),/No 80-day warehouse-receipt clock has started/);
+ const app=harness();app.click(app.find('Preview Konsoliss demo states')[0]);
+ assert.match(app.text(),/DEMO ONLY · New customer/);assert.match(app.webviews()[0].props.source.html,/data-empty="true"/);
+ app.click(app.find('Return to live data')[0]);assert.doesNotMatch(app.text(),/DEMO ONLY/);assert.ok(app.text().includes('Loaded 0.5'));
 });

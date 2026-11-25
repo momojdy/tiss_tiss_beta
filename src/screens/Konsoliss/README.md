@@ -57,7 +57,7 @@
 
 ---
 
-## 0C. Temporary ten-state demo tour and never-sent cargo treatment (2026-11-24)
+## 0C. Temporary ten-state demo tour and never-sent cargo treatment (2026-11-24) — demo controls superseded by 0D
 
 **Founder request:** For development review, place a small Demo states switch on the existing Konsoliss home page so the founder can watch every customer visual state, then return to the original empty-container animation. **This is a temporary beta preview**, not the production customer experience; do not ship it enabled publicly.
 
@@ -88,6 +88,61 @@
 - Tiss Admin generated homepage preview and hash manifest: commits 91b5a7543b478b62431e3a876e49313ba0936568 and 88864a95edfad8d6a9490e7c9478e0943356150c; rerun normal preview generator/check with both local checkouts at final validation.
 
 **Verification boundaries:** Ten scenario arithmetic checks passed. Embedded JavaScript compiled and mocked-canvas smoke checks passed empty, reserved-no-goods, sent-but-not-loaded, assigned-with-other-cargo, partially loaded and 0.020 CBM loaded, including ghost vs solid behavior. Full local npm tests, native device animation screenshots, complete TypeScript check and integration tests have **not yet been run**. No Supabase schema/data/payment changes in this visual tour task. **Before production:** disable KONSOLISS_DEMO_TOUR_ENABLED or remove the temporary demo controls, and verify no simulated states are customer-accessible.
+
+---
+
+## 0D. Multi-state DEMO / PREVIEW selector and allocation-aware 3D (2026-11-25 implementation)
+
+**Supersedes the ten-state auto-tour in 0C.** Same approved homepage, cartons, colors, empty animation, top-left component and 7-second bars. Changes are limited to the 3D data interpretation and the temporary preview controls. **The demo is still ON and awaiting founder visual review; it has NOT been declared approved.**
+
+**What changed**
+- New pure module `konsolissPreviewScenarios.ts`: 23 frontend-only scenarios (A1-A5, B1-B4, C1-C7, D1-D6, D6b), derived quantities identical to the live `konsoliss_customer_load_breakdown` formulas, per-container views, an optional separate *unassigned* view, autoplay helpers and the feature flag. It imports no Supabase client, hooks, storage or network API (enforced by a test).
+- New `useKonsolissPreviewController.ts`: holds only index / view id / autoplay / replay counter. Live hooks keep running underneath and are never mutated, so **Live / Original** restores genuine data without contamination.
+- `konsolissHomeScreen.tsx`: compact selector (grouped list, Prev/Next, Replay, Play all/Pause, Live / Original, **DEMO ONLY** badge + panel). Autoplay advances every 7 s (9 s on A1) and **stops on the last state**; it never returns to empty by itself. Sheets (Book Space, Load Items...), quick menu and bottom navigation are inert in demo, so no support request, checkout, notification or claim can be created from a fixture.
+- Renderer additions (carton geometry/materials/labels/empty animation untouched): (1) **allocation overlay** borrowed from the approved HTML: translucent red = inbound, dashed outline = allocated/reserved but unfilled, volumetrically proportional box starting at the loaded boundary, labelled "X CBM reserved here . not loaded yet"; (2) **sealed/closed containers** (status filled/departed/arrived) hide the yellow free region and the "CBM free" label, and the top-right shows the verified status instead of "available" (applies to live data too); (3) captions and an "Illustration . not a real container" tag for reservation previews; (4) customer red cartons are now chosen from **fully visible** cartons so the last carton is never clipped to a sliver (critical for C4); (5) callout now shows three decimals ("My current loaded space 0.500 CBM"); (6) `prefers-reduced-motion` freezes the preview flight and pulse (the original empty animation is unchanged).
+- Live data now also passes `yourAllocatedCbm` to the overlay. With no per-container inbound figure available it draws only the dashed allocated-not-loaded outline, never an invented inbound portion.
+
+**Calculation rules (unchanged, now tested)**
+- Headline = (physically loaded + inbound) / purchased, e.g. 0.300 + 0.100 -> **0.400 / 0.500 CBM**; subtitle shows Loaded and Inbound separately.
+- Customer completion and shared-container fill are independent: C4 is 100% customer loaded while the 40HQ holds 51.700 / 68 CBM (~76%). Seal status comes only from container status, never from the customer's percentage.
+- A container's percentage uses `loadedCbm / 68`, never purchased CBM. An unassigned customer or third-party shipment never inherits a physical container. Warehouse-received never becomes loaded.
+
+**Demo fixtures (CBM; purchased / sent / loaded / inbound; container other-cargo)**
+| Code | Purchased | Sent | Loaded | Inbound | Container |
+|---|---:|---:|---:|---:|---|
+| A1 | - | - | - | - | none (original empty animation) |
+| A2/A3/A4 | 1.000 | 0 | 0 | 0 | none (A3 day 22/25; A4 label created, not accepted) |
+| A5 | 1.000 | 0.700 | 0 | 0 | none (carrier accepted, in transit) |
+| B1 | 1.000 | 0.400 | 0 | 0 | none (0.400 warehouse-verified) |
+| B2 | 1.000 | 0.700 | 0 | 0 | none (0.700 at warehouse) |
+| B3 | 0.500 | 0.500 | 0 | 0 | A: other 23.0, 0.500 allocated outline |
+| B4 | 1.000 | 0.700 | 0 | 0.300 | A: other 30.0; 0.400 at warehouse, 0.300 unused |
+| C1 | 0.500 | 0.300 | 0.300 | 0 | A: other 51.2; 0.200 unassigned view |
+| C2 | 0.500 | 0.500 | 0.300 | 0.100 | A: other 51.2; 0.100 outline (not allocated) |
+| C3 | 1.000 | 0.700 | 0.700 | 0 | A: other 40.0; 0.300 unused (not 100% utilized) |
+| C4 | 0.500 | 0.500 | 0.500 | 0 | A: other 51.2 -> 51.700 / 68 (76%), filling |
+| C5 | 0.500 | 0.500 | 0.500 | 0 | A: other 60.1 -> 60.600 / 68, status filled (sealed) |
+| C6 | 0.020 | 0.020 | 0.020 | 0 | A: other 30.0 |
+| C7 | 1.000 | 0.700 | 0.500 | 0.100 | A (sealed): other 48.0, loaded 0.400; B: other 22.5, loaded 0.100 + inbound 0.100; 0.400 unassigned view |
+| D1 | 1.000 | 0.700 | 0 | 0 | none (third-party milestones) |
+| D2/D3 | 1.000 | 1.000 | 1.000 | 0 | A: other 57.0, departed / arrived (customs and pickup shown as separate pending statuses) |
+| D4 | 0 active | 0 | 0 | 0 | none; history line keeps the paid booking |
+| D5 | 1.000 | 0.700 | 0.400 | 0.300 | A: other 30.0, incident flag |
+| D6 / D6b | - | - | - | - | unavailable / loading: nothing drawn, dashes shown |
+
+**How to use:** consumer home screen -> **Demo / Preview** (top right under the header) -> tap the state name to pick any scenario, or use Prev / Next / Replay / Play all. For C7/B4/C1 open the container pill to switch between each real container and the *Not assigned yet* view. **Live / Original** returns to Supabase data. The same controls appear in Tiss Admin's generated homepage preview.
+
+**Production restriction:** the selector is enabled unless `EXPO_PUBLIC_KONSOLISS_DEMO=0`. **Every public/production build MUST set `EXPO_PUBLIC_KONSOLISS_DEMO=0`** so customers can never see simulated records. Do not remove the demo until the founder approves.
+
+**Consumer/Admin synchronization:** `scripts/sync-konsoliss-preview.cjs` now also copies `konsolissPreviewScenarios.ts` and `useKonsolissPreviewController.ts`. Run `npm run sync:konsoliss-preview` then `npm run check:konsoliss-preview` after any homepage change.
+
+**Files:** consumer - `konsolissHomeScreen.tsx`, `konsolissPreviewScenarios.ts`, `useKonsolissPreviewController.ts`, `scripts/sync-konsoliss-preview.cjs`, `tests/konsoliss-preview-states.test.cjs` (new), `tests/konsoliss-homepage.test.cjs`, `tests/konsoliss-renderer-contract.json`, `package.json`. Admin - generated files under `src/features/admin/screens/content/konsolissPreview/`.
+
+**Tests run (2026-11-25, plain Node; dependencies are not installed in the authoring sandbox):** `konsoliss`, `konsoliss-homepage`, `konsoliss-preview-states`, `konsoliss-language-hook`, `konsoliss-lifecycle` all PASS; `check:konsoliss-preview` PASS; admin `tests/konsoliss.test.cjs` PASS (8). Covered: all 23 scenarios selectable and any-to-any switching, replay remount, autoplay stop-at-last, exit restoring live data, top-left arithmetic, C4/C5 independence, 0.020 CBM, split containers + unassigned view, third-party, expiry, unavailable/loading (no canvas), 99%/100% occupancy, rotated view, reduced motion, demo-module isolation. Every scenario was also drawn in headless Chromium and inspected as screenshots (HTML canvas only, not a native device).
+**Renderer contract hash** (`tests/konsoliss-renderer-contract.json`) was already stale at the previous HEAD (the lifecycle test failed before this change); it now records the current renderer with a note. `tests/konsoliss-lifecycle` test 4 also passed again because the old KS-DEMO tour was removed.
+**Pre-existing, unrelated failure:** admin `tests/cms.test.cjs` #18 (GoodiesQuickMenu hash) fails before and after this change.
+
+**Remaining limitations (honest list):** native iOS/Android WebView and touch performance not verified; `tsc` for the whole app and lint could not run (no node_modules, installs blocked) - only the new pure modules were strict-type-checked and the home screen transpiled; new demo labels and canvas strings are English-only (live states reuse existing localized keys, no CMS catalog change); the red cargo is carton-quantized (about 0.5 CBM per carton), not a measured pack plan; the live view merges warehouse and in-transit and has no per-container inbound figure, no deadline/Day-25 data, no domestic-carrier acceptance events, no partner-milestone records, no incident records and no valid-release event, so A3/A4/A5/B1/B2/D1/D3/D4/D5 can only be demo visualizations until those backend records exist.
 
 ---
 
