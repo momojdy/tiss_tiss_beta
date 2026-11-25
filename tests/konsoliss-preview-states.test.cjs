@@ -166,3 +166,23 @@ test('reduced motion freezes preview and pulse animation without breaking drawin
 });
 
 test('HTML-reference flight and proportional allocation geometry are used outside the original empty animation',()=>{const script=rendererScript();assert.match(script,/function fly\(\)/);assert.match(script,/\/4\.6/);assert.match(script,/function geo\(h\)/);assert.match(script,/function subtract\(b,o\)/);assert.match(rendererScript(true),/%13600/);});
+
+
+test('requested customer-facing captions and discreet shipment status',()=>{
+ const c1=byCode('C1'),c7=byCode('C7'),a5=byCode('A5'),d1=byCode('D1');
+ assert.equal(S.previewRender(c1,S.previewViews(c1)[0]).caption,'Partly loaded · rest unassigned');
+ for(const v of S.previewViews(c7).filter(v=>v.kind==='container'))assert.equal(S.previewRender(c7,v).caption,'Split into 2 containers');
+ assert.match(a5.caption2,/Inbound to warehouse/);assert.doesNotMatch(JSON.stringify(d1),/partner|third.party|forwarder/i);
+ assert.equal(S.previewProgress(byCode('A2')).loadedCbm,0);assert.equal(S.previewProgress(byCode('A3')).sentCbm,0);
+});
+test('reservation parcel lands once, remains visible, and never updates physical load',()=>{
+ const script=rendererScript();let now=1000,frames=[],timers=[],ops=[],state={};
+ const ctx=new Proxy(state,{get(t,k){if(k==='fillText'||k==='strokeText')return x=>ops.push(['text',x,t.globalAlpha]);if(k==='createRadialGradient')return()=>{ops.push(['gradient']);return{addColorStop(){}}};if(k==='fill')return()=>ops.push(['fill',t.fillStyle]);return typeof t[k]==='undefined'?()=>{}:t[k]},set(t,k,v){t[k]=v;return true}});
+ const cv={getContext:()=>ctx,getBoundingClientRect:()=>({width:390,height:300}),addEventListener(){}};
+ const doc={documentElement:{dataset:{theme:'light',reserved:'1',free:'-',sent:'0',warning:'Send goods or upload tracking before Day 25'}},querySelector:()=>cv};
+ const r=new Function('document','devicePixelRatio','requestAnimationFrame','setInterval','addEventListener','matchMedia','Date',script+'\\nreturn {V,reservationLanded};')(doc,1,f=>{frames.push(f);return 1},f=>{timers.push(f);return 1},()=>{},()=>({matches:false}),{now:()=>now});
+ const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(r.reservationLanded(),false);
+ const foreground=ops.slice(ops.map(x=>x[0]).lastIndexOf('text')+1);assert.ok(foreground.some(x=>x[0]==='gradient'));assert.ok(foreground.some(x=>x[1]==='#cda874'));
+ const alpha=[];for(const t of [1750,3100,7000,12000]){now=t;ops=[];timers.forEach(f=>f());flush();alpha.push(ops.find(x=>x[1]===doc.documentElement.dataset.warning)?.[2]);if(t>=3100){assert.ok(r.reservationLanded());assert.equal(r.V.ld,0);assert.ok(ops.some(x=>x[1]==='#F0B0A8'));}}
+ assert.ok(new Set(alpha).size>1);
+});
