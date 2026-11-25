@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../lib/supabase';
 import {wantissLocale} from '../../lib/locales';
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
-import {KONSOLISS_COPY_DEFAULTS,type KonsolissCopy} from './cms/catalog';
+import {KONSOLISS_COPY_DEFAULTS,konsolissLocaleDefaults,type KonsolissCopy} from './cms/catalog';
 import {resolveHomepage} from './cms/model';
 export {KONSOLISS_CONTENT_KEY,KONSOLISS_COPY_DEFAULTS,type KonsolissCopy} from './cms/catalog';
 
@@ -23,7 +23,7 @@ export function useKonsolissHomepageContent(){
     if(owner){const settings=await supabase.from('user_settings').select('language').eq('user_id',owner).maybeSingle();if(settings.error)throw settings.error;locale=wantissLocale(settings.data?.language);}
     if(hydratedLocale!==locale){
      hydratedLocale=locale;
-     if(active&&request===generation.current)setState({copy:{...KONSOLISS_COPY_DEFAULTS},images:{},accountId:owner,locale,status:'loading'});
+     if(active&&request===generation.current)setState({copy:konsolissLocaleDefaults(locale),images:{},accountId:owner,locale,status:'loading'});
      try{const stored=await AsyncStorage.getItem('konsoliss.copy.'+locale);if(stored&&active&&request===generation.current){const cached=JSON.parse(stored);const resolved=resolveHomepage([{content_key:'konsoliss.content',locale,version:0,payload:{v:1,labels:cached.copy}}],locale);const images=Object.fromEntries(Object.entries(cached.images??{}).filter(([,url])=>typeof url==='string'&&/^https:\/\//.test(url)));setState({copy:resolved.copy,images:images as Record<string,string>,accountId:owner,locale,status:'loading'});}}catch{/* Invalid public cache is ignored. */}
     }
     const result=await fetchPublishedWantissContent(locale);

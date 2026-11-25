@@ -201,7 +201,7 @@ test('C1-C3 arrow labels carry actual quantities and C7 shows total loaded volum
 test('countdown is calculated from absolute deadline, not hardcoded day count',()=>{
  const {trackingCountdown}=load('src/screens/Konsoliss/konsolissLoadModel.ts');const start=Date.parse('2026-11-25T03:00:00Z'),due=start+259200000;
  assert.equal(trackingCountdown(due,start).label,'3d 00h 00m 00s left');assert.equal(trackingCountdown(due,start+1000).label,'2d 23h 59m 59s left');assert.equal(trackingCountdown(due,due-1000).label,'00h 00m 01s left');assert.equal(trackingCountdown(due,due).label,'Deadline reached');assert.equal(trackingCountdown(due,due+1000).label,'Deadline reached');assert.equal(trackingCountdown(NaN,start),null);
- const home=src('konsolissHomeScreen.tsx'),hook=src('useKonsolissLoadProgress.ts');assert.match(home,/Send goods and upload tracking/);assert.match(hook,/konsoliss_homepage_snapshot/);assert.match(src('konsolissLoadModel.ts'),/tracking_due_at/);assert.match(hook,/auth.user/);
+ const home=src('konsolissHomeScreen.tsx'),hook=src('useKonsolissLoadProgress.ts');assert.match(home,/copy\['deadline\.reminder'\]/);assert.equal(copy['deadline.reminder'],'Send goods and upload tracking');assert.match(hook,/konsoliss_homepage_snapshot/);assert.match(src('konsolissLoadModel.ts'),/tracking_due_at/);assert.match(hook,/auth.user/);
 });
 
 
@@ -257,3 +257,7 @@ test('all 23 fixtures and 27 renderable views survive 324 theme/width/motion com
  }
  assert.equal(S.PREVIEW_SCENARIOS.length,23);assert.equal(views,27);assert.equal(checks,324);
 });
+
+ test('all 23 scenario indexes can be opened directly by Content Studio using localized copy',()=>{
+ const {konsolissLocaleDefaults}=load('src/screens/Konsoliss/cms/catalog.ts');for(const locale of ['en','fr','ht','es','zh-Hans']){const local=konsolissLocaleDefaults(locale);S.PREVIEW_SCENARIOS.forEach((scenario,index)=>{const app=harness({locale,previewIndex:index});assert.match(app.text(),new RegExp(scenario.code+' · '));assert.ok(app.text().includes(local['home.load.heading']),locale+' '+scenario.code);const status=S.previewLoadStatus(scenario,S.resolvePreviewView(scenario,null),local);if(status)assert.ok(app.text().includes(status),locale+' '+scenario.code+' status');assert.equal(app.webviews().length,scenario.data?0:1,locale+' '+scenario.code+' render');});}
+ });
