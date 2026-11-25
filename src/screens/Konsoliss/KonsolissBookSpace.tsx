@@ -7,6 +7,8 @@ type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
 type RouteConfig={code:string;country:string;region:string;mode:'LCL'|'FCL';delivery:'pickup'|'door';requests_enabled:boolean;service_verified:boolean;checkout_enabled:boolean;price_published:boolean};
+type PaidBooking={id:string;status:string;physical_entitlement_cbm:number|null;paid_cents:number;accepted_scope:Record<string,unknown>};
+type ServiceRequest={id:string;order_id:string;request_kind:string;description:string;status:string;decision_note:string|null};
 type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;quote_version:number;expires_at:string|null;review_note:string|null;created_at:string};
 const R='#A90E02',C='#FFFBD4',GOLD='#F2D179',COPPER='#E8935A',GREEN='#5FD38A';
 const presets=[.02,.10,.30,.50,1],factors={cm:.01,mm:.001,m:1,in:.0254,ft:.3048},units=['cm','mm','m','in','ft'] as const;
@@ -28,10 +30,13 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [value,setValue]=useState(''),[valueUnknown,setValueUnknown]=useState(true),[description,setDescription]=useState(''),[address,setAddress]=useState('');
  const [cargoOpen,setCargoOpen]=useState(false),[inspectionOpen,setInspectionOpen]=useState(false),[guaranteeOpen,setGuaranteeOpen]=useState(true);
  const [terms,setTerms]=useState(false),[truth,setTruth]=useState(false);
- const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
+ const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'|'serviceRequests'|'serviceRequestForm'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
  const [quotes,setQuotes]=useState<Quote[]>([]),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[backend,setBackend]=useState<Record<string,any>|null>(null);
  const [content,setContent]=useState<Record<string,string>>({});
  const [routes,setRoutes]=useState<RouteConfig[]|null>(null);
+ const [paidBookings,setPaidBookings]=useState<PaidBooking[]>([]),[serviceRequests,setServiceRequests]=useState<ServiceRequest[]>([]);
+ const [requestOrder,setRequestOrder]=useState<string|null>(null),[requestKind,setRequestKind]=useState<'refund'|'return'|'alternative_service'|'claim'>('refund'),[requestReason,setRequestReason]=useState('');
+ const requestId=useRef<string|null>(null);
  const submitLock=useRef(false);
  const requestIdentity=useRef<{signature:string;key:string}>({signature:'',key:''});
  const tx=useCallback((key:string,fallback:string)=>content['bookspace.'+key]||copy['bookspace.'+key]||fallback,[content,copy]);
@@ -118,6 +123,27 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  };
  const loadQuotes=async()=>{setBusy(true);const {data,error}=await supabase.from('konsoliss_booking_quotes').select('*').order('created_at',{ascending:false}).limit(30);
   if(error)setNotice(error.message);else{setQuotes(data||[]);setStep('quotes')}setBusy(false)};
+ const loadServiceRequests=async()=>{
+  if(busy)return;setBusy(true);setNotice('');try{
+   const [orders,requests]=await Promise.all([
+    supabase.from('konsoliss_booking_orders').select('id,status,physical_entitlement_cbm,paid_cents,accepted_scope').in('status',['reserved','held','fulfilling','ready']).order('created_at',{ascending:false}).limit(30),
+    supabase.from('konsoliss_customer_service_requests').select('id,order_id,request_kind,description,status,decision_note').order('created_at',{ascending:false}).limit(50)
+   ]);
+   if(orders.error||requests.error)throw new Error(orders.error?.message||requests.error?.message);
+   setPaidBookings((orders.data||[]) as PaidBooking[]);setServiceRequests((requests.data||[]) as ServiceRequest[]);setStep('serviceRequests');
+  }catch(e){setNotice(e instanceof Error?e.message:'Could not load your requests')}finally{setBusy(false)}
+ };
+ const sendServiceRequest=async()=>{
+  if(busy||!requestOrder||requestReason.trim().length<10){setNotice('Enter at least ten characters describing your request.');return}
+  setBusy(true);setNotice('');try{
+   if(!requestId.current)requestId.current=idempotency();
+   const {error:e}=await supabase.rpc('konsoliss_customer_request_service',{
+    p_order_id:requestOrder,p_kind:requestKind,p_reason:requestReason.trim(),p_key:requestId.current
+   });
+   if(e)throw new Error(e.message);
+   requestId.current=null;setRequestReason('');await loadServiceRequests();
+  }catch(e){setNotice(e instanceof Error?e.message:'Could not send this request. Retry using the same request.')}finally{setBusy(false)}
+ };
  const reset=()=>{setStep('edit');setNotice('');setScopeAgreed(false);bump()};
  const quoteScope=(key:string):string=>{const v=quote?.approved_scope?.[key];return Array.isArray(v)?v.join(' · '):typeof v==='string'?v:v==null?'Not specified':String(v)};
  const acceptQuote=async()=>{if(!scopeAgreed||busy||!quote||quote.status!=='approved')return;setBusy(true);setNotice('');try{const {data,error:e}=await supabase.rpc('konsoliss_customer_acknowledge_quote',{p_quote_id:quote.id,p_quote_version:quote.quote_version});if(e)throw new Error(e.message);if(data?.payment_taken||data?.space_reserved)throw new Error('Unexpected checkout state; contact support.');setQuote({...quote,status:'accepted_awaiting_checkout'});setStep('acknowledged')}catch(e){setNotice(e instanceof Error?e.message:'Could not confirm your acknowledgement. Please refresh the quote.')}finally{setBusy(false)}};
@@ -212,6 +238,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      <Pressable onPress={()=>setTerms(x=>!x)}>{text((terms?'☑':'□')+'  '+tx('terms','I accept the booking terms and delivery conditions.'),12)}</Pressable>
      <Pressable onPress={()=>setTruth(x=>!x)} style={{marginTop:10}}>{text((truth?'☑':'□')+'  '+(category==='unknown'?tx('consentReserve',"I understand this reserves space, not a final customs-inclusive shipment price. I'll declare goods before sending."):'My declaration is accurate. I understand goods are subject to inspection and eligible loading.'),12)}</Pressable>
      {notice?text(notice,11,accent,true,{marginTop:10}):null}
+     <Pressable onPress={()=>{void loadServiceRequests()}} style={{paddingVertical:7,alignItems:'center'}}>{text(tx('myRequests','My shipment requests'),11,accent,true)}</Pressable>
      <Pressable onPress={()=>{void loadQuotes()}} style={{paddingVertical:13,alignItems:'center'}}>{text('My quotes',11,accent,true)}</Pressable>
    </>:null}
    {step==='review'?<>
@@ -253,6 +280,37 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      {box(<>{heading('Quote scope acknowledged')}{text('Konsoliss has recorded your reviewed quote. Secure checkout will become available only after route capacity, payment provider and contract terms are verified.',12,muted)}
        {text('No payment taken · No space reserved',12,accent,true,{marginTop:8})}</>)}
      {footer('View my quotes',()=>{void loadQuotes()})}{footer('Close',onClose)}
+   </>:null}
+   {step==='serviceRequests'?<>
+     {box(<>{heading(tx('myRequests','My shipment requests'))}{text(tx('requestExplanation','Request a refund, cargo return or alternative service only for a confirmed paid booking. Requests do not automatically move funds or cargo.'),11,muted)}</>)}
+     {paidBookings.length?paidBookings.map(b=><View key={b.id}>{box(<>
+       {text('Booking '+b.id.slice(0,8)+' · '+b.status,12,ink,true)}
+       {text('Paid '+cash(b.paid_cents)+' · Reserved '+(b.physical_entitlement_cbm??'—')+' CBM',11,muted)}
+       {footer(tx('createRequest','Create service request'),()=>{setRequestOrder(b.id);setRequestKind('refund');setRequestReason('');requestId.current=null;setStep('serviceRequestForm')})}
+     </>)}</View>):box(text(tx('noPaidBookings','No eligible paid shipping bookings yet. Quotation requests are not reservations.'),12,muted))}
+     {serviceRequests.map(r=><View key={r.id}>{box(<>
+       {text(r.request_kind.replace(/_/g,' ')+' · '+r.status.replace(/_/g,' '),12,ink,true)}
+       {text('Booking '+r.order_id.slice(0,8)+' · '+r.description,11)}
+       {r.decision_note?text('Admin response: '+r.decision_note,11,muted):null}
+     </>)}</View>)}
+     {notice?text(notice,11,accent):null}
+     {footer(tx('refreshRequests','Refresh requests'),()=>{void loadServiceRequests()})}
+     {footer('‹ Book Space',reset)}
+   </>:null}
+   {step==='serviceRequestForm'?<>
+     {box(<>{heading(tx('createRequest','Create service request'))}
+       {text('Booking '+(requestOrder?.slice(0,8)||'—'),12,muted)}
+       {text(tx('requestType','Request type'),11,ink,true,{marginTop:9})}
+       <View style={{flexDirection:'row',gap:5,flexWrap:'wrap',marginTop:7}}>
+        {(['refund','return','alternative_service','claim'] as const).map(k=><Pressable key={k} accessibilityRole="button" onPress={()=>{setRequestKind(k);requestId.current=null}} style={{borderWidth:.5,borderColor:line,padding:8,borderRadius:6,backgroundColor:k===requestKind?R:paper}}>{text(k.replace(/_/g,' '),11,k===requestKind?C:ink,true)}</Pressable>)}
+       </View>
+       {text(tx('requestDetails','Explain your request'),11,ink,true,{marginTop:10})}
+       <TextInput multiline value={requestReason} onChangeText={v=>{setRequestReason(v);requestId.current=null}} maxLength={2000} placeholder="Describe the issue and expected resolution" placeholderTextColor={muted} style={{minHeight:88,borderWidth:.5,borderColor:line,backgroundColor:paper,color:ink,borderRadius:7,padding:10,marginTop:7}}/>
+       {text(tx('requestNotSettlement','Admin review does not automatically issue a refund or return shipment.'),11,muted,false,{marginTop:8})}
+     </>)}
+     {notice?text(notice,11,accent):null}
+     {footer(tx('submitRequest','Submit request'),()=>{void sendServiceRequest()},busy||requestReason.trim().length<10)}
+     {footer('‹ My requests',()=>{void loadServiceRequests()})}
    </>:null}
    {step==='quotes'?<>{quotes.length?quotes.map(renderQuote):box(text('No quote requests yet.',12,muted))}
     {notice?text(notice,11,accent):null}
