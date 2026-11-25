@@ -1,0 +1,28 @@
+name: Konsoliss public CMS readback
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/screens/Konsoliss/cms/**'
+      - 'supabase/migrations/*konsoliss*cms*.sql'
+      - 'scripts/check-konsoliss-public-cms.cjs'
+      - '.github/workflows/konsoliss-public-cms.yml'
+  workflow_dispatch:
+    inputs:
+      require_published:
+        description: Require a reviewed published homepage in all five locales
+        type: boolean
+        default: false
+jobs:
+  public-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read actual public CMS (no writes)
+        env:
+          REQUIRE_PUBLISHED: ${{ inputs.require_published }}
+        run: node --experimental-strip-types scripts/check-konsoliss-public-cms.cjs
