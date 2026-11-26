@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, BackHandler, FlatList, Image, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { AccessibilityInfo, BackHandler, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,8 +9,9 @@ import { referenceAssets } from './assets';
 import { BOOKS, creators, exhibitions, floors, future, museums, works } from './catalog';
 import { palettes, frameMax } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
-import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard, type IconName } from './components';
+import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
+import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
 import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
@@ -21,7 +22,7 @@ function readPreferences(raw:string|null):PreviewPreferences {
   try {const x=JSON.parse(raw);const strings=(v:unknown,d:string[])=>Array.isArray(v)?v.filter((a):a is string=>typeof a==='string'):d;return {theme:x.theme==='dark'?'dark':'light',saved:strings(x.saved,[]),reminders:strings(x.reminders,[]),following:strings(x.following,[...defaultFollowing])};}catch{return initialPreferences;}
 }
 type HomeRow={id:string;content:React.ReactElement};
-const tabs:[string,IconName][]=[['Home','home'],['Explore','explore'],['Museum','museum'],['Library','library'],['Me','me']];
+const tabs:LivingArtTab[]=['Home','Explore','Artrium','Library','Bazaar'];
 
 export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const {width,fontScale}=useWindowDimensions(); const insets=useSafeAreaInsets();
@@ -137,6 +138,8 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   }
   // Same root-relative placement as Flyz, Goodies, Gatherz and Prezo. App owns the Android bottom inset.
   const dockBottom=18;
+  const dockExtra=Math.ceil(13*Math.max(1,fontScale))-13;
+  const dockEyeWidth=Math.max(96,Math.min(122,screenWidth*.29));
   return <View style={{flex:1,minHeight:0,backgroundColor:p.outer,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:Math.max(0,insets.top-19)}}>
@@ -148,11 +151,17 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={cancelJump}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
-        <View testID="arts-lits-bottom-nav" onLayout={e=>setDockHeight(Math.ceil(e.nativeEvent.layout.height))} accessibilityRole="tablist" style={{height:Math.max(65,Math.ceil(50+13*Math.max(0,fontScale-1))),borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
-          {tabs.map(([name,icon])=><Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:name==='Home'}} onPress={()=>{if(name==='Home'){cancelJump();scroll.current?.scrollToOffset({offset:0,animated:!reducedMotion});}else open(name);}} style={{flex:1,minWidth:0,minHeight:50,alignItems:'center',justifyContent:'center'}}>
-            <View style={{width:30,height:29,alignItems:'center',justifyContent:'center'}}><Icon name={icon} color={name==='Home'?p.teal:dark?p.muted:'#1F1E1E'} size={24}/></View>
-            <Body p={p} style={{paddingTop:4,fontSize:10.5,lineHeight:13,color:name==='Home'?p.teal:dark?p.muted:'#1F1E1E',fontWeight:'500',textAlign:'center'}}>{name}</Body>
-          </Pressable>)}
+        <View testID="arts-lits-bottom-nav" onLayout={e=>setDockHeight(Math.ceil(e.nativeEvent.layout.height))} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
+          {tabs.map(name=>{
+            const home=name==='Home',center=name==='Artrium',bazaar=name==='Bazaar';
+            const [artWidth,artHeight]=artSize[name];
+            return <Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:home}} accessibilityHint={bazaar?'Opens marketplace. Long press for your personal cultural space.':undefined} accessibilityActions={bazaar?[{name:'personalSpace',label:'Open personal cultural space'}]:undefined} onAccessibilityAction={bazaar?e=>{if(e.nativeEvent.actionName==='personalSpace')open('Me');}:undefined} onLongPress={bazaar?()=>open('Me'):undefined} onPress={()=>{if(home){cancelJump();scroll.current?.scrollToOffset({offset:0,animated:!reducedMotion});}else open(center?'Museum':bazaar?'Marketplace':name);}} style={{flex:center?0:1,width:center?dockEyeWidth:undefined,minWidth:0,height:(center?65:55)+dockExtra,alignItems:'center',justifyContent:home?'center':'flex-end',overflow:'visible',zIndex:center?2:undefined}}>
+              <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible'}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?22:26)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
+                <LivingArtIcon name={name} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
+              </View>
+              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:7,left:0,right:0,fontSize:10.5,lineHeight:13,fontWeight:'500',textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
+            </Pressable>;
+          })}
         </View>
       </View>
     </View>
