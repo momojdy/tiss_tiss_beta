@@ -1,6 +1,6 @@
 // Pure fluid-front geometry, independent of React Native. Angles are sampled
 // in real screen coordinates (no stretched SVG or uniformly scaled silhouette).
-export const SPILL_SPREAD_MS=1650;
+export const SPILL_SPREAD_MS=5640;
 export const SPILL_REVEAL_MS=360;
 export const SPILL_SAMPLES=32;
 export function spillProgress(t:number){return Math.max(0,Math.min(1,t));}
