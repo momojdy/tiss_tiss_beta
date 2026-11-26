@@ -1,0 +1,32 @@
+{
+  "v103-vangogh-cypresses": {
+    "file": "v103/vangogh-cypresses.jpg",
+    "title": "Cypresses",
+    "artist": "Vincent van Gogh",
+    "date": "1889",
+    "objectId": 437980,
+    "source": "https://www.metmuseum.org/art/collection/search/437980",
+    "mirror": "https://github.com/HuiYingChung/Openhall/blob/main/public/demo/vangogh-cypresses.jpg",
+    "license": "CC0 / Met Open Access per documented mirror; direct institutional file verification pending",
+    "gitBlobSha": "0fa090edc88c2ec1be8d978a956e490e420ce2b8",
+    "width": 495,
+    "height": 624,
+    "bytes": 141597,
+    "isSample": true
+  },
+  "v103-manet-boating": {
+    "file": "v103/manet-boating.jpg",
+    "title": "Boating",
+    "artist": "Édouard Manet",
+    "date": "1874",
+    "objectId": 436947,
+    "source": "https://www.metmuseum.org/art/collection/search/436947",
+    "mirror": "https://github.com/HuiYingChung/Openhall/blob/main/public/demo/manet-boating.jpg",
+    "license": "CC0 / Met Open Access per documented mirror; direct institutional file verification pending",
+    "gitBlobSha": "392f414bef8cd33299a9821f04a0769d7eef3f4e",
+    "width": 599,
+    "height": 457,
+    "bytes": 124959,
+    "isSample": true
+  }
+}

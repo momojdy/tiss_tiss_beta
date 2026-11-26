@@ -25,6 +25,8 @@ export const referenceAssets: Record<string, ImageSourcePropType> = {
   "Sense and Sensibility": require('./assets/sense-and-sensibility.jpg'),
   "v102-vangogh-wheatfield": require('./assets/v102/vangogh-wheatfield.jpg'),
   "v102-degas-dance-class": require('./assets/v102/degas-dance-class.jpg'),
+  "v103-vangogh-cypresses": require('./assets/v103/vangogh-cypresses.jpg'),
+  "v103-manet-boating": require('./assets/v103/manet-boating.jpg'),
   "v10-study-ochre": require('./assets/v10/study-ochre.jpg'),
   "v10-coastal-study": require('./assets/v10/coastal-study.jpg'),
   "v10-stoneware-form": require('./assets/v10/stoneware-form.jpg'),

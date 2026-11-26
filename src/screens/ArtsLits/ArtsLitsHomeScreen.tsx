@@ -12,7 +12,7 @@ import { access, categories, connectionMessages, defaultFollowing, editorPicks, 
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard, type IconName } from './components';
 import PreviewSheet from './PreviewSheet';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
-import { selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
+import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -30,15 +30,17 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const posterWidth=inner*.61, posterMaxOffset=Math.max(0,2*inset+exhibitions.length*posterWidth+(exhibitions.length-1)*12-screenWidth);
   const posterOffsets=exhibitions.map((_,i)=>Math.min(posterMaxOffset,Math.max(0,inset+i*(posterWidth+12)+(posterWidth-screenWidth)/2)));
   const [prefs,setPrefs]=useState(initialPreferences), [loaded,setLoaded]=useState(false);
-  const [profile,setProfile]=useState<Profile>('returning'),[connection,setConnection]=useState<Connection>('live'),[connected,setConnected]=useState<boolean|null>(null),[language,setLanguage]=useState<Language>('normal'),[sponsor,setSponsor]=useState(true);
+  const [profile,setProfile]=useState<Profile>('returning'),[connection,setConnection]=useState<Connection>('live'),[connected,setConnected]=useState<boolean|null>(null),[language,setLanguage]=useState<Language>('normal'),[sponsorScenario,setSponsorScenario]=useState<SponsorScenario>('active');
+  const sponsor=sponsorScenario!=='inactive',setSponsor=(v:boolean)=>setSponsorScenario(v?'active':'inactive');
   const [dockHeight,setDockHeight]=useState(65);
   const [layout,setLayout]=useState<HomeLayout>(defaultLayout),[displayMode,setDisplayMode]=useState<DisplayMode>('personalized'),[currency,setCurrency]=useState<PreviewCurrency>('USD');
   const [draftLayout,setDraftLayout]=useState<HomeLayout|null>(null),[previousLayout,setPreviousLayout]=useState<HomeLayout|null>(null),[locale,setLocale]=useState<PreviewLocale>('en'),[region,setRegion]=useState<PreviewRegion>('HT');
   const effectiveLayout=displayMode==='cms'&&draftLayout?draftLayout:layout;
+  const sponsorAccess=sponsorEligible(effectiveLayout,profile,region,sponsorScenario,Date.now());
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const scroll=useRef<FlatList<HomeRow>>(null); const jumpTimer=useRef<ReturnType<typeof setTimeout>|null>(null); const pendingJump=useRef<{index:number;attempts:number}|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
-  const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsor);
+  const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
   const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){const id=name.slice(9);if(rows.some(r=>r.id===id))jumpToSection(id);else if(discovery.some(d=>d.id===id)&&!(id==='recently-viewed'&&profile==='new'))setStack(v=>[...v,'Explore section: '+id]);else setStack(['Section not shown']);return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
   function changeConnection(c:Connection){if(timer.current)clearTimeout(timer.current);setConnection(c);setLimit(6);if(c==='loading')timer.current=setTimeout(()=>setConnection('live'),1200);}
   function togglePref(key:'saved'|'reminders'|'following',value:string){setPrefs(prev=>({...prev,[key]:prev[key].includes(value)?prev[key].filter(v=>v!==value):[...prev[key],value]}));}
@@ -112,8 +114,10 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   ];
   const extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale);
   const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/> }));
-  const eligibleNative=(l:HomeLayout,now:number)=>nativeRows.filter(r=>{const entry=l.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,now);});
-  const rows=selectHomepageRows([...eligibleNative(effectiveLayout,Date.now()),...extraRows],effectiveLayout,profile,displayMode);
+  const eligibleNative=(l:HomeLayout,now:number)=>nativeRows.filter(r=>{const entry=l.sections.find(x=>x.id===r.id);return r.id==='sponsored'?sponsorEligible(l,profile,region,sponsorScenario,now):!entry||entryEligible(entry,profile,region,now);});
+  const selectedRows=selectHomepageRows([...eligibleNative(effectiveLayout,Date.now()),...extraRows],effectiveLayout,profile,displayMode);
+  const preferred=preferNeighborImages(extras,selectedRows.map(r=>r.id),effectiveLayout,displayMode);
+  const rows=selectedRows.map(r=>{const d=preferred.find(x=>x.id===r.id);return d?{id:r.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}:r;});
   // The layout editor uses the same actual profile, mode, eligibility and budget as the rendered homepage.
   function visibleSectionIdsForLayout(value:HomeLayout){const l=validateLayout(value),now=Date.now();return selectHomepageRows([...eligibleNative(l,now).map(r=>({id:r.id})),...selectDiscovery(l,profile,displayMode,region,locale,now).map(d=>({id:d.id}))],l,profile,displayMode).map(r=>r.id);}
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
@@ -152,6 +156,6 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </View>
       </View>
     </View>
-    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }
