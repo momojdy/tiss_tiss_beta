@@ -128,3 +128,6 @@ Verified in the Expo Linux sandbox: native V8 asset/syntax checks; 2,100 homepag
 
 ### B4 — Founder homepage refinement
 Removed the two-card Museum viewing-options row (Walk in 3D / Browse the gallery) from the homepage and its layout registry. Older CMS layouts cannot restore the retired row. The Museum hero, destination viewing modes, section ordering, scrolling and bottom navigation are unchanged. Regression assertions cover the removal in all homepage modes and legacy layouts.
+
+### B5 — Original museum hero illustration
+Restored the original inline SVG from the founder-supplied `arts_lits_homepage_v6.html` byte-for-byte as `assets/museum-hero-v6.svg` (SHA-256 `9dd30be59ddf54066e14a6e368c1f41f96032845ead30c66fe80fe1d1227d280`). The hero alone uses the bundled vector via the existing Expo Image dependency, with cover fitting and no transition; no WebView, external URL or new dependency. The other museum photography, card dimensions, title, arrow, label, tap route and scrolling remain unchanged. Source regression assertions verify the SVG hash and hero binding. Native SVG filter rendering and full regression execution remain to be verified.

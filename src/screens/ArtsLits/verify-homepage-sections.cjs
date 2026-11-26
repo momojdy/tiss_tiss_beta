@@ -21,13 +21,14 @@ function load(name) {
   if (name === 'react/jsx-runtime') return {jsx:element,jsxs:element,Fragment:'Fragment'};
   if (name === 'react-native') return rn;
   if (name === 'react-native-safe-area-context') return {useSafeAreaInsets:()=>({top:24,bottom:24})};
+  if (name === 'expo-image') return {Image:'ExpoImage'};
   if (name === 'expo-status-bar') return {StatusBar:'StatusBar'};
   if (name === 'expo-linear-gradient') return {LinearGradient:'LinearGradient'};
   if (name === 'react-native-svg') return {default:'Svg',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
   if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
-  if (/\.(png|jpg)$/.test(name)) return name;
+  if (/\.(png|jpg|svg)$/.test(name)) return name;
   const base=path.join(root,name); const file=[base,base+'.ts',base+'.tsx'].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile());
   if(!file) throw Error('Unexpected import '+name);
   if(modules.has(file))return modules.get(file);
@@ -155,3 +156,7 @@ console.log('B3: ordinary native ScrollView, no touch timers or direction lock, 
 assert.ok(!sectionOrder.includes('museum-modes'));assert.ok(!requiredSections.has('museum-modes'));assert.ok(!defaultLayout.sections.some(e=>e.id==='museum-modes'));
 const oldMuseumLayout=validateLayout({...defaultLayout,sections:[...defaultLayout.sections,{id:'museum-modes',enabled:true}]});assert.ok(!oldMuseumLayout.sections.some(e=>e.id==='museum-modes'));assert.ok(destinations.Museum.includes('Walk through the museum'));assert.ok(destinations.Museum.includes('Browse as gallery'));
 console.log('B4: museum viewing options removed from homepage and CMS; Museum destinations preserved.');
+
+// B5: exact uploaded HTML artwork, isolated to the museum hero.
+assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/museum-hero-v6.svg'))).digest('hex'),'9dd30be59ddf54066e14a6e368c1f41f96032845ead30c66fe80fe1d1227d280');
+state=[];refs=[];nodes=flatten(tree());const originalMuseumHero=find(nodes,'arts-lits-museum-original-illustration');assert.equal(originalMuseumHero.props.source,'./assets/museum-hero-v6.svg');assert.equal(originalMuseumHero.props.contentFit,'cover');assert.equal(originalMuseumHero.props.transition,0);const museumPress=flatten(find(nodes,'arts-lits-section-museum-hero')).find(n=>n.props.accessibilityRole==='button');museumPress.props.onPress();nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Museum');console.log('B5: original V6 museum illustration and hero route verified.');
