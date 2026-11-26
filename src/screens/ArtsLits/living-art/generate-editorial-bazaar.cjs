@@ -1,0 +1,4 @@
+// Generate a separate, graded Bazaar asset; keep the original source.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),sharp=require('sharp');
+const {editorialGrade}=require('./editorial-grade.cjs');
+(async()=>{const src=path.join(__dirname,'bazaar-v73.png'),file='bazaar-editorial.png';const {data,info}=await sharp(src).resize(144,144,{fit:'contain',background:'#00000000'}).ensureAlpha().raw().toBuffer({resolveWithObject:true});const b=await sharp(editorialGrade(data,info.width,info.height,'Bazaar'),{raw:{width:info.width,height:info.height,channels:4}}).png().toBuffer();fs.writeFileSync(path.join(__dirname,file),b);fs.writeFileSync(path.join(__dirname,'bazaar-editorial-manifest.json'),JSON.stringify({file,source:'bazaar-v73.png',width:info.width,height:info.height,bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')},null,2)+'\n');})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -137,3 +137,5 @@ B5's bundled SVG image was reported blank on the founder's device. The same exac
 
 ### B7 — Editorial dock refinement
 The founder approved muted museum colors, a more consistent optical weight, cleaner artwork and editorial serif labels, while explicitly preserving the existing transparent dock. Initial changes set the four visible labels to the homepage serif family, retain the Home W size/position and adjust only decorative icon scale (Explore +6%, Artrium -14%, Library -6%, Bazaar +13%); the Explore palette is muted. Dock alpha, dimensions, routes, reduced motion, homepage and original animation playback remain unchanged. Offline color/texture refinement of the raster assets is a separate remaining step; device visual validation is not yet complete.
+
+B7 follow-up: added deterministic offline RGBA color grading and edge-aware microtexture reduction for the four raster artworks, preserving the alpha channel and near-neutral Home W pixels. The generators use this grade before image compression and preserve original vector motion sources. The generated outputs still need to be rebuilt and checked before the new palette is visible on the device.

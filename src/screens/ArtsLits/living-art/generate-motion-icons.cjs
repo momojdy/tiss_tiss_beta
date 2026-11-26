@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),sharp=require('sharp');
 const {loadTS,geometry,serialize}=require('./generate-static-icons.cjs');
 const {nums}=loadTS('motion.ts');
+const {editorialGrade}=require('./editorial-grade.cjs');
 const periods={Home:23000,Artrium:27000,Library:9800};
 (async()=>{
  const manifest={};
@@ -16,7 +17,8 @@ const periods={Home:23000,Artrium:27000,Library:9800};
    for(let i=0;i<count;i++){
     const clock=i*period/count;
     const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+W+'" height="'+H+'" viewBox="'+expanded+'" color="'+color+'">'+tree[2].map(n=>serialize(n,{name,dark,parentClass:'',inMask:false,cherries:false},clock,period)).join('')+'</svg>';
-    frames.push(await sharp(Buffer.from(svg)).ensureAlpha().raw().toBuffer());
+    const frame=await sharp(Buffer.from(svg)).ensureAlpha().raw().toBuffer();
+    frames.push(Buffer.from(editorialGrade(frame,W,H,name)));
    }
    const out=name.toLowerCase()+'-motion-'+(dark?'dark':'light')+'.webp';
    const b=await sharp(Buffer.concat(frames),{raw:{width:W,height:H*frames.length,channels:4,pageHeight:H}}).webp({quality:82,alphaQuality:95,loop:0,delay,effort:2}).toBuffer();
