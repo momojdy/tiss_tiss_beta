@@ -19,14 +19,16 @@ const tags:Record<string,React.ElementType>={g:G,path:Path,polygon:Polygon,circl
 const web=Platform.OS==='web';
 // The V73 cycles (8-29s) are too subtle on a phone, so the shared clock runs this many times faster than the HTML.
 const SPEED=3;
+// Every commit redraws the whole native SVG (Artrium ~4,300 shapes, Home ~2,800), so the heavy icons update less often to keep touch and scrolling responsive.
+const frameMs:Record<'Home'|'Explore'|'Artrium'|'Library',number>={Explore:42,Library:50,Home:66,Artrium:66};
 const ClockContext=createContext(0);
 const listeners=new Set<(dt:number)=>void>();
-let raf=0,last=0,acc=0,gated=false;
+let raf=0,last=0,gated=false;
 // The screen pauses the art while the page is being dragged/flung so animation never competes with touch handling and scrolling.
 export function setLivingArtGate(paused:boolean){gated=paused;}
 // One shared ~30fps ticker for every animated icon; each icon accumulates its own clock.
-function loop(ts:number){raf=requestAnimationFrame(loop);const d=last?ts-last:0;last=ts;if(gated){acc=0;return;}acc+=Math.min(d,100);if(acc<42)return;const dt=acc;acc=0;listeners.forEach(l=>l(dt));}
-function subscribe(l:(dt:number)=>void){listeners.add(l);if(listeners.size===1){last=0;acc=0;raf=requestAnimationFrame(loop);}return()=>{listeners.delete(l);if(!listeners.size)cancelAnimationFrame(raf);};}
+function loop(ts:number){raf=requestAnimationFrame(loop);const d=last?ts-last:0;last=ts;if(gated)return;const dt=Math.min(d,100);listeners.forEach(l=>l(dt));}
+function subscribe(l:(dt:number)=>void){listeners.add(l);if(listeners.size===1){last=0;raf=requestAnimationFrame(loop);}return()=>{listeners.delete(l);if(!listeners.size)cancelAnimationFrame(raf);};}
 function Moving({tag,props,tracks,children}:{tag:string;props:NativeProps;tracks:ReturnType<typeof motionFor>;children:React.ReactNode}){
   const clock=useContext(ClockContext);
   return React.createElement(tags[tag],{...props,...motionProps(tracks,clock,web)},children);
@@ -75,8 +77,8 @@ function renderNode(node:SvgNode|string,ctx:Context,key:number):React.ReactNode{
   return React.createElement(Component,{...base,key},kids);
 }
 function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
-  const [clock,setClock]=useState(0),elapsed=useRef(0);
-  useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{elapsed.current+=dt*SPEED;setClock(elapsed.current);});},[paused,reducedMotion]);
+  const [clock,setClock]=useState(0),elapsed=useRef(0),pending=useRef(0);
+  useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{pending.current+=dt;if(pending.current<frameMs[name])return;elapsed.current+=pending.current*SPEED;pending.current=0;setClock(elapsed.current);});},[paused,reducedMotion,name]);
   const [ready,setReady]=useState(false);
   useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;t=setTimeout(()=>setReady(true),400+mountDelay[name]);return()=>{if(t)clearTimeout(t);};},[name]);
   const [w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
