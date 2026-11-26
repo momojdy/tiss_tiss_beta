@@ -1,5 +1,7 @@
-import React, { createContext, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, memo, useContext, useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { Image, Platform, View } from 'react-native';
+import { WebView } from 'react-native-webview';
+import browserRuntime from './browser-runtime';
 import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix } from 'react-native-svg';
 import { motionFor, motionProps, nums, type SvgNode } from './motion';
 
@@ -25,11 +27,12 @@ const SPEED=3;
 const frameMs:Record<'Home'|'Explore'|'Artrium'|'Library',number>={Explore:42,Library:50,Home:66,Artrium:66};
 const ClockContext=createContext(0);
 const listeners=new Set<(dt:number)=>void>();
+const gateListeners=new Set<(paused:boolean)=>void>();
 let raf:number|null=null,last=0,gated=false;
 function startClock(){if(raf===null&&!gated&&listeners.size){last=0;raf=requestAnimationFrame(loop);}}
 function stopClock(){if(raf!==null)cancelAnimationFrame(raf);raf=null;last=0;}
 // Stop the clock completely during a touch/drag/fling; resume the original phase when idle.
-export function setLivingArtGate(paused:boolean){if(gated===paused)return;gated=paused;if(gated)stopClock();else startClock();}
+export function setLivingArtGate(paused:boolean){if(gated===paused)return;gated=paused;if(gated)stopClock();else startClock();gateListeners.forEach(listener=>listener(gated));}
 function loop(ts:number){raf=null;if(gated||!listeners.size)return;const d=last?ts-last:0;last=ts;listeners.forEach(l=>l(Math.min(d,100)));if(!gated&&listeners.size)raf=requestAnimationFrame(loop);}
 function subscribe(l:(dt:number)=>void){listeners.add(l);startClock();return()=>{listeners.delete(l);if(!listeners.size)stopClock();};}
 function Moving({tag,props,tracks,children}:{tag:string;props:NativeProps;tracks:ReturnType<typeof motionFor>;children:React.ReactNode}){
@@ -50,8 +53,8 @@ function nativeProps(node:SvgNode,ctx:Context):NativeProps{
   for(const [k,v] of Object.entries(a))if(!ignore.has(k)&&!k.startsWith('data-')&&!k.startsWith('aria-'))out[camel(k)]=v;
   if(tag==='mask')out.maskType='luminance';
   if(cls.includes('home-w'))out.fill='currentColor';
-  // Shrink the W and its clearance outline together, about the original glyph center, then move left/down.
-  if(ctx.name==='Home'&&cls.split(/\s+/).includes('v30-logo-scale'))out.transform='translate(-51.2925 13.12) scale(1.017)';
+  // Scale the W, its clearance and trail 5% around the glyph center, then move 0.75 dp left/down.
+  if(ctx.name==='Home'&&cls.split(/\s+/).includes('v30-logo-scale'))out.transform='translate(-71.360875 9.416) scale(1.06785)';
   
   if(cls==='home-spray'){out.fill='currentColor';out.opacity=.75;}
   if(cls.includes('home-ink-trail'))out.opacity=.56;
@@ -104,9 +107,73 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
     </Svg>
   </View></ClockContext.Provider>;
 }
+// One isolated browser surface for all three heavy decorative scenes. The five native
+// tab hit targets and the homepage FlatList remain unchanged. Explore stays native.
+type HeavyName=Exclude<VectorName,'Explore'>;
+type DockProps={width:number;centerWidth:number;extra:number;dark:boolean;reducedMotion:boolean;paused:boolean};
+const heavyNames:HeavyName[]=['Home','Artrium','Library'];
+// The overlay is a sibling of the bordered dock, with its origin 42 dp above the bar.
+// Reproduce the native tab layout including the one-point border and original padding.
+export function heavyDockGeometry(width:number,centerWidth:number,extra:number){
+  const side=(width-2-centerWidth)/4;
+  return heavyNames.map(name=>{
+    const [w,h]=artSize[name],pad=name==='Home'?4:22;
+    const center=name==='Home'?1+side/2:name==='Artrium'?1+2*side+centerWidth/2:1+2.5*side+centerWidth;
+    const [x,y,vw,vh]=nums(viewBoxes[name]),s=Math.min(w/vw,h/vh);
+    return {name,left:12+center-w/2-pad,top:name==='Home'?42+(65+extra-h)/2-pad:name==='Artrium'?1:10,width:w+2*pad,height:h+2*pad,
+      viewBox:[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ')};
+  });
+}
+function browserDocument(geometry:ReturnType<typeof heavyDockGeometry>,dark:boolean,reduced:boolean){
+  // Source modules contain serialized trees: pass the strings straight to the browser.
+  // Do not JSON.parse or build thousands of React elements on the native JS thread.
+  const scenes=geometry.map(g=>JSON.stringify({...g,dark,reduced,frameMs:frameMs[g.name],color:g.name==='Home'?(dark?'#f2e6d2':'#171612'):(dark?'#f0e9dd':'#222522')}).slice(0,-1)+',"tree":'+source[g.name]()+'}');
+  const data='['+scenes.join(',')+']';
+  return '<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; img-src data:;"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;pointer-events:none}svg{display:block}</style></head><body><script id="scene" type="application/json">'+data.replace(/</g,'\\u003c')+'</script><script>'+browserRuntime+'</script></body></html>';
+}
+function NativeDockArt({width,centerWidth,extra,dark,reducedMotion,paused}:DockProps){
+  const [mounted,setMounted]=useState(false),[ready,setReady]=useState(false);
+  const browser=useRef<WebView>(null);
+  const pausedRef=useRef(paused||reducedMotion);
+  pausedRef.current=paused||reducedMotion;
+  const geometry=useMemo(()=>heavyDockGeometry(width,centerWidth,extra),[width,centerWidth,extra]);
+  const sync=useCallback(()=>{browser.current?.injectJavaScript('window.setArtPaused?.('+String(gated||pausedRef.current)+');true;');},[]);
+  // Cancel deferred mount on the first touch. No React state changes during scrolling.
+  useEffect(()=>{
+    let cancelled=false,timer:ReturnType<typeof setTimeout>|undefined,idle:number|undefined;
+    const cancel=()=>{if(timer!==undefined)clearTimeout(timer);if(idle!==undefined)(globalThis as typeof globalThis&{cancelIdleCallback?:(id:number)=>void}).cancelIdleCallback?.(idle);};
+    const schedule=()=>{cancel();if(cancelled||mounted||paused||gated)return;
+      timer=setTimeout(()=>{if(cancelled||gated)return;
+        const request=(globalThis as typeof globalThis&{requestIdleCallback?:(fn:()=>void)=>number}).requestIdleCallback;
+        const activate=()=>{if(!cancelled&&!gated)setMounted(true);};
+        if(request)idle=request(activate);else activate();
+      },40);
+    };
+    const listener=()=>{if(mounted)sync();else schedule();};
+    gateListeners.add(listener);schedule();
+    return()=>{cancelled=true;cancel();gateListeners.delete(listener);};
+  },[mounted,paused,sync]);
+  const doc=useMemo(()=>mounted?{html:browserDocument(geometry,dark,reducedMotion),baseUrl:'about:blank'}:null,[mounted,geometry,dark,reducedMotion]);
+  useEffect(()=>{if(ready)sync();},[ready,paused,reducedMotion,sync]);
+  return <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{position:'absolute',left:-12,top:-42,width:width+24,height:65+extra+46,overflow:'hidden',zIndex:3}}>
+    {!ready&&geometry.map(g=><Image key={g.name} source={stills[g.name][dark?'dark':'light']} resizeMode="contain" fadeDuration={0} accessible={false} style={{position:'absolute',left:g.left,top:g.top,width:g.width,height:g.height}}/>)}
+    {doc&&<View pointerEvents="none" style={{position:'absolute',left:0,right:0,top:0,bottom:0,opacity:ready?1:0}}>
+      <WebView ref={browser} source={doc} originWhitelist={['*']} onShouldStartLoadWithRequest={request=>request.url==='about:blank'||request.url.startsWith('data:text/html')}
+        onMessage={event=>{if(event.nativeEvent.data==='ready'){setReady(true);sync();}}}
+        onError={()=>setReady(false)} onHttpError={()=>setReady(false)} onContentProcessDidTerminate={()=>{setReady(false);browser.current?.reload();}} onRenderProcessGone={()=>setReady(false)}
+        scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled domStorageEnabled={false} allowFileAccess={false} setSupportMultipleWindows={false}
+        style={{flex:1,backgroundColor:'transparent'}} containerStyle={{backgroundColor:'transparent'}}/>
+    </View>}
+  </View>;
+}
+export const LivingArtDock=memo(function LivingArtDock(props:DockProps){
+  if(web)return null;
+  return <NativeDockArt key={[props.width,props.centerWidth,props.extra,props.dark,props.reducedMotion].join(':')} {...props}/>;
+});
 export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
   if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
     <Image source={require('./bazaar-v73.png')} style={{width:35,height:35}} resizeMode="contain" accessible={false}/>
   </View>;
+  if(!web&&props.name!=='Explore')return null; // shared native dock artwork is positioned by LivingArtDock
   return <VectorArt {...props} name={props.name}/>;
 });

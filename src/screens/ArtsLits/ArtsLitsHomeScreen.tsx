@@ -11,7 +11,7 @@ import { palettes, frameMax } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
-import { LivingArtIcon, artSize, setLivingArtGate, type LivingArtTab } from './living-art/LivingArtIcon';
+import { LivingArtIcon, LivingArtDock, artSize, setLivingArtGate, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
 import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
@@ -167,7 +167,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         initialNumToRender={7} maxToRenderPerBatch={3} updateCellsBatchingPeriod={40} windowSize={5} removeClippedSubviews={false}
         onViewableItemsChanged={onRowsVisible}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
-        onScrollToIndexFailed={onJumpFailed} onTouchStart={()=>{scrollGesture.current.touch=true;holdArt();}} onTouchEnd={()=>{scrollGesture.current.touch=false;releaseArt(700);}} onTouchCancel={()=>{scrollGesture.current.touch=false;releaseArt(700);}} onScrollBeginDrag={()=>{scrollGesture.current.drag=true;cancelJump();holdArt();}} onScrollEndDrag={()=>{scrollGesture.current.drag=false;scrollGesture.current.touch=false;releaseArt(700);}} onMomentumScrollBegin={()=>{scrollGesture.current.momentum=true;holdArt();}} onMomentumScrollEnd={()=>{scrollGesture.current.momentum=false;releaseArt(300);}}
+        onScrollToIndexFailed={onJumpFailed} onTouchStart={()=>{scrollGesture.current.touch=true;scrollGesture.current.momentum=false;holdArt();}} onTouchEnd={()=>{scrollGesture.current.touch=false;releaseArt(180);}} onTouchCancel={()=>{scrollGesture.current.touch=false;releaseArt(180);}} onScrollBeginDrag={()=>{scrollGesture.current.drag=true;cancelJump();holdArt();}} onScrollEndDrag={()=>{scrollGesture.current.drag=false;scrollGesture.current.touch=false;releaseArt(180);}} onMomentumScrollBegin={()=>{scrollGesture.current.momentum=true;holdArt();}} onMomentumScrollEnd={()=>{scrollGesture.current.momentum=false;releaseArt(120);}}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
         <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
@@ -182,6 +182,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
             </Pressable>;
           })}
         </View>
+        <LivingArtDock width={screenWidth-28} centerWidth={dockEyeWidth} extra={dockExtra} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
       </View>
     </View>
     <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
