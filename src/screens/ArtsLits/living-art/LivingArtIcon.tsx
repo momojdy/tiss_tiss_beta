@@ -11,8 +11,8 @@ export const artSize = {Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50
 // Loaded lazily: these four modules hold ~3 MB of SVG data, which must not be evaluated or parsed before the nav needs them.
 const source:Record<VectorName,()=>string> = {Home:()=>require('./home-v73').default,Explore:()=>require('./explore-v73').default,Artrium:()=>require('./artrium-v73').default,Library:()=>require('./library-v73').default};
 const viewBoxes:Record<VectorName,string> = {Home:'0 0 500 500',Explore:'0 0 72 64',Artrium:'0 0 2048 1572',Library:'33 48 407 380'};
-// Building the big icons is heavy, so they mount after the screen transition (400ms + stagger), one at a time.
-const mountDelay:Record<VectorName,number> = {Explore:0,Home:900,Library:1300,Artrium:1800};
+// Start the original live scenes on a short stagger, rather than waiting 0.9–1.8 seconds. The touch gate still defers mounts while scrolling.
+const mountDelay:Record<VectorName,number> = {Explore:0,Home:40,Library:100,Artrium:180};
 // Show the exact existing art immediately, then hand off to its original live V73 scene.
 const stills={Home:{light:require('./home-idle-light.png'),dark:require('./home-idle-dark.png')},Artrium:{light:require('./artrium-idle-light.png'),dark:require('./artrium-idle-dark.png')},Library:{light:require('./library-idle-light.png'),dark:require('./library-idle-dark.png')}};
 const cache:Partial<Record<VectorName,SvgNode>> = {};
@@ -86,7 +86,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   useEffect(()=>{
     if(ready||paused||reducedMotion)return;
     let t:ReturnType<typeof setTimeout>|undefined;
-    const activate=()=>{if(gated){t=setTimeout(activate,220);return;}setReady(true);};
+    const activate=()=>{if(gated){t=setTimeout(activate,80);return;}setReady(true);};
     t=setTimeout(activate,mountDelay[name]);
     return()=>{if(t!==undefined)clearTimeout(t);};
   },[ready,paused,reducedMotion,name]);
@@ -96,7 +96,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const content=useMemo(()=>!ready||(reducedMotion&&name!=='Explore')?null:tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[ready,name,dark,reducedMotion]);
   if(name!=='Explore'&&(!ready||reducedMotion))return <View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}><Image source={stills[name][dark?'dark':'light']} resizeMode="contain" fadeDuration={0} accessible={false} style={{position:'absolute',left:-pad,top:-pad,width:w+2*pad,height:h+2*pad}}/></View>;
   return <ClockContext.Provider value={reducedMotion?0:clock}><View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
-    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#e0443e':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
+    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#ffffff':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
     </Svg>
   </View></ClockContext.Provider>;
