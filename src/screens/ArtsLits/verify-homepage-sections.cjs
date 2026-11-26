@@ -24,7 +24,7 @@ function load(name) {
   if (name === 'expo-image') return {Image:'ExpoImage'};
   if (name === 'expo-status-bar') return {StatusBar:'StatusBar'};
   if (name === 'expo-linear-gradient') return {LinearGradient:'LinearGradient'};
-  if (name === 'react-native-svg') return {default:'Svg',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
+  if (name === 'react-native-svg') return {default:'Svg',SvgXml:'SvgXml',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
   if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
@@ -159,4 +159,4 @@ console.log('B4: museum viewing options removed from homepage and CMS; Museum de
 
 // B5: exact uploaded HTML artwork, isolated to the museum hero.
 assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets/museum-hero-v6.svg'))).digest('hex'),'9dd30be59ddf54066e14a6e368c1f41f96032845ead30c66fe80fe1d1227d280');
-state=[];refs=[];nodes=flatten(tree());const originalMuseumHero=find(nodes,'arts-lits-museum-original-illustration');assert.equal(originalMuseumHero.props.source,'./assets/museum-hero-v6.svg');assert.equal(originalMuseumHero.props.contentFit,'cover');assert.equal(originalMuseumHero.props.transition,0);const museumPress=flatten(find(nodes,'arts-lits-section-museum-hero')).find(n=>n.props.accessibilityRole==='button');museumPress.props.onPress();nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Museum');console.log('B5: original V6 museum illustration and hero route verified.');
+state=[];refs=[];nodes=flatten(tree());const originalMuseumHero=find(nodes,'arts-lits-museum-original-illustration');const svgNode=flatten(originalMuseumHero).find(n=>n.type==='SvgXml');assert.ok(svgNode);assert.equal(svgNode.props.width,'100%');assert.equal(svgNode.props.height,'100%');assert.equal(svgNode.props.xml,fs.readFileSync(path.join(root,'assets/museum-hero-v6.svg'),'utf8'));assert.equal(originalMuseumHero.props.pointerEvents,'none');const museumPress=flatten(find(nodes,'arts-lits-section-museum-hero')).find(n=>n.props.accessibilityRole==='button');museumPress.props.onPress();nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Museum');console.log('B5: original V6 museum illustration and hero route verified.');
