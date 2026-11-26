@@ -29,6 +29,7 @@ function load(name) {
   if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
   if (name === './ArtsLitsQuickMenu') return {default:'ArtsLitsQuickMenu'};
+  if (name === './ThemeSpill') return {default:'ThemeSpill'};
   if (name === '../../shared/quickMenu/FloatingQuickMenuButton') return {FloatingQuickMenuButton:'FloatingQuickMenuButton'};
   if (/\.(png|jpg|svg)$/.test(name)) return name;
   const base=path.join(root,name); const file=[base,base+'.ts',base+'.tsx'].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile());
@@ -181,15 +182,18 @@ const headerNodes=flatten(find(nodes,'arts-lits-section-header'));
 assert.ok(headerNodes.some(n=>n.props.name==='search'));
 assert.ok(!headerNodes.some(n=>['bell','saved','more'].includes(n.props.name)));
 assert.ok(!flatten(find(nodes,'arts-lits-home-scroll')).some(n=>n.props.testID==='arts-lits-floating-quick-menu'));
-assert.equal(trigger().props.top,222);
+assert.equal(trigger().props.top,25);assert.equal(trigger().props.right,21);assert.equal(trigger().props.background,'#00635e');
 for(const action of ['home','messages','notifications','wallet','activity','help','feedback','business']){openHomeMenu();quick().props.onAction(action);nodes=flatten(tree());assert.equal(quick(),undefined);}
 assert.deepEqual(menuActions,['home','messages','notifications','wallet','activity','help','feedback','business']);
-openHomeMenu();quick().props.onAction('dark');nodes=flatten(tree());openHomeMenu();assert.equal(quick().props.dark,true);
+openHomeMenu();quick().props.onAction('dark');nodes=flatten(tree());const homeSpill=()=>nodes.find(n=>n.type==='ThemeSpill');assert.equal(homeSpill().props.color,'#142021');assert.equal(homeSpill().props.committed,false);assert.equal(preview(nodes).preferences.theme,'light');homeSpill().props.onCovered();nodes=flatten(tree());assert.equal(homeSpill().props.committed,true);assert.equal(trigger().props.background,'#f0e9dd');assert.equal(trigger().props.color,'#142021');homeSpill().props.onDone();nodes=flatten(tree());assert.equal(homeSpill(),undefined);openHomeMenu();assert.equal(quick().props.dark,true);
 quick().props.onAction('saved');nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Saved');assert.equal(quick(),undefined);
 preview(nodes).onOpenQuickMenu();nodes=flatten(tree());assert.equal(preview(nodes).quickMenuOverlay.props.inline,true);
 preview(nodes).quickMenuOverlay.props.close();nodes=flatten(tree());assert.equal(preview(nodes).quickMenuOverlay,null);assert.equal(preview(nodes).stack.at(-1),'Saved');
-preview(nodes).onOpenQuickMenu();nodes=flatten(tree());preview(nodes).quickMenuOverlay.props.onAction('dark');nodes=flatten(tree());assert.equal(preview(nodes).preferences.theme,'light');assert.equal(preview(nodes).stack.at(-1),'Saved');
+preview(nodes).onOpenQuickMenu();nodes=flatten(tree());preview(nodes).quickMenuOverlay.props.onAction('dark');nodes=flatten(tree());const detailSpill=()=>preview(nodes).themeTransitionOverlay;assert.equal(detailSpill().props.color,'#f4f0e8');assert.equal(detailSpill().props.committed,false);assert.equal(preview(nodes).preferences.theme,'dark');detailSpill().props.onCovered();nodes=flatten(tree());assert.equal(detailSpill().props.committed,true);assert.equal(preview(nodes).preferences.theme,'light');detailSpill().props.onDone();nodes=flatten(tree());assert.equal(detailSpill(),null);assert.equal(preview(nodes).stack.at(-1),'Saved');
 preview(nodes).onOpenQuickMenu();nodes=flatten(tree());preview(nodes).quickMenuOverlay.props.onAction('orders');nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'My Orders');assert.equal(preview(nodes).quickMenuOverlay,null);
 const detailProps=preview(nodes);state=[];refs=[];index=0;refIndex=0;const detailNodes=flatten(realSheet(detailProps));assert.ok(find(detailNodes,'arts-lits-detail-floating-quick-menu'));assert.equal(detailNodes.find(n=>n.type==='Modal').props.onRequestClose,detailProps.back);
 const triggerSource=fs.readFileSync(path.resolve(root,'../../shared/quickMenu/FloatingQuickMenuButton.tsx'),'utf8');assert.ok(triggerSource.includes('QUICK_MENU_DOT_SIZES=[5,7,10]'));assert.ok(triggerSource.includes("position:'absolute'"));assert.ok(triggerSource.includes('width:49,height:42'));
 console.log('B10: floating Quick Menu, unequal dots, detail overlay and theme/action return paths checked.');
+
+// B11: header alignment, corner ink cover and native animation contract.
+const spillSource=fs.readFileSync(path.join(root,'ThemeSpill.tsx'),'utf8');assert.ok(spillSource.includes('SPILL_SPREAD_MS=480'));assert.ok(spillSource.includes('SPILL_REVEAL_MS=220'));assert.ok(spillSource.includes("transformOrigin:'0px 0px'"));assert.ok(spillSource.includes('width:width*2,height:height*2'));assert.ok(spillSource.includes('useNativeDriver:true'));console.log('B11: theme coverage before palette commit, detail retention and cream trigger assertions added.');
