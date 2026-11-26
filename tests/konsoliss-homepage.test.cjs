@@ -140,11 +140,14 @@ const widths=(app,...ids)=>ids.map(id=>Number(app.byId('konsoliss-'+id)[0].props
 const nearWidths=(actual,expected)=>{assert.equal(actual.length,expected.length);actual.forEach((x,i)=>assert.ok(Math.abs(x-expected[i])<1e-9,x+' vs '+expected[i]));};
 const activeBar=app=>app.byId('konsoliss-customer-progress').length?'customer':'container';
 const switchBar=app=>app.click(app.find(defaults['a11y.progress'])[0]);
-test('real homepage segment widths, no fixed gaps, unknown track distinct from measured zero',()=>{
+test('real homepage segment widths, no fixed gaps, solid tracks with unknown data distinguished by labels and absent segments',()=>{
  const app=harness({timers:true});nearWidths(widths(app,'customer-loaded','customer-inbound','customer-remaining'),[25,15,60]);assert.equal(app.byId('konsoliss-customer-progress')[0].props.style.gap,undefined);
  switchBar(app);nearWidths(widths(app,'container-loaded','container-own','container-free'),[51.2/68*100,.5/68*100,16.3/68*100]);app.dispose();
  for(const options of [{empty:true},{reservedOnly:true},{unverified:true},{failed:true}]){
-  const x=harness({...options,timers:true});switchBar(x);const track=x.byId('konsoliss-container-progress')[0];assert.equal(track.props.style.borderStyle,'dashed');assert.equal(track.props.style.backgroundColor,'transparent');assert.equal(track.props.accessibilityLabel,defaults['load.unavailable']);assert.equal(x.byId('konsoliss-container-free').length,0);assert.match(x.text(),/Free —/);x.dispose();
+  const x=harness({...options,timers:true});switchBar(x);const track=x.byId('konsoliss-container-progress')[0];assert.equal(track.props.style.borderWidth,0);assert.notEqual(track.props.style.borderStyle,'dashed');assert.equal(track.props.style.backgroundColor,'rgba(169,14,2,0.1)');assert.equal(track.props.accessibilityLabel,defaults['load.unavailable']);assert.equal(x.byId('konsoliss-container-free').length,0);assert.match(x.text(),/Free —/);x.dispose();
+ }
+ for(const options of [{empty:true},{failed:true}]){
+  const x=harness({...options,timers:true});const track=x.byId('konsoliss-customer-progress')[0];assert.equal(track.props.style.borderWidth,0);assert.notEqual(track.props.style.borderStyle,'dashed');assert.equal(track.props.style.backgroundColor,'rgba(169,14,2,0.1)');assert.ok(track.props.accessibilityLabel);assert.equal(x.byId('konsoliss-customer-loaded').length,0);assert.equal(x.byId('konsoliss-customer-remaining').length,0);x.dispose();
  }
  const make=(reserved,loaded,inbound,containers)=>({kind:'recorded',progress:{reserved_cbm:reserved,sent_cbm:loaded+inbound,loaded_cbm:loaded,inbound_to_container_cbm:inbound,allocated_cbm:loaded+inbound,at_warehouse_or_in_transit_cbm:0,reserved_not_sent_cbm:reserved-loaded-inbound,not_allocated_cbm:reserved-loaded-inbound,allocated_percent:reserved?(loaded+inbound)/reserved*100:0},warehouse_cbm:loaded+inbound,transit_cbm:0,containers,status_code:null});
  const c=(id,total,own,allocated)=>({id,number:'BAR-'+id,status:'filling',occupancy:{container_id:id,container_type:'40HQ',capacity_cbm:68,loaded_cbm:total,your_loaded_cbm:own,other_cargo_cbm:Math.round((total-own)*1000)/1000,free_cbm:Math.round((68-total)*1000)/1000,your_allocated_cbm:allocated}});

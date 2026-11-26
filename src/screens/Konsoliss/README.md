@@ -670,6 +670,8 @@ No Supabase mutation or migration was necessary: both bars continue to consume t
 
 **Final CI readback:** Consumer 63/63 scoped tests passed (15+17+22+3+6), including the actual host-effect rotation and segment tests; full consumer TypeScript failed solely on the six unrelated ArtsLits `StyleSheet.absoluteFillObject` errors, so Expo web export was skipped. Admin workflow concluded success, including Android and iOS bundling and existing Goodies regression tests. The scoped acceptance above is unchanged.
 
+**Founder visual correction (2026-11-26):** Restore the original solid, rounded, 10-pixel tinted tracks for both consumer homepage progress bars, including unavailable states. This supersedes the dashed-outline styling in item (3) above for the consumer homepage. Unknown data still renders no measured segments, retains dash legends where unknown and localized accessibility wording. Exact CBM partitions, seven-second rotation, manual switching, and all 3D styling remain unchanged. Do not reintroduce dashed progress tracks.
+
 ## Book Space — milestone opened and read-only baseline audit, 2026-11-26
 
 Founder explicitly instructed us to move from accepted progress bars to Book Space. Scope is the existing Book Space button and its connected journey, not a redesign. Re-read §§0A, 0E, 2, 3, 11 and 12. Preserve AGREED versus OPEN policy distinction; provider onboarding and legal/commercial readiness gate live checkout, not technical development.

@@ -284,7 +284,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
       <View pointerEvents={isDemo&&!editing.enabled?'none':'auto'} style={{paddingHorizontal:24,marginTop:12}}>
         {progressView==='container'?<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
-            <View testID="konsoliss-container-progress" accessibilityLabel={containerWidths?undefined:copy['load.unavailable']} style={{flex:1,height:10,borderRadius:5,overflow:'hidden',flexDirection:'row',backgroundColor:containerWidths?t.tint:'transparent',borderWidth:containerWidths?0:1,borderStyle:containerWidths?'solid':'dashed',borderColor:t.mu}}>
+            <View testID="konsoliss-container-progress" accessibilityLabel={containerWidths?undefined:copy['load.unavailable']} style={{flex:1,height:10,borderRadius:5,overflow:'hidden',flexDirection:'row',backgroundColor:t.tint,borderWidth:0}}>
               {containerWidths?<><View testID="konsoliss-container-loaded" style={{width:`${containerWidths.first}%`,flexShrink:0,backgroundColor:'#CDAA7D'}}/>
               {!splitShipment?<View testID="konsoliss-container-own" style={{width:`${containerWidths.second}%`,flexShrink:0,backgroundColor:t.ac}}/>:null}
               <View testID="konsoliss-container-free" style={{width:`${containerWidths.remaining}%`,flexShrink:0,backgroundColor:t.tint}}/></>:null}
@@ -304,7 +304,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
           </View>
         </>:<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
-            <View testID="konsoliss-customer-progress" accessibilityLabel={customerWidths?undefined:copy[displayLoadState.kind==='loading'?'load.loading':displayLoadState.kind==='unrecorded'||progress?.reservedCbm===0?'status.unassigned':'load.unavailable']} style={{flex:1,flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',backgroundColor:customerWidths?t.tint:'transparent',borderWidth:customerWidths?0:1,borderStyle:customerWidths?'solid':'dashed',borderColor:t.mu}}>
+            <View testID="konsoliss-customer-progress" accessibilityLabel={customerWidths?undefined:copy[displayLoadState.kind==='loading'?'load.loading':displayLoadState.kind==='unrecorded'||progress?.reservedCbm===0?'status.unassigned':'load.unavailable']} style={{flex:1,flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',backgroundColor:t.tint,borderWidth:0}}>
             {customerWidths?<><View testID="konsoliss-customer-loaded" style={{width:`${customerWidths.first}%`,flexShrink:0}}>
               <Svg width="100%" height={10}><Defs><LinearGradient id="g" x1="0" y1="0" x2="1" y2="0"><Stop offset="0" stopColor="#CDAA7D"/><Stop offset="0.5" stopColor="#B7B1A3"/><Stop offset="1" stopColor="#D2B48A"/></LinearGradient></Defs><Rect width="100%" height={10} fill="url(#g)"/></Svg>
             </View>
