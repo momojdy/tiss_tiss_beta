@@ -107,7 +107,7 @@ function nativeProps(node:SvgNode,ctx:Context):NativeProps{
   if(cls==='v44-binary'){out.fill=ctx.dark?'#d0c2b1':'#5e5753';out.opacity=ctx.dark?.76:.72;}
   if(cls==='v45-floor'){out.fill=ctx.dark?'#d0c2b1':'#655e59';out.opacity=ctx.dark?.84:.82;}
   if(cls==='v45-sketch-chain'){out.color=ctx.dark?'#c2b6a9':'#4b4542';out.fill=out.color;}
-  if(cls==='neo-outline'&&ctx.dark)out.stroke='#eee2c7';
+  // Explore keeps its original black outline in dark mode (product decision, differs from the V73 HTML which lightens it).
   if(ctx.parentClass==='home-slash'&&tag==='path'){out.strokeDasharray=[400];out.strokeDashoffset=400;}
   if(ctx.dark&&!ctx.inMask&&(ctx.name==='Library'||ctx.cherries||cls==='v25-cherries')){
     for(const k of ['fill','stroke'])if(typeof out[k]==='string')out[k]=shade(out[k] as string,ctx.name==='Library'?1.06:1.19,ctx.name==='Library'?1.05:1);
@@ -142,7 +142,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const expanded=[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ');
   const content=useMemo(()=>root[2].map((n,i)=>renderNode(n,{name,dark,clock,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[root,name,dark,clock,reducedMotion]);
   return <View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
-    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#e9dfc9':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
+    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?'#171612':(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
     </Svg>
   </View>;
