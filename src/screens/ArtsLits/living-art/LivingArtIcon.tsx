@@ -8,6 +8,13 @@ export type LivingArtTab = 'Home' | 'Explore' | 'Artrium' | 'Library' | 'Bazaar'
 type ArtProps = {name:LivingArtTab;dark:boolean;reducedMotion:boolean;paused:boolean};
 export const artSize={Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]} as const;
 type HeavyName='Home'|'Artrium'|'Library';
+// Optical sizing changes only the artwork, not the dock layout or hit targets.
+export const opticalScale={Home:1,Explore:1.06,Artrium:.86,Library:.94,Bazaar:1.13} as const;
+const compassPalette:Record<string,string>={
+ '#e7b631':'#ba9b55','#d95a48':'#b66f57','#36a8ad':'#729d94','#3977ab':'#69828f',
+ '#f4e3ba':'#eee1c5','#d64f3e':'#a85d49','#319b9d':'#608e83','#eec64d':'#d0b36b',
+ '#e6b833':'#b99b59','#222a28':'#343a35','#232826':'#343a35'
+};
 // Native image playback: no WebView, no touch capture and no heavy SVG mount.
 const stills={
  Home:{light:require('./home-idle-light.png'),dark:require('./home-idle-dark.png')},
@@ -40,7 +47,7 @@ function renderNode(node:SvgNode|string,parentClass:string,key:number):React.Rea
  if(typeof node==='string')return null;
  const [tag,a,children]=node;if(tag==='animate'||tag==='animateTransform')return null;
  const Component=tags[tag];if(!Component)throw Error('Unsupported Explore SVG node '+tag);
- const props:NativeProps={};for(const [k,v] of Object.entries(a))if(!ignore.has(k)&&!k.startsWith('data-')&&!k.startsWith('aria-'))props[camel(k)]=v;
+ const props:NativeProps={};for(const [k,v] of Object.entries(a))if(!ignore.has(k)&&!k.startsWith('data-')&&!k.startsWith('aria-'))props[camel(k)]=typeof v==='string'&&(k==='fill'||k==='stroke')?(compassPalette[v.toLowerCase()]??v):v;
  if(tag==='mask')props.maskType='luminance';
  const tracks=motionFor(node,parentClass),kids=children.map((c,i)=>renderNode(c,a.class??'',i));
  return tracks.length?<Moving key={key} tag={tag} props={props} tracks={tracks}>{kids}</Moving>:React.createElement(Component,{...props,key},kids);
@@ -61,8 +68,12 @@ function ExploreArt({dark,reducedMotion,paused}:ArtProps){
   <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={dark?'#f0e9dd':'#222522'} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>{content}</Svg>
  </View></ClockContext.Provider>;
 }
-export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
+function LivingArtArtwork(props:ArtProps){
  if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}><Image source={require('./bazaar-v73.png')} style={{width:35,height:35}} resizeMode="contain" accessible={false}/></View>;
  if(props.name==='Explore')return <ExploreArt {...props}/>;
  return <RasterArt {...props} name={props.name}/>;
+}
+export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
+ const [width,height]=artSize[props.name];
+ return <View pointerEvents="none" accessible={false} style={{width,height,overflow:'visible'}}><View pointerEvents="none" style={{width,height,overflow:'visible',transform:[{scale:opticalScale[props.name]}]}}><LivingArtArtwork {...props}/></View></View>;
 });
