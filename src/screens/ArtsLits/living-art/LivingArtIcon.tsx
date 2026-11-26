@@ -1,20 +1,20 @@
 import React, { createContext, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, Platform, View } from 'react-native';
+import { Image, InteractionManager, Platform, View } from 'react-native';
 import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix } from 'react-native-svg';
 import { motionFor, motionProps, nums, type SvgNode } from './motion';
-import home from './home-v73';
-import explore from './explore-v73';
-import artrium from './artrium-v73';
-import library from './library-v73';
 
 export type LivingArtTab = 'Home' | 'Explore' | 'Artrium' | 'Library' | 'Bazaar';
 type NativeProps = Record<string, unknown>;
 type ArtProps = { name:LivingArtTab; dark:boolean; reducedMotion:boolean; paused:boolean };
 type VectorName = Exclude<LivingArtTab,'Bazaar'>;
-export const artSize = {Home:[58,58],Explore:[42,42],Artrium:[62,62],Library:[42,42],Bazaar:[42,42]} as const;
-const source:Record<VectorName,string> = {Home:home,Explore:explore,Artrium:artrium,Library:library};
+export const artSize = {Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]} as const;
+// Loaded lazily: these four modules hold ~3 MB of SVG data, which must not be evaluated or parsed before the nav needs them.
+const source:Record<VectorName,()=>string> = {Home:()=>require('./home-v73').default,Explore:()=>require('./explore-v73').default,Artrium:()=>require('./artrium-v73').default,Library:()=>require('./library-v73').default};
+const viewBoxes:Record<VectorName,string> = {Home:'0 0 500 500',Explore:'0 0 72 64',Artrium:'0 0 2048 1572',Library:'33 48 407 380'};
+// Building the big icons is heavy, so they mount after the screen transition, one at a time.
+const mountDelay:Record<VectorName,number> = {Explore:0,Home:80,Library:160,Artrium:260};
 const cache:Partial<Record<VectorName,SvgNode>> = {};
-function tree(name:VectorName) { return cache[name] ?? (cache[name]=JSON.parse(source[name]) as SvgNode); }
+function tree(name:VectorName) { return cache[name] ?? (cache[name]=JSON.parse(source[name]()) as SvgNode); }
 const tags:Record<string,React.ElementType>={g:G,path:Path,polygon:Polygon,circle:Circle,ellipse:Ellipse,rect:Rect,defs:Defs,mask:Mask,clipPath:ClipPath,linearGradient:LinearGradient,radialGradient:RadialGradient,stop:Stop,use:Use,filter:Filter,feColorMatrix:FeColorMatrix};
 const web=Platform.OS==='web';
 // The V73 cycles (8-29s) are too subtle on a phone, so the shared clock runs this many times faster than the HTML.
@@ -75,10 +75,12 @@ function renderNode(node:SvgNode|string,ctx:Context,key:number):React.ReactNode{
 function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const [clock,setClock]=useState(0),elapsed=useRef(0);
   useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{elapsed.current+=dt*SPEED;setClock(elapsed.current);});},[paused,reducedMotion]);
-  const root=tree(name),[w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
-  const [x,y,vw,vh]=nums(root[1].viewBox),s=Math.min(w/vw,h/vh);
+  const [ready,setReady]=useState(false);
+  useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;const h=InteractionManager.runAfterInteractions(()=>{t=setTimeout(()=>setReady(true),mountDelay[name]);});return()=>{h.cancel();if(t)clearTimeout(t);};},[name]);
+  const [w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
+  const [x,y,vw,vh]=nums(viewBoxes[name]),s=Math.min(w/vw,h/vh);
   const expanded=[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ');
-  const content=useMemo(()=>root[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[root,name,dark,reducedMotion]);
+  const content=useMemo(()=>!ready?null:tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[ready,name,dark,reducedMotion]);
   return <ClockContext.Provider value={reducedMotion?0:clock}><View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
     <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#b3aa95':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
@@ -86,8 +88,8 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   </View></ClockContext.Provider>;
 }
 export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
-  if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:42,height:42,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
-    <Image source={require('./bazaar-v73.png')} style={{width:42,height:42}} resizeMode="contain" accessible={false}/>
+  if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
+    <Image source={require('./bazaar-v73.png')} style={{width:35,height:35}} resizeMode="contain" accessible={false}/>
   </View>;
   return <VectorArt {...props} name={props.name}/>;
 });
