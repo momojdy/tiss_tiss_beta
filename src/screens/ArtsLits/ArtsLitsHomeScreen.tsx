@@ -7,7 +7,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { LinearGradient } from 'expo-linear-gradient';
 import { referenceAssets } from './assets';
 import { BOOKS, creators, exhibitions, floors, future, museums, works } from './catalog';
-import { palettes, frameMax, sans } from './design';
+import { palettes, frameMax } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
@@ -159,7 +159,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
               <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible'}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?22:26)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
                 <LivingArtIcon name={name} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
               </View>
-              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:7,left:0,right:0,fontFamily:sans,fontSize:10.5,lineHeight:13,fontWeight:'500',textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
+              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:7,left:0,right:0,fontFamily:'System',fontSize:10.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
             </Pressable>;
           })}
         </View>

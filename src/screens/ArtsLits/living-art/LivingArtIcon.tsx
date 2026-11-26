@@ -11,12 +11,14 @@ export type LivingArtTab = 'Home' | 'Explore' | 'Artrium' | 'Library' | 'Bazaar'
 type NativeProps = Record<string, unknown>;
 type ArtProps = { name:LivingArtTab; dark:boolean; reducedMotion:boolean; paused:boolean };
 type VectorName = Exclude<LivingArtTab,'Bazaar'>;
-export const artSize = {Home:[70,70],Explore:[42,36],Artrium:[98,59],Library:[62,57],Bazaar:[42,31]} as const;
+export const artSize = {Home:[58,58],Explore:[42,42],Artrium:[62,62],Library:[42,42],Bazaar:[42,42]} as const;
 const source:Record<VectorName,string> = {Home:home,Explore:explore,Artrium:artrium,Library:library};
 const cache:Partial<Record<VectorName,SvgNode>> = {};
 function tree(name:VectorName) { return cache[name] ?? (cache[name]=JSON.parse(source[name]) as SvgNode); }
 const tags:Record<string,React.ElementType>={g:G,path:Path,polygon:Polygon,circle:Circle,ellipse:Ellipse,rect:Rect,defs:Defs,mask:Mask,clipPath:ClipPath,linearGradient:LinearGradient,radialGradient:RadialGradient,stop:Stop,use:Use,filter:Filter,feColorMatrix:FeColorMatrix};
 const web=Platform.OS==='web';
+// The V73 cycles (8-29s) are too subtle on a phone, so the shared clock runs this many times faster than the HTML.
+const SPEED=3;
 const ClockContext=createContext(0);
 const listeners=new Set<(dt:number)=>void>();
 let raf=0,last=0,acc=0;
@@ -72,7 +74,7 @@ function renderNode(node:SvgNode|string,ctx:Context,key:number):React.ReactNode{
 }
 function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const [clock,setClock]=useState(0),elapsed=useRef(0);
-  useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{elapsed.current+=dt;setClock(elapsed.current);});},[paused,reducedMotion]);
+  useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{elapsed.current+=dt*SPEED;setClock(elapsed.current);});},[paused,reducedMotion]);
   const root=tree(name),[w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
   const [x,y,vw,vh]=nums(root[1].viewBox),s=Math.min(w/vw,h/vh);
   const expanded=[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ');
@@ -84,8 +86,8 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   </View></ClockContext.Provider>;
 }
 export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
-  if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:42,height:31,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
-    <Image source={require('./bazaar-v73.png')} style={{width:42,height:31}} resizeMode="contain" accessible={false}/>
+  if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:42,height:42,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
+    <Image source={require('./bazaar-v73.png')} style={{width:42,height:42}} resizeMode="contain" accessible={false}/>
   </View>;
   return <VectorArt {...props} name={props.name}/>;
 });

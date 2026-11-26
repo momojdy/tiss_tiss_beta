@@ -25,7 +25,7 @@ function load(name) {
   if (name === 'expo-linear-gradient') return {LinearGradient:'LinearGradient'};
   if (name === 'react-native-svg') return {default:'Svg',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
-  if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[70,70],Explore:[42,36],Artrium:[98,59],Library:[62,57],Bazaar:[42,31]}};
+  if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[42,42],Artrium:[62,62],Library:[42,42],Bazaar:[42,42]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
   if (/\.(png|jpg)$/.test(name)) return name;
   const base=path.join(root,name); const file=[base,base+'.ts',base+'.tsx'].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile());
