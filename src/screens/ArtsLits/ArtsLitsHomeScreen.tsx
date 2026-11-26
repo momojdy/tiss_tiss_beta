@@ -14,7 +14,9 @@ import { access, categories, connectionMessages, defaultFollowing, editorPicks, 
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
 import ArtsLitsQuickMenu from './ArtsLitsQuickMenu';
-import ThemeSpill from './ThemeSpill';
+import ThemeSpill,{SpillPaper} from './ThemeSpill';
+import {blendPalette,paintThemeTree,wavePalette,type LiveWave} from './liveThemeWave';
+import {mixColor,waveAmount} from './themeSpillGeometry';
 import {FloatingQuickMenuButton} from '../../shared/quickMenu/FloatingQuickMenuButton';
 import type {QuickMenuAction,QuickMenuHostAction,QuickMenuInbox} from '../../shared/quickMenu/menuContract';
 import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
@@ -31,7 +33,7 @@ type HomeRow={id:string;content:React.ReactElement};
 const tabs:LivingArtTab[]=['Home','Explore','Artrium','Library','Bazaar'];
 
 export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onBack:()=>void;onUniversalAction:(action:QuickMenuHostAction)=>void;inbox:QuickMenuInbox}) {
-  const {width,fontScale}=useWindowDimensions(); const insets=useSafeAreaInsets();
+  const {width,height:windowHeight,fontScale}=useWindowDimensions(); const insets=useSafeAreaInsets();
   const screenWidth=Math.min(width,frameMax), small=screenWidth<=350, inset=small?15:21, inner=screenWidth-2*inset;
   const filterHeight=Math.max(44,Math.ceil(18.2*fontScale+22));
   const posterWidth=inner*.61, posterMaxOffset=Math.max(0,2*inset+exhibitions.length*posterWidth+(exhibitions.length-1)*12-screenWidth);
@@ -47,7 +49,8 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const [menuVisible,setMenuVisible]=useState(false);
   const [spillTarget,setSpillTarget]=useState<PreviewPreferences['theme']|null>(null);
-  const homeCapture=useRef<View>(null),detailCapture=useRef<View>(null);
+  const [spillProgress,setSpillProgress]=useState(0);
+  const viewportHeight=useRef(windowHeight),scrollY=useRef(0),rowFrames=useRef(new Map<string,{y:number;height:number}>());
   const scroll=useRef<ScrollView>(null); const sectionOffsets=useRef(new Map<string,number>()); const pendingJump=useRef<string|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
@@ -61,7 +64,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   useEffect(()=>NetInfo.addEventListener(s=>setConnected(s.isConnected===false||s.isInternetReachable===false?false:s.isConnected)),[]);
   useEffect(()=>{let alive=true;AccessibilityInfo.isReduceMotionEnabled().then(v=>{if(alive)setReducedMotion(v)}).catch(()=>{});const sub=AccessibilityInfo.addEventListener('reduceMotionChanged',setReducedMotion);return()=>{alive=false;sub.remove()};},[]);
   useEffect(()=>{const sub=BackHandler.addEventListener('hardwareBackPress',()=>{if(spillTarget)return true;if(menuVisible)setMenuVisible(false);else if(stack.length)back();else onBack();return true});return()=>sub.remove()},[spillTarget,menuVisible,stack.length,onBack]);
-  useEffect(()=>{if(reducedMotion&&spillTarget){setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);}},[reducedMotion,spillTarget]);
+  useEffect(()=>{if(reducedMotion&&spillTarget){setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}},[reducedMotion,spillTarget]);
   const head=(title:string,action?:string,target?:string,aside?:string)=><SectionHead p={p} title={title} action={action} onPress={target?()=>open(target):undefined} aside={aside} small={small} language={language}/>;
   const suffix=language==='long'?' — collection internationale':'';
   const marketReady=network==='ready'||network==='offline';
@@ -154,31 +157,47 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const previousEyeWidth=Math.max(96,Math.min(122,screenWidth*.29));
   const homeGap=small?8:10;
   const homeSlotWidth=(screenWidth-30-previousEyeWidth)/4+homeGap;
-  const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else setSpillTarget(next);}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
-  const spillOverlay=spillTarget?<ThemeSpill captureTarget={active?detailCapture:homeCapture} committed={prefs.theme===spillTarget} delay={active?0:260} onReady={()=>setPrefs(v=>({...v,theme:spillTarget}))} onDone={()=>setSpillTarget(null)} onFallback={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);}}/>:null;
+  const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else{setSpillProgress(0);setSpillTarget(next);}}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
+  const wave:LiveWave|null=spillTarget?{from:p,to:palettes[spillTarget],progress:spillProgress,width:screenWidth,height:Math.max(1,viewportHeight.current||windowHeight)}:null;
+  const spillOverlay=spillTarget?<ThemeSpill delay={active?0:260} onFrame={setSpillProgress} onDone={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}}/>:null;
+  const topPadding=Math.max(0,insets.top-19);
+  const floatingP=wave?wavePalette(wave,screenWidth-inset-24,Math.max(19,insets.top)+22):p;
+  const floatingMix=wave?waveAmount(wave.width,wave.height,screenWidth-inset-24,Math.max(19,insets.top)+22,wave.progress):0;
+  const dockMix=wave?waveAmount(wave.width,wave.height,screenWidth*.5,wave.height-dockBottom-32,wave.progress):0;
+  const dockP=wave?blendPalette(p,wave.to,dockMix):p;
+  const dockDark=spillTarget&&dockMix>=.5?spillTarget==='dark':dark;
+  const paperOuter=wave?mixColor(p.outer,wave.to.outer,spillProgress):p.outer;
+  const paintRow=(item:HomeRow)=>{
+    if(!wave||wave.progress<=0)return item.content;
+    const frame=rowFrames.current.get(item.id);if(!frame)return item.content;
+    const y=frame.y-scrollY.current+topPadding;
+    if(y+frame.height<0||y>wave.height)return item.content;
+    return paintThemeTree(item.content,wave,{x:inset,y,width:inner,height:frame.height});
+  };
   const quickMenuProps={visible:menuVisible,close:()=>setMenuVisible(false),p,dark,reducedMotion,inbox,onAction:quickMenuAction};
-  return <View style={{flex:1,minHeight:0,backgroundColor:p.outer,alignItems:'center'}}>
+  return <View style={{flex:1,minHeight:0,backgroundColor:paperOuter,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
-    <View ref={homeCapture} collapsable={false} style={{flex:1,minHeight:0,width:'100%',backgroundColor:p.outer,alignItems:'center'}}>
-    <View style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:Math.max(0,insets.top-19)}}>
-      <ScrollView ref={scroll} testID="arts-lits-home-scroll"
+    <View style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
+    <View onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:topPadding}}>
+      {wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
+      <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}>
-        {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>recordSection(item.id,e.nativeEvent.layout.y)} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>)}
+        {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>{const {y,height}=e.nativeEvent.layout;rowFrames.current.set(item.id,{y,height});recordSection(item.id,y);}} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{paintRow(item)}</View>)}
       </ScrollView>
-      {!active&&!menuVisible&&<FloatingQuickMenuButton testID="arts-lits-floating-quick-menu" top={Math.max(19,insets.top)+1} right={inset} background={dark?'#f0e9dd':p.teal} color={p.paper} onPress={()=>{if(!spillTarget)setMenuVisible(true);}}/>}
+      {!active&&!menuVisible&&<FloatingQuickMenuButton testID="arts-lits-floating-quick-menu" top={Math.max(19,insets.top)+1} right={inset} background={wave?mixColor(dark?'#f0e9dd':p.teal,spillTarget==='dark'?'#f0e9dd':wave.to.teal,floatingMix):dark?'#f0e9dd':p.teal} color={floatingP.paper} onPress={()=>{if(!spillTarget)setMenuVisible(true);}}/>}
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
-        <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
+        <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:wave?mixColor(dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',spillTarget==='dark'?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',dockMix):dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:wave?mixColor(dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',spillTarget==='dark'?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',dockMix):dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
           {tabs.map(name=>{
             const home=name==='Home',center=name==='Artrium',bazaar=name==='Bazaar';
             const [artWidth,artHeight]=artSize[name];
             return <Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:home}} accessibilityHint={bazaar?'Opens marketplace. Long press for your personal cultural space.':undefined} accessibilityActions={bazaar?[{name:'personalSpace',label:'Open personal cultural space'}]:undefined} onAccessibilityAction={bazaar?e=>{if(e.nativeEvent.actionName==='personalSpace')open('Me');}:undefined} onLongPress={bazaar?()=>open('Me'):undefined} onPress={()=>{if(home){cancelJump();scroll.current?.scrollTo({y:0,animated:!reducedMotion});}else open(center?'Museum':bazaar?'Marketplace':name);}} style={{flex:home?0:1,width:home?homeSlotWidth:undefined,minWidth:0,height:(center?65:55)+dockExtra,alignItems:'center',justifyContent:home?'center':'flex-end',overflow:'visible',zIndex:center?2:undefined}}>
               <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible',transform:[{translateX:-homeGap/2}]}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?11:name==='Explore'?13.5:20)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
-                <LivingArtIcon name={name} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
+                <LivingArtIcon name={name} dark={dockDark} reducedMotion={reducedMotion} paused={!!active}/>
               </View>
-              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:1,left:0,right:0,fontFamily:serif,fontSize:11.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
+              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:1,left:0,right:0,fontFamily:serif,fontSize:11.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:wave?dockP.ink:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
             </Pressable>;
           })}
         </View>
@@ -188,6 +207,6 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     {!active&&spillOverlay}
     </View>
     {menuVisible&&!active&&<ArtsLitsQuickMenu {...quickMenuProps}/>}
-    <PreviewSheet captureRef={detailCapture} onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitionOverlay={active?spillOverlay:null} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet wave={active?wave:null} onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitionOverlay={active?spillOverlay:null} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }

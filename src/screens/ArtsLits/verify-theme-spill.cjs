@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript');
 const source=fs.readFileSync(path.join(__dirname,'themeSpillGeometry.ts'),'utf8'),mod={exports:{}};
 new Function('module','exports',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(mod,mod.exports);
-const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,spillFrontRadius,spillFrontPoints,spillPath,spillProgress}=mod.exports;
+const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor}=mod.exports;
 assert.equal(SPILL_SPREAD_MS,5640);assert.equal(SPILL_REVEAL_MS,360);assert.equal(SPILL_SPREAD_MS+SPILL_REVEAL_MS,6000);assert.equal(spillProgress(-1),0);assert.equal(spillProgress(2),1);
 let frames=0;
 for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
@@ -22,3 +22,14 @@ for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
  assert.ok(spillPath(w,h,.45).includes('C'));
 }
 console.log('Theme spill: '+frames+' viewport/frame cases passed.');
+
+// Both endpoints are exact, intermediate colors are genuine, and the top-left arrives before the bottom-right.
+let waveCases=0;
+for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]])for(let i=0;i<=100;i++){
+ const t=i/100;for(const [x,y] of [[0,0],[w*.25,h*.25],[w*.75,h*.25],[w*.25,h*.75],[w,h]]){
+  const v=waveAmount(w,h,x,y,t);assert.ok(Number.isFinite(v)&&v>=0&&v<=1);if(i===0||i===100)assert.equal(v,t);waveCases++;
+ }
+}
+assert.ok(waveAmount(390,844,0,0,.35)>waveAmount(390,844,390,844,.35));
+assert.equal(mixColor('#f4f0e8','#142021',0),'#f4f0e8');assert.equal(mixColor('#f4f0e8','#142021',1),'#142021');assert.equal(mixColor('#000000','#ffffff',.5),'rgba(128,128,128,1)');assert.equal(mixColor('rgba(255,255,255,0.88)','rgba(20,32,33,0.88)',.5),'rgba(138,144,144,0.88)');
+console.log('Live palette wave: '+waveCases+' spatial samples checked.');

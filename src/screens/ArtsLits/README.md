@@ -168,3 +168,6 @@ B12 painted an opaque theme-colored SVG over the UI, which the founder reported 
 
 ### B14 — Six-second theme transition
 Founder requested a six-second liquid reveal. The existing masked-page animation now runs for exactly 6000 ms (5640 + 360 ms in the existing timing constants), excluding the snapshot preparation/menu dismissal. No changes to liquid geometry, content, navigation, theme persistence or fallback behavior. Reduced motion and unsupported/failed captures still switch directly; device timing remains unverified.
+
+### B15 — Live fluid palette, no screenshot fallback
+Founder still saw a snap after B14. The B13 capture/decoder timeout and missing-native-module direct-switch paths are removed entirely. The six-second clock now drives a deforming top-left SVG paper-color front BEHIND the live UI, and spatially interpolates theme colors in existing visible homepage rows, the active detail, floating trigger and dock. The old preference is committed only at completion. No solid foreground curtain, duplicate page, snapshot, or image decode is involved. Native view-shot dependency removed (added only for B13). This is a live palette wave, not a pixel-perfect masked screenshot wipe. Reduced-motion preference remains respected. Actual native performance and visual acceptance remain OPEN; source/geometry checks only.

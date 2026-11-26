@@ -36,3 +36,28 @@ export function spillPath(width:number,height:number,t:number,lead=0){
  }
  return path+'Z';
 }
+
+// The same moving front drives the paper and the actual live content colors.
+export type WaveBounds={x:number;y:number;width:number;height:number};
+export function waveAmount(width:number,height:number,x:number,y:number,t:number){
+ t=spillProgress(t);if(t===0||t===1)return t;
+ const diagonal=Math.max(1,Math.hypot(width,height));
+ x=Math.max(0,Math.min(width,x));y=Math.max(0,Math.min(height,y));
+ const radius=spillFrontRadius(diagonal,t,Math.atan2(y,x));
+ const band=diagonal*.105;
+ const u=spillProgress((radius-Math.hypot(x,y)+band)/(2*band));
+ // Limit the last part to a gradual finish even where the leading lobe arrives early.
+ const settle=spillProgress(t*1.16);
+ return (u*u*(3-2*u))*(.85+.15*settle);
+}
+export function mixColor(from:string,to:string,t:number){
+ t=spillProgress(t);if(t===0||from===to)return from;if(t===1)return to;
+ const read=(s:string)=>{
+  if(/^#[\da-f]{6}$/i.test(s))return [parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16),1];
+  if(/^#[\da-f]{8}$/i.test(s))return [parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16),parseInt(s.slice(7,9),16)/255];
+  const m=s.match(/^rgba?\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\s*\)$/i);return m?[+m[1],+m[2],+m[3],m[4]===undefined?1:+m[4]]:null;
+ };
+ const a=read(from),b=read(to);if(!a||!b)return t<.5?from:to;
+ const v=a.map((n,i)=>n+(b[i]-n)*t);
+ return `rgba(${Math.round(v[0])},${Math.round(v[1])},${Math.round(v[2])},${Math.round(v[3]*1000)/1000})`;
+}
