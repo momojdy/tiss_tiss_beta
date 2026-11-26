@@ -1,0 +1,56 @@
+{
+  "home-motion-light.webp": {
+    "source": "home-v73.ts",
+    "width": 132,
+    "height": 132,
+    "frames": 77,
+    "durationMs": 7667,
+    "sha256": "67d0d332dc328073b56d6df91d388602c08be573b2f3ecce344227d8fa76d8bb",
+    "bytes": 241810
+  },
+  "home-motion-dark.webp": {
+    "source": "home-v73.ts",
+    "width": 132,
+    "height": 132,
+    "frames": 77,
+    "durationMs": 7667,
+    "sha256": "4f0ac665ffaa0908d15db3d924e8a7996748e5526ae6d8fea05ed95c2861a9e6",
+    "bytes": 254292
+  },
+  "artrium-motion-light.webp": {
+    "source": "artrium-v73.ts",
+    "width": 212,
+    "height": 212,
+    "frames": 90,
+    "durationMs": 9000,
+    "sha256": "969b9fa8cfaf7be413b6ef28945e2d810014a19db672cd0ec3d22605e4f3db00",
+    "bytes": 870940
+  },
+  "artrium-motion-dark.webp": {
+    "source": "artrium-v73.ts",
+    "width": 212,
+    "height": 212,
+    "frames": 90,
+    "durationMs": 9000,
+    "sha256": "74f0f9d41ac8895f27cd9acc4102af5253c4546faba4093b4bc363bbcf029ea3",
+    "bytes": 898370
+  },
+  "library-motion-light.webp": {
+    "source": "library-v73.ts",
+    "width": 188,
+    "height": 188,
+    "frames": 13,
+    "durationMs": 3267,
+    "sha256": "b05c520390e2b6a5754a618bda9b737d886cb5e44ecbc348c2c03507fc459444",
+    "bytes": 17074
+  },
+  "library-motion-dark.webp": {
+    "source": "library-v73.ts",
+    "width": 188,
+    "height": 188,
+    "frames": 13,
+    "durationMs": 3267,
+    "sha256": "4773a4cef189a6e271d4fd3d8a6e9665d980111fc782e7b58a4ea9d40be5dcb2",
+    "bytes": 17452
+  }
+}
