@@ -13,6 +13,8 @@ import { palettes, frameMax, serif } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
+import ArtsLitsQuickMenu from './ArtsLitsQuickMenu';
+import type {QuickMenuAction,QuickMenuHostAction,QuickMenuInbox} from '../../shared/quickMenu/menuContract';
 import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow } from './DiscoveryRows';
 import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
@@ -26,7 +28,7 @@ function readPreferences(raw:string|null):PreviewPreferences {
 type HomeRow={id:string;content:React.ReactElement};
 const tabs:LivingArtTab[]=['Home','Explore','Artrium','Library','Bazaar'];
 
-export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
+export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onBack:()=>void;onUniversalAction:(action:QuickMenuHostAction)=>void;inbox:QuickMenuInbox}) {
   const {width,fontScale}=useWindowDimensions(); const insets=useSafeAreaInsets();
   const screenWidth=Math.min(width,frameMax), small=screenWidth<=350, inset=small?15:21, inner=screenWidth-2*inset;
   const filterHeight=Math.max(44,Math.ceil(18.2*fontScale+22));
@@ -41,6 +43,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const effectiveLayout=displayMode==='cms'&&draftLayout?draftLayout:layout;
   const sponsorAccess=sponsorEligible(effectiveLayout,profile,region,sponsorScenario,Date.now());
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
+  const [menuVisible,setMenuVisible]=useState(false);
   const scroll=useRef<ScrollView>(null); const sectionOffsets=useRef(new Map<string,number>()); const pendingJump=useRef<string|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
@@ -53,7 +56,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   useEffect(()=>{if(loaded)void AsyncStorage.setItem(PREFS_KEY,JSON.stringify(prefs)).catch(()=>{});},[prefs,loaded]);
   useEffect(()=>NetInfo.addEventListener(s=>setConnected(s.isConnected===false||s.isInternetReachable===false?false:s.isConnected)),[]);
   useEffect(()=>{let alive=true;AccessibilityInfo.isReduceMotionEnabled().then(v=>{if(alive)setReducedMotion(v)}).catch(()=>{});const sub=AccessibilityInfo.addEventListener('reduceMotionChanged',setReducedMotion);return()=>{alive=false;sub.remove()};},[]);
-  useEffect(()=>{const sub=BackHandler.addEventListener('hardwareBackPress',()=>{if(stack.length)back();else onBack();return true});return()=>sub.remove()},[stack.length,onBack]);
+  useEffect(()=>{const sub=BackHandler.addEventListener('hardwareBackPress',()=>{if(menuVisible)setMenuVisible(false);else if(stack.length)back();else onBack();return true});return()=>sub.remove()},[menuVisible,stack.length,onBack]);
   const head=(title:string,action?:string,target?:string,aside?:string)=><SectionHead p={p} title={title} action={action} onPress={target?()=>open(target):undefined} aside={aside} small={small} language={language}/>;
   const suffix=language==='long'?' — collection internationale':'';
   const marketReady=network==='ready'||network==='offline';
@@ -64,7 +67,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
             <Image source={referenceAssets.brand} resizeMode="contain" style={{width:small?20:35,height:small?20:35}} accessible={false}/>
             <Serif p={p} size={small?16:22} style={{lineHeight:small?19:23,letterSpacing:small?-.9:-1.8,flexShrink:1}}>Arts &amp; Lits</Serif>
           </View>
-          <View style={{flexDirection:'row'}}><TouchIcon p={p} compact={small} name="bell" label="Notifications — preview" onPress={()=>open('Notifications')}/><TouchIcon p={p} compact={small} name="search" label="Search" onPress={()=>open('Search')}/><TouchIcon p={p} compact={small} name="saved" label="Saved" onPress={()=>open('Saved')}/><TouchIcon p={p} compact={small} name={dark?'sun':'moon'} label={dark?'Switch to light mode':'Switch to dark mode'} onPress={()=>setPrefs(v=>({...v,theme:dark?'light':'dark'}))} selected={dark}/></View>
+          <View style={{flexDirection:'row'}}><TouchIcon p={p} compact={small} name="bell" label="Notifications — preview" onPress={()=>open('Notifications')}/><TouchIcon p={p} compact={small} name="search" label="Search" onPress={()=>open('Search')}/><TouchIcon p={p} compact={small} name="saved" label="Saved" onPress={()=>open('Saved')}/><TouchIcon p={p} compact={small} name="more" label="Open quick menu" onPress={()=>setMenuVisible(true)}/></View>
         </View>)},
     ...(network!=='ready' ? [{id:'connection',content:(<View accessibilityLiveRegion="polite" style={{paddingVertical:12,borderBottomWidth:1,borderBottomColor:p.line}}><Body p={p} style={{fontSize:13,lineHeight:18}}>{connectionMessages[network]}</Body>{network!=='loading'&&<TextLink p={p} label="Retry" onPress={()=>changeConnection('loading')} style={{alignSelf:'flex-start',justifyContent:'flex-start',marginTop:6}} chevron={false}/>}</View>)}] : []),
     {id:'edition',content:(<View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',marginTop:17,marginBottom:11}}><Micro p={p} style={{fontSize:10,lineHeight:14,letterSpacing:1.35}}>The cultural edit</Micro><Micro p={p} style={{fontSize:10,lineHeight:14,letterSpacing:1.35}}>Vol. 01   /   The gallery edit</Micro></View>)},
@@ -170,6 +173,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </View>
       </View>
     </View>
+    {menuVisible&&<ArtsLitsQuickMenu visible={menuVisible} close={()=>setMenuVisible(false)} p={p} dark={dark} reducedMotion={reducedMotion} inbox={inbox} onAction={(action:QuickMenuAction)=>{if(action==='dark')setPrefs(v=>({...v,theme:v.theme==='dark'?'light':'dark'}));else if(action==='saved')open('Saved');else if(action==='orders')open('My Orders');else onUniversalAction(action);}}/>}
     <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }

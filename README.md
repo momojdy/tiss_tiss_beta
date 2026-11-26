@@ -24,6 +24,35 @@ Use the Expo QR code with Expo Go or run a platform-specific development build. 
 
 The [Goodies operating guide](src/features/Goodies/README.md) explains customer/vendor/courier/admin workflows, pricing and commissions, Wallet/Card/Cash, Group Orders, Help Pay, the 5,000 HTG cash-sales cap, earnings holds, payouts, CMS ownership, deferred work and outstanding release acceptance. The [22 November audit](docs/goodies/operating-guide-audit-20261122/README.md) records the source/live-backend evidence and its verification limits. Goodies is part of the existing Wantiss app and backend; documenting or enabling backend capabilities does not release the super-app.
 
+## Shared feature Quick Menu (three dots)
+
+The header's three-dot button opens the Wantiss feature Quick Menu: a transparent slide-up modal with a dismissible backdrop, drag-handle appearance, five equal-width primary tiles, a horizontally scrolling secondary row, and Cancel. Use the feature's own light/dark palette; preserve the same layout, order, thin-stroke icons, accessible labels and Wantiss Home logo across features. Do not confuse Wantiss Home (exits to the host homepage) with the feature's own bottom-nav Home.
+
+| Row | Ordered actions |
+| --- | --- |
+| Primary | Home, Messages, Notifications, Wallet, Saved |
+| Secondary | My Orders, Recent Activity, Help Center, Feedback, Business Space, Dark Mode |
+
+### Reuse and route contract
+
+- [menuContract.ts](src/shared/quickMenu/menuContract.ts) defines canonical action keys, order, labels and icons for new menus. Existing menus retain their feature implementations; they do not yet all import the new contract.
+- Reuse [ThinMenuIcon](src/shared/quickMenu/ThinMenuIcon.tsx) and [useUnreadSummary](src/shared/inbox/useUnreadSummary.ts). The host already subscribes to the latter; pass the snapshot into new menus where practical. Show actual per-customer counts, capped visually at 99+, using aggregate feature badge colors. Show loading and retry for unavailable data; never substitute demo counts. The hook reads authenticated Supabase notifications, conversations and messages, refreshes via realtime, foreground and periodic updates, and resets on auth change.
+- Close the menu before navigation. Home goes to Wantiss Home; messages/notifications open host screens with the originating feature as their inbox return route; wallet and recent activity set the originating feature as their return route. Business Space uses the existing account-mode check and registration flow. Help/feedback use an appropriate implemented support route; the general Wantiss help form writes settings_support_requests only after user submission.
+- Saved and My Orders must point to appropriate feature or supported shared screens, not invent cross-feature records. Dark Mode toggles and persists the current feature preference, not another feature's theme. Use [useFeatureTheme](src/shared/quickMenu/useFeatureTheme.ts) where applicable or the feature's existing persistent theme store.
+- Honor Android back, backdrop/Cancel, safe-area insets, reduced motion, narrow screen widths and accessibility. When integrating CMS, keep all menu labels, close/retry text and supported logo asset editable through the feature's content layer; keep stable action IDs and route logic in code, not editable copy.
+- Test every tile, return navigation, dark/light persistence, unread loading/empty/error/retry, badge cap, signed-out transitions, narrow layouts and horizontal scrolling. Never mark production acceptance without device and authenticated backend verification.
+
+### Existing implementations
+
+| Feature | Implementation | Current routing notes |
+| --- | --- | --- |
+| Goodies | [GoodiesQuickMenu](src/features/Goodies/GoodiesQuickMenu.tsx) | Host actions via callback; feature orders/help/feedback and shared Saved where callback exists. |
+| Gatherz | [GatherzQuickMenu](src/features/gatherz/GatherzQuickMenu.tsx) | Host callbacks plus local favorites/orders/help/feedback; some fallback alerts. |
+| Konsoliss | [KonsolissQuickMenu](src/screens/Konsoliss/KonsolissQuickMenu.tsx) and [view](src/screens/Konsoliss/KonsolissQuickMenuView.tsx) | CMS copy, shared Saved, activity for orders, and existing Goodies support handoff. |
+| Arts & Lits | [ArtsLitsQuickMenu](src/screens/ArtsLits/ArtsLitsQuickMenu.tsx) | Host inbox/wallet/activity/business/support; Saved is local preview, My Orders explicitly unavailable until connected, theme uses existing local preferences. |
+
+Arts & Lits' header uses its existing theme-toggle slot for the dots; theme moves into the menu. No other header icons or approved homepage/dock artwork are changed. Arts & Lits menu CMS/translation wiring and feature-specific order/saved backend are outstanding; the menu uses canonical English defaults. Existing feature-specific return paths, copy and CMS completeness are not certified by this documentation.
+
 ## Supabase
 
 Configure the environment values expected by `src/lib/supabase.ts`. The root `stayz_guest.sql` file defines the Stayz guest database objects; review and apply it in the intended Supabase project before using the related backend features.

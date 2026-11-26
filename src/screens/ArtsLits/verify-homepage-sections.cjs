@@ -28,6 +28,7 @@ function load(name) {
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
   if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
+  if (name === './ArtsLitsQuickMenu') return {default:'ArtsLitsQuickMenu'};
   if (/\.(png|jpg|svg)$/.test(name)) return name;
   const base=path.join(root,name); const file=[base,base+'.ts',base+'.tsx'].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile());
   if(!file) throw Error('Unexpected import '+name);
@@ -40,7 +41,8 @@ const Home=load('./ArtsLitsHomeScreen').default;
 const {categories,profileOptions,connectionOptions,editorPicks,titleFor,destinations}=load('./model');
 const {catalog}=load('./catalog');
 const {discovery,defaultLayout,validateLayout,arrangeRows,showDiscovery,selectDiscovery,moveSection,entryEligible,resolveDiscovery,sampleMoney,requiredSections,sectionOrder,minimumItems,distinctItems,sampleDisclosure,canonicalAssetId,selectHomepageRows,previewRouteTitle,discoveryItem,sectionTitle,outsideOptionalBudget,sponsorEligible,preferNeighborImages,artworkSize,artworkAspectRatio,discoveryRailSlotHeight}=load('./homeRegistry');
-function tree(){index=0;refIndex=0;return Home({onBack(){}});}
+const menuActions=[];const testInbox={messages:4,notifications:102,status:'ready',notificationColor:'#123456',messageColor:'#654321',retry(){}};
+function tree(){index=0;refIndex=0;return Home({onBack(){},onUniversalAction:a=>menuActions.push(a),inbox:testInbox});}
 function flatten(node, out=[]){if(Array.isArray(node)){node.forEach(x=>flatten(x,out));return out;}if(!node||typeof node!=='object'||!node.props)return out;out.push(node);flatten(node.props.children,out);return out;}
 function rowsOf(scroll){return scroll.props.children.map(n=>({id:n.props.testID.slice('arts-lits-section-'.length),content:n.props.children}));}
 function find(nodes,id){const n=nodes.find(n=>n.props.testID===id);assert.ok(n,'Missing '+id);return n;}
@@ -168,3 +170,6 @@ console.log('B7: editorial nav typography and existing dock opacity verified.');
 // B8: uniform labeled-tab geometry, preserved Home center and no shifted hit targets.
 for(const w of [320,350,375,390,430,460,600]){width=w;state=[];refs=[];nodes=flatten(tree());const nav=find(nodes,'arts-lits-bottom-nav');const home=find(nodes,'arts-lits-tab-home');const sw=Math.min(w,460),inner=sw-30,oldEye=Math.max(96,Math.min(122,sw*.29)),oldHome=(inner-oldEye)/4,gap=sw<=350?8:10;assert.equal(home.props.style.width,oldHome+gap);assert.equal(home.props.style.flex,0);const art=flatten(home).find(n=>n.props.pointerEvents==='none');assert.equal(home.props.style.width/2+art.props.style.transform[0].translateX,oldHome/2);for(const name of ['explore','artrium','library','bazaar']){const tab=find(nodes,'arts-lits-tab-'+name);assert.equal(tab.props.style.flex,1);assert.equal(tab.props.style.width,undefined);assert.equal(tab.props.style.transform,undefined);}assert.ok((inner-home.props.style.width)/4>=44);assert.equal(nav.props.style.backgroundColor,'rgba(255,255,255,0.88)');}
 const dockArtwork=fs.readFileSync(path.join(root,'living-art/LivingArtIcon.tsx'),'utf8');assert.ok(dockArtwork.includes('Artrium:.728'));assert.ok(dockArtwork.includes('bazaarSaturation=0.58'));assert.ok(dockArtwork.includes('<G filter="url(#bazaar-editorial-saturation)">'));assert.ok(!dockArtwork.includes('!loaded&&<Image source={bazaarSource}'));console.log('B8: equal labeled-tab slots, unchanged Home center, smaller Artrium and approved Bazaar grade verified.');
+
+// B9: header entry, menu close, host callbacks, local saved/orders and theme toggle.
+state=[];refs=[];nodes=flatten(tree());const quickHeader=()=>flatten(find(nodes,'arts-lits-section-header')).find(n=>n.props.label==='Open quick menu');assert.ok(quickHeader());quickHeader().props.onPress();nodes=flatten(tree());const quick=()=>nodes.find(n=>n.type==='ArtsLitsQuickMenu');assert.equal(quick().props.inbox,testInbox);assert.equal(quick().props.visible,true);for(const action of ['home','messages','notifications','wallet','activity','help','feedback','business'])quick().props.onAction(action);assert.deepEqual(menuActions,['home','messages','notifications','wallet','activity','help','feedback','business']);quick().props.onAction('dark');nodes=flatten(tree());assert.equal(quick().props.dark,true);quick().props.onAction('saved');nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Saved');preview(nodes).close();nodes=flatten(tree());quick().props.onAction('orders');nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'My Orders');preview(nodes).close();nodes=flatten(tree());quick().props.close();nodes=flatten(tree());assert.equal(quick(),undefined);console.log('B9: Quick Menu header, host routes, local preview actions, close and theme dispatch checked.');
