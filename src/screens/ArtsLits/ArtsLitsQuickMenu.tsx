@@ -5,8 +5,8 @@ import {ThinMenuIcon} from '../../shared/quickMenu/ThinMenuIcon';
 import {primaryQuickActions,secondaryQuickActions,type QuickMenuAction,type QuickMenuInbox} from '../../shared/quickMenu/menuContract';
 import {sans,type Palette} from './design';
 
-type Props={visible:boolean;close:()=>void;onAction:(action:QuickMenuAction)=>void;p:Palette;dark:boolean;reducedMotion:boolean;inbox:QuickMenuInbox};
-export default function ArtsLitsQuickMenu({visible,close,onAction,p,dark,reducedMotion,inbox}:Props){
+type Props={inline?:boolean;visible:boolean;close:()=>void;onAction:(action:QuickMenuAction)=>void;p:Palette;dark:boolean;reducedMotion:boolean;inbox:QuickMenuInbox};
+export default function ArtsLitsQuickMenu({visible,close,onAction,p,dark,reducedMotion,inbox,inline=false}:Props){
  const insets=useSafeAreaInsets(),{height}=useWindowDimensions();
  const [logoFailed,setLogoFailed]=useState(false);
  const tile=([key,label,icon]:readonly [QuickMenuAction,string,string],primary:boolean)=>{
@@ -17,8 +17,8 @@ export default function ArtsLitsQuickMenu({visible,close,onAction,p,dark,reduced
    {key!=='home'?<Text style={{fontFamily:sans,fontSize:10,fontWeight:'600',color:p.ink,textAlign:'center'}}>{label}</Text>:null}
   </Pressable>;
  };
- return <Modal visible={visible} transparent animationType={reducedMotion?'none':'slide'} onRequestClose={close}>
-  <View style={{flex:1,justifyContent:'flex-end',backgroundColor:'rgba(12,8,25,0.45)'}}>
+ if(!visible)return null;
+ const content=<View style={{flex:1,justifyContent:'flex-end',backgroundColor:'rgba(12,8,25,0.45)'}}>
    <Pressable accessibilityRole="button" accessibilityLabel="Close menu" onPress={close} style={{flex:1}}/>
    <View accessibilityViewIsModal style={{backgroundColor:p.paper,borderTopLeftRadius:26,borderTopRightRadius:26,paddingTop:12,paddingBottom:Math.max(28,insets.bottom+12),maxHeight:height*.88}}>
     <View style={{width:38,height:4,borderRadius:3,backgroundColor:p.teal,alignSelf:'center',marginBottom:22}}/>
@@ -30,6 +30,9 @@ export default function ArtsLitsQuickMenu({visible,close,onAction,p,dark,reduced
      <Pressable accessibilityRole="button" accessibilityLabel="Cancel" onPress={close} style={{marginHorizontal:16,marginTop:14,padding:14,minHeight:44,backgroundColor:p.plaque,borderRadius:14,alignItems:'center',borderWidth:1,borderColor:p.line}}><Text style={{fontFamily:sans,color:p.teal,fontWeight:'700'}}>Cancel</Text></Pressable>
     </ScrollView>
    </View>
-  </View>
- </Modal>;
+  </View>;
+ // A detail page already uses a native Modal. Keep the menu in that same
+ // presentation layer rather than trying to present a second native modal.
+ if(inline)return <View testID="arts-lits-inline-quick-menu" style={{position:'absolute',top:0,right:0,bottom:0,left:0,zIndex:150,elevation:20}}>{content}</View>;
+ return <Modal visible={visible} transparent animationType={reducedMotion?'none':'slide'} onRequestClose={close}>{content}</Modal>;
 }

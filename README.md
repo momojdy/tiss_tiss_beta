@@ -26,12 +26,18 @@ The [Goodies operating guide](src/features/Goodies/README.md) explains customer/
 
 ## Shared feature Quick Menu (three dots)
 
-The header's three-dot button opens the Wantiss feature Quick Menu: a transparent slide-up modal with a dismissible backdrop, drag-handle appearance, five equal-width primary tiles, a horizontally scrolling secondary row, and Cancel. Use the feature's own light/dark palette; preserve the same layout, order, thin-stroke icons, accessible labels and Wantiss Home logo across features. Do not confuse Wantiss Home (exits to the host homepage) with the feature's own bottom-nav Home.
+The floating three-dot button opens the Wantiss feature Quick Menu: a transparent slide-up modal with a dismissible backdrop, drag-handle appearance, five equal-width primary tiles, a horizontally scrolling secondary row, and Cancel. Use the feature's own light/dark palette; preserve the same layout, order, thin-stroke icons, accessible labels and Wantiss Home logo across features. Do not confuse Wantiss Home (exits to the host homepage) with the feature's own bottom-nav Home.
 
 | Row | Ordered actions |
 | --- | --- |
 | Primary | Home, Messages, Notifications, Wallet, Saved |
 | Secondary | My Orders, Recent Activity, Help Center, Feedback, Business Space, Dark Mode |
+
+### Floating trigger — mandatory for every feature
+
+- The Quick Menu trigger is a fixed viewport overlay, outside the scroll content and not a header-row icon. Keep it accessible on every page belonging to the current feature (including detail sheets, with the trigger rendered in the active modal/route layer). Do not display it over unrelated host destinations, or stack another trigger above its own open menu. Use the feature's own palette and a safe-area-aware placement.
+- The reference trigger in Goodies and Konsoliss uses a 49 × 42 dp rounded pill, three left-to-right circles of **5, 7 and 10 dp** diameter with a 3 dp gap. Do not replace these with three equally sized dots or a generic ellipsis. New implementations should reuse [FloatingQuickMenuButton](src/shared/quickMenu/FloatingQuickMenuButton.tsx).
+- If a feature uses a native modal for its detail pages, render the trigger in the visible modal layer. Present the menu above that page in the same layer (avoid competing native modal presentations), and return to the same detail when dismissed or toggling its theme. Verify that the floating trigger stays fixed while scrolling. For native payment/security surfaces, follow the host's security and modal rules.
 
 ### Reuse and route contract
 
@@ -51,7 +57,7 @@ The header's three-dot button opens the Wantiss feature Quick Menu: a transparen
 | Konsoliss | [KonsolissQuickMenu](src/screens/Konsoliss/KonsolissQuickMenu.tsx) and [view](src/screens/Konsoliss/KonsolissQuickMenuView.tsx) | CMS copy, shared Saved, activity for orders, and existing Goodies support handoff. |
 | Arts & Lits | [ArtsLitsQuickMenu](src/screens/ArtsLits/ArtsLitsQuickMenu.tsx) | Host inbox/wallet/activity/business/support; Saved is local preview, My Orders explicitly unavailable until connected, theme uses existing local preferences. |
 
-Arts & Lits' header uses its existing theme-toggle slot for the dots; theme moves into the menu. No other header icons or approved homepage/dock artwork are changed. Arts & Lits menu CMS/translation wiring and feature-specific order/saved backend are outstanding; the menu uses canonical English defaults. Existing feature-specific return paths, copy and CMS completeness are not certified by this documentation.
+Arts & Lits' header retains Back, branding and Search only; Notifications, Saved and Dark Mode are available through the floating Quick Menu. The trigger is mounted on the homepage and in every existing Arts & Lits detail sheet, using the same shared 5/7/10 dp dots. Its position follows the existing Konsoliss reference (safe-area top + 198 dp, right 18 dp). The approved homepage/dock artwork is unchanged. Arts & Lits menu CMS/translation wiring and feature-specific order/saved backend are outstanding; the menu uses canonical English defaults. Existing feature-specific return paths, copy and CMS completeness are not certified by this documentation.
 
 ## Supabase
 
