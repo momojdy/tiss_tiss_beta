@@ -1,6 +1,6 @@
 import React from 'react';
 import type {Palette} from './design';
-import {mixColor,waveAmount,type WaveBounds} from './themeSpillGeometry';
+import {mixColor,waveAmount,paperWaveAmount,readableColor,type WaveBounds} from './themeSpillGeometry';
 export type LiveWave={from:Palette;to:Palette;progress:number;width:number;height:number};
 export function blendPalette(from:Palette,to:Palette,t:number):Palette{
  if(t<=0)return from;if(t>=1)return to;
@@ -8,7 +8,15 @@ export function blendPalette(from:Palette,to:Palette,t:number):Palette{
  for(const key of Object.keys(from) as (keyof Palette)[])result[key]=mixColor(from[key],to[key],t);
  return result;
 }
-export function wavePalette(wave:LiveWave,x:number,y:number){return blendPalette(wave.from,wave.to,waveAmount(wave.width,wave.height,x,y,wave.progress));}
+export function wavePalette(wave:LiveWave,x:number,y:number){
+ const t=waveAmount(wave.width,wave.height,x,y,wave.progress);
+ if(wave.progress<=0)return wave.from;if(wave.progress>=1)return wave.to;
+ const mixed=blendPalette(wave.from,wave.to,t);
+ const paper=mixColor(wave.from.paper,wave.to.paper,paperWaveAmount(wave.width,wave.height,x,y,wave.progress));
+ const preferred=paperWaveAmount(wave.width,wave.height,x,y,wave.progress)>=.5?wave.to:wave.from;
+ const other=preferred===wave.to?wave.from:wave.to;
+ return {...mixed,ink:readableColor(mixed.ink,paper,[preferred.ink,other.ink]),muted:readableColor(mixed.muted,paper,[preferred.muted,preferred.ink,other.ink]),teal:readableColor(mixed.teal,paper,[preferred.teal,preferred.ink,other.ink]),rust:readableColor(mixed.rust,paper,[preferred.rust,preferred.ink,other.ink])};
+}
 function mapIfChanged<T>(items:readonly T[],fn:(item:T,index:number)=>T):readonly T[]{
  let changed=false;const next=items.map((item,index)=>{const v=fn(item,index);if(v!==item)changed=true;return v;});return changed?next:items;
 }
@@ -20,7 +28,7 @@ export function paintThemeTree(node:React.ReactNode,wave:LiveWave,bounds:WaveBou
  if(Array.isArray(node))return mapIfChanged(node,(child,i)=>paintThemeTree(child,wave,{x,y:y+height*i/Math.max(1,node.length),width,height:height/Math.max(1,node.length)})) as React.ReactNode;
  if(!React.isValidElement(node))return node;
  const amount=waveAmount(wave.width,wave.height,x+width*.5,y+height*.5,wave.progress);
- const p=blendPalette(wave.from,wave.to,amount);
+ const p=wavePalette(wave,x+width*.5,y+height*.5);
  const colorMap=new Map((Object.keys(wave.from) as (keyof Palette)[]).map(k=>[wave.from[k],p[k]]));
  const color=(v:unknown)=>typeof v==='string'?(colorMap.get(v)??v):v;
  const style=(v:unknown):unknown=>{

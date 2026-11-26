@@ -61,3 +61,32 @@ export function mixColor(from:string,to:string,t:number){
  const v=a.map((n,i)=>n+(b[i]-n)*t);
  return `rgba(${Math.round(v[0])},${Math.round(v[1])},${Math.round(v[2])},${Math.round(v[3]*1000)/1000})`;
 }
+
+// Keep theme-dependent foregrounds legible while their colors cross.
+// Interpolating light paper and dark ink simultaneously otherwise makes
+// them converge to the same gray around the middle of a transition.
+function rgbLuminance(color:string){
+ const hex=color.match(/^#([\da-f]{6})$/i);
+ const m=color.match(/^rgba?\(\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)/i);
+ const rgb=hex?[0,2,4].map(i=>parseInt(hex[1].slice(i,i+2),16)):m?[+m[1],+m[2],+m[3]]:null;
+ if(!rgb)return null;
+ const linear=rgb.map(n=>{const v=n/255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);});
+ return .2126*linear[0]+.7152*linear[1]+.0722*linear[2];
+}
+export function contrastRatio(a:string,b:string){
+ const x=rgbLuminance(a),y=rgbLuminance(b);return x===null||y===null?0:(Math.max(x,y)+.05)/(Math.min(x,y)+.05);
+}
+export function readableColor(preferred:string,background:string,alternatives:readonly string[],minimum=4.5){
+ if(contrastRatio(preferred,background)>=minimum)return preferred;
+ for(const c of alternatives)if(contrastRatio(c,background)>=minimum)return c;
+ return ['#111111','#ffffff','#000000'].reduce((best,c)=>contrastRatio(c,background)>contrastRatio(best,background)?c:best);
+}
+export function paperWaveAmount(width:number,height:number,x:number,y:number,t:number){
+ t=spillProgress(t);if(t===0||t===1)return t;
+ x=Math.max(0,Math.min(width,x));y=Math.max(0,Math.min(height,y));
+ const d=Math.max(1,Math.hypot(width,height)),a=Math.atan2(y,x),r=Math.hypot(x,y);
+ if(r<=spillFrontRadius(d,t,a))return 1;
+ if(r<=spillFrontRadius(d,t,a,.055))return .34+.17*(1-.34);
+ if(r<=spillFrontRadius(d,t,a,.12))return .17;
+ return 0;
+}
