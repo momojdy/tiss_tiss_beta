@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AccessibilityInfo, BackHandler, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -13,7 +13,7 @@ import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, P
 import PreviewSheet from './PreviewSheet';
 import { LivingArtIcon, artSize, setLivingArtGate, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
-import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
+import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -22,6 +22,8 @@ function readPreferences(raw:string|null):PreviewPreferences {
   try {const x=JSON.parse(raw);const strings=(v:unknown,d:string[])=>Array.isArray(v)?v.filter((a):a is string=>typeof a==='string'):d;return {theme:x.theme==='dark'?'dark':'light',saved:strings(x.saved,[]),reminders:strings(x.reminders,[]),following:strings(x.following,[...defaultFollowing])};}catch{return initialPreferences;}
 }
 type HomeRow={id:string;content:React.ReactElement};
+const rowKey=(row:HomeRow)=>row.id;
+const renderHomeRow=({item}:{item:HomeRow})=><View testID={'arts-lits-section-'+item.id} collapsable={false} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>;
 const tabs:LivingArtTab[]=['Home','Explore','Artrium','Library','Bazaar'];
 
 export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
@@ -39,10 +41,12 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const effectiveLayout=displayMode==='cms'&&draftLayout?draftLayout:layout;
   const sponsorAccess=sponsorEligible(effectiveLayout,profile,region,sponsorScenario,Date.now());
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
-  const scroll=useRef<FlatList<HomeRow>>(null); const jumpTimer=useRef<ReturnType<typeof setTimeout>|null>(null); const pendingJump=useRef<{index:number;attempts:number}|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const scroll=useRef<FlatList<HomeRow>>(null); const jumpTimer=useRef<ReturnType<typeof setTimeout>|null>(null); const pendingJump=useRef<{id:string;index:number;attempts:number;lastMeasured?:number}|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
-  const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){const id=name.slice(9);if(rows.some(r=>r.id===id))jumpToSection(id);else if(discovery.some(d=>d.id===id)&&!(id==='recently-viewed'&&profile==='new'))setStack(v=>[...v,'Explore section: '+id]);else setStack(['Section not shown']);return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
+  const dispatchOpen=useRef<(name:string)=>void>(()=>{});
+  const open=useCallback((name:string)=>dispatchOpen.current(name),[]);
+  dispatchOpen.current=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){const id=name.slice(9);if(rows.some(r=>r.id===id))jumpToSection(id);else if(discovery.some(d=>d.id===id)&&!(id==='recently-viewed'&&profile==='new'))setStack(v=>[...v,'Explore section: '+id]);else setStack(['Section not shown']);return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
   function changeConnection(c:Connection){if(timer.current)clearTimeout(timer.current);setConnection(c);setLimit(6);if(c==='loading')timer.current=setTimeout(()=>setConnection('live'),1200);}
   function togglePref(key:'saved'|'reminders'|'following',value:string){setPrefs(prev=>({...prev,[key]:prev[key].includes(value)?prev[key].filter(v=>v!==value):[...prev[key],value]}));}
   useEffect(()=>{let alive=true;AsyncStorage.getItem(PREFS_KEY).then(raw=>{if(alive)setPrefs(readPreferences(raw));}).catch(()=>{}).finally(()=>{if(alive)setLoaded(true);});return()=>{alive=false;if(timer.current)clearTimeout(timer.current);if(jumpTimer.current)clearTimeout(jumpTimer.current)};},[]);
@@ -53,7 +57,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const head=(title:string,action?:string,target?:string,aside?:string)=><SectionHead p={p} title={title} action={action} onPress={target?()=>open(target):undefined} aside={aside} small={small} language={language}/>;
   const suffix=language==='long'?' — collection internationale':'';
   const marketReady=network==='ready'||network==='offline';
-  const nativeRows:HomeRow[] = [
+  const nativeRows:HomeRow[] = useMemo(()=>[
     {id:'header',content:(<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:4,paddingTop:19,paddingBottom:14,borderBottomWidth:1,borderBottomColor:p.ink}}>
           <TouchIcon p={p} compact={small} name="back" label="Back to Wantiss" onPress={onBack}/>
           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',flex:1,minWidth:0,gap:small?3:6}}>
@@ -112,13 +116,16 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
           <View accessibilityLiveRegion="polite" style={{paddingVertical:14,alignItems:'center',minHeight:52}}>{!marketReady?<><Small p={p} style={{textAlign:'center'}}>{network==='loading'?'Loading available works…':network==='error'?'Catalog could not be refreshed.':'No works available right now. Explore the museum or try another category.'}</Small>{network!=='loading'&&<TextLink p={p} label="Retry catalog" onPress={()=>changeConnection('loading')} chevron={false}/>}</>:products.hasMore?<TextLink p={p} label="Load more works" labelStyle={{fontSize:10,lineHeight:14,letterSpacing:1.2,textTransform:'uppercase',color:p.muted}} onPress={()=>setLimit(n=>n+6)} chevron={false}/>:<Small p={p} style={{textAlign:'center'}}>{products.total?'You’ve reached the end of this sample collection.':'No works in this category.'}</Small>}</View>
         </Section>)},
     {id:'footer',content:(<View style={{marginTop:28,borderTopWidth:1,borderColor:p.line,paddingTop:12}}><Small p={p}>Design preview · Illustrative catalog, access and prices. Embedded visual references, not actual venue or product photographs. No real purchases or partnerships.</Small><TextLink p={p} label="Preview customer, layout & connection states" onPress={()=>open('Preview controls')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/><TextLink p={p} label="Image references & credits" onPress={()=>open('Image credits')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/></View>)},
-  ];
-  const extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale);
-  const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/> }));
+  ],[p,profile,sponsor,sponsorAccess,network,small,screenWidth,inner,inset,width,fontScale,language,prefs.following,prefs.reminders,prefs.saved,category,limit,currency,onBack,open]);
   const eligibleNative=(l:HomeLayout,now:number)=>nativeRows.filter(r=>{const entry=l.sections.find(x=>x.id===r.id);return r.id==='sponsored'?sponsorEligible(l,profile,region,sponsorScenario,now):!entry||entryEligible(entry,profile,region,now);});
-  const selectedRows=selectHomepageRows([...eligibleNative(effectiveLayout,Date.now()),...extraRows],effectiveLayout,profile,displayMode);
-  const preferred=preferNeighborImages(extras,selectedRows.map(r=>r.id),effectiveLayout,displayMode);
-  const rows=selectedRows.map(r=>{const d=preferred.find(x=>x.id===r.id);return d?{id:r.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}:r;});
+  const rows=useMemo(()=>{
+    const now=Date.now(),extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale,now);
+    const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}));
+    const selectedRows=selectHomepageRows([...eligibleNative(effectiveLayout,now),...extraRows],effectiveLayout,profile,displayMode);
+    const preferred=preferNeighborImages(extras,selectedRows.map(r=>r.id),effectiveLayout,displayMode);
+    return selectedRows.map(r=>{const d=preferred.find(x=>x.id===r.id);return d?{id:r.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}:r;});
+  },[nativeRows,effectiveLayout,profile,displayMode,region,locale,sponsorScenario,p,inset,small,language,open]);
+  const currentRows=useRef(rows);currentRows.current=rows;
   // The layout editor uses the same actual profile, mode, eligibility and budget as the rendered homepage.
   function visibleSectionIdsForLayout(value:HomeLayout){const l=validateLayout(value),now=Date.now();return selectHomepageRows([...eligibleNative(l,now).map(r=>({id:r.id})),...selectDiscovery(l,profile,displayMode,region,locale,now).map(d=>({id:d.id}))],l,profile,displayMode).map(r=>r.id);}
   // Freeze the nav art from the first touch until scrolling has settled so its redraws never compete with touch and scroll handling.
@@ -127,20 +134,25 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   function releaseArt(ms:number){if(gateTimer.current)clearTimeout(gateTimer.current);gateTimer.current=setTimeout(()=>setLivingArtGate(false),ms);}
   useEffect(()=>()=>{if(gateTimer.current)clearTimeout(gateTimer.current);setLivingArtGate(false);},[]);
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
-  function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;scroll.current.scrollToIndex({index:target.index,animated:!reducedMotion,viewPosition:0});}
+  function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;const index=currentRows.current.findIndex(r=>r.id===target.id);if(index<0){cancelJump();return;}target.index=index;scroll.current.scrollToIndex({index,animated:target.attempts===0&&!reducedMotion,viewPosition:0});}
   function jumpToSection(id:string){
     const index=rows.findIndex(r=>r.id===id);if(index<0){setStack(['Section not shown']);return;}
-    cancelJump();setStack([]);pendingJump.current={index,attempts:0};
+    cancelJump();setStack([]);pendingJump.current={id,index,attempts:0};
     jumpTimer.current=setTimeout(tryJump,active&&!reducedMotion?350:0);
   }
   function onJumpFailed(info:{index:number;highestMeasuredFrameIndex:number;averageItemLength:number}){
     const target=pendingJump.current;if(!target||target.index!==info.index)return;
-    const estimate=Math.max(0,info.averageItemLength*info.index);
+    if(++target.attempts>16){cancelJump();return;}
+    // Measured lengths vary widely. Probe around the estimate if a previous retry made no progress.
+    const stalled=target.lastMeasured===info.highestMeasuredFrameIndex;
+    const probe=stalled?(target.attempts%2===0?1:-1)*Math.ceil(target.attempts/2):0;
+    target.lastMeasured=info.highestMeasuredFrameIndex;
+    const estimate=Math.max(0,Math.max(1,info.averageItemLength)*(info.index+probe));
     scroll.current?.scrollToOffset({offset:estimate,animated:false});
-    if(++target.attempts>5){cancelJump();return;}
     if(jumpTimer.current)clearTimeout(jumpTimer.current);
-    jumpTimer.current=setTimeout(tryJump,180);
+    jumpTimer.current=setTimeout(tryJump,200);
   }
+  const onRowsVisible=useRef(({viewableItems}:{viewableItems:Array<{item:HomeRow;isViewable:boolean}>})=>{const target=pendingJump.current;if(target&&viewableItems.some(v=>v.isViewable&&v.item.id===target.id))cancelJump();}).current;
   // Same root-relative placement as Flyz, Goodies, Gatherz and Prezo. App owns the Android bottom inset.
   const dockBottom=18;
   const dockExtra=Math.ceil(13*Math.max(1,fontScale))-13;
@@ -148,15 +160,16 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   return <View style={{flex:1,minHeight:0,backgroundColor:p.outer,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:Math.max(0,insets.top-19)}}>
-      <FlatList ref={scroll} testID="arts-lits-home-scroll" data={rows} keyExtractor={row=>row.id}
-        renderItem={({item})=><View testID={`arts-lits-section-${item.id}`} collapsable={false} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>}
+      <FlatList ref={scroll} testID="arts-lits-home-scroll" data={rows} keyExtractor={rowKey}
+        renderItem={renderHomeRow}
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
-        initialNumToRender={sectionOrder.length} maxToRenderPerBatch={sectionOrder.length} windowSize={11} removeClippedSubviews={false}
+        initialNumToRender={7} maxToRenderPerBatch={3} updateCellsBatchingPeriod={40} windowSize={5} removeClippedSubviews={false}
+        onViewableItemsChanged={onRowsVisible}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         onScrollToIndexFailed={onJumpFailed} onTouchStart={holdArt} onTouchEnd={()=>releaseArt(700)} onTouchCancel={()=>releaseArt(700)} onScrollBeginDrag={()=>{cancelJump();holdArt();}} onScrollEndDrag={()=>releaseArt(700)} onMomentumScrollBegin={holdArt} onMomentumScrollEnd={()=>releaseArt(300)}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
-        <View testID="arts-lits-bottom-nav" onLayout={e=>setDockHeight(Math.ceil(e.nativeEvent.layout.height))} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
+        <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
           {tabs.map(name=>{
             const home=name==='Home',center=name==='Artrium',bazaar=name==='Bazaar';
             const [artWidth,artHeight]=artSize[name];

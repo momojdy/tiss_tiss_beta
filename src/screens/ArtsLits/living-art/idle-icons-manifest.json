@@ -1,0 +1,44 @@
+{
+  "home-idle-light.png": {
+    "source": "home-v73.ts",
+    "width": 198,
+    "height": 198,
+    "sha256": "b99231b545671d74ab3be1c18878077a6f6379c3d04684b6495c1d81d9de3c70",
+    "bytes": 37521
+  },
+  "home-idle-dark.png": {
+    "source": "home-v73.ts",
+    "width": 198,
+    "height": 198,
+    "sha256": "76af9c85b1c47f28fe39376fe5d85364fc8419155727ed82111bc8382274dc29",
+    "bytes": 39674
+  },
+  "artrium-idle-light.png": {
+    "source": "artrium-v73.ts",
+    "width": 318,
+    "height": 318,
+    "sha256": "5c95d3b4b6cd3627d6099148dabc0ff75035167bc01d23f19cca20ebcf798752",
+    "bytes": 80694
+  },
+  "artrium-idle-dark.png": {
+    "source": "artrium-v73.ts",
+    "width": 318,
+    "height": 318,
+    "sha256": "54d12364a329662e6501734e25220228c0726137fe1eb1a052b11747481ba329",
+    "bytes": 81377
+  },
+  "library-idle-light.png": {
+    "source": "library-v73.ts",
+    "width": 282,
+    "height": 282,
+    "sha256": "2797552211f4193038828ff807518ae70ac1d6c87251f60d68ddfdbd077991d9",
+    "bytes": 48025
+  },
+  "library-idle-dark.png": {
+    "source": "library-v73.ts",
+    "width": 282,
+    "height": 282,
+    "sha256": "f4fbc10dfa3b50f4d995e1f8725efa300b4aa84356cdc1087c84f2a81ca799ca",
+    "bytes": 47849
+  }
+}

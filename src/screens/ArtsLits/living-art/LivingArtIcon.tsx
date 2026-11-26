@@ -8,18 +8,17 @@ type NativeProps = Record<string, unknown>;
 type ArtProps = { name:LivingArtTab; dark:boolean; reducedMotion:boolean; paused:boolean };
 type VectorName = Exclude<LivingArtTab,'Bazaar'>;
 export const artSize = {Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]} as const;
-// Loaded lazily: these four modules hold ~3 MB of SVG data, which must not be evaluated or parsed before the nav needs them.
-const source:Record<VectorName,()=>string> = {Home:()=>require('./home-v73').default,Explore:()=>require('./explore-v73').default,Artrium:()=>require('./artrium-v73').default,Library:()=>require('./library-v73').default};
+// Only the 18-node compass is evaluated at runtime. Heavy V73 art is pre-rendered offline.
+const source:Record<VectorName,()=>string> = {Explore:()=>require('./explore-v73').default,Home:()=>'',Artrium:()=>'',Library:()=>''};
+const stills={Home:{light:require('./home-idle-light.png'),dark:require('./home-idle-dark.png')},Artrium:{light:require('./artrium-idle-light.png'),dark:require('./artrium-idle-dark.png')},Library:{light:require('./library-idle-light.png'),dark:require('./library-idle-dark.png')}};
 const viewBoxes:Record<VectorName,string> = {Home:'0 0 500 500',Explore:'0 0 72 64',Artrium:'0 0 2048 1572',Library:'33 48 407 380'};
-// Building the big icons is heavy, so they mount after the screen transition (400ms + stagger), one at a time.
-const mountDelay:Record<VectorName,number> = {Explore:0,Home:80,Library:160,Artrium:260};
 const cache:Partial<Record<VectorName,SvgNode>> = {};
 function tree(name:VectorName) { return cache[name] ?? (cache[name]=JSON.parse(source[name]()) as SvgNode); }
 const tags:Record<string,React.ElementType>={g:G,path:Path,polygon:Polygon,circle:Circle,ellipse:Ellipse,rect:Rect,defs:Defs,mask:Mask,clipPath:ClipPath,linearGradient:LinearGradient,radialGradient:RadialGradient,stop:Stop,use:Use,filter:Filter,feColorMatrix:FeColorMatrix};
 const web=Platform.OS==='web';
 // The V73 cycles (8-29s) are too subtle on a phone, so the shared clock runs this many times faster than the HTML.
 const SPEED=3;
-// Every commit redraws the whole native SVG (Artrium ~4,300 shapes, Home ~2,800), so the heavy icons update less often to keep touch and scrolling responsive.
+// Only the lightweight Explore compass uses the frame clock.
 const frameMs:Record<'Home'|'Explore'|'Artrium'|'Library',number>={Explore:42,Library:50,Home:66,Artrium:66};
 const ClockContext=createContext(0);
 const listeners=new Set<(dt:number)=>void>();
@@ -79,12 +78,11 @@ function renderNode(node:SvgNode|string,ctx:Context,key:number):React.ReactNode{
 function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const [clock,setClock]=useState(0),elapsed=useRef(0),pending=useRef(0);
   useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{pending.current+=dt;if(pending.current<frameMs[name])return;elapsed.current+=pending.current*SPEED;pending.current=0;setClock(elapsed.current);});},[paused,reducedMotion,name]);
-  const [ready,setReady]=useState(false);
-  useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;t=setTimeout(()=>setReady(true),400+mountDelay[name]);return()=>{if(t)clearTimeout(t);};},[name]);
+  // Compass is small enough to mount immediately; no deferred heavy mount on first swipe.
   const [w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
   const [x,y,vw,vh]=nums(viewBoxes[name]),s=Math.min(w/vw,h/vh);
   const expanded=[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ');
-  const content=useMemo(()=>!ready?null:tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[ready,name,dark,reducedMotion]);
+  const content=useMemo(()=>tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[name,dark,reducedMotion]);
   return <ClockContext.Provider value={reducedMotion?0:clock}><View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
     <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#b3aa95':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
@@ -95,5 +93,9 @@ export const LivingArtIcon=memo(function LivingArtIcon(props:ArtProps){
   if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
     <Image source={require('./bazaar-v73.png')} style={{width:35,height:35}} resizeMode="contain" accessible={false}/>
   </View>;
-  return <VectorArt {...props} name={props.name}/>;
+  if(props.name==='Explore')return <VectorArt {...props} name="Explore"/>;
+  const [w,h]=artSize[props.name],pad=props.name==='Home'?4:22;
+  return <View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
+    <Image source={stills[props.name][props.dark?'dark':'light']} resizeMode="contain" fadeDuration={0} accessible={false} style={{position:'absolute',left:-pad,top:-pad,width:w+2*pad,height:h+2*pad}}/>
+  </View>;
 });
