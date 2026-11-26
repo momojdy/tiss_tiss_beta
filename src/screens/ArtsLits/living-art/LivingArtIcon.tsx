@@ -9,7 +9,7 @@ type ArtProps = {name:LivingArtTab;dark:boolean;reducedMotion:boolean;paused:boo
 export const artSize={Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]} as const;
 type HeavyName='Home'|'Artrium'|'Library';
 // Optical sizing changes only the artwork, not the dock layout or hit targets.
-export const opticalScale={Home:1,Explore:1.06,Artrium:.86,Library:.94,Bazaar:1.13} as const;
+export const opticalScale={Home:1,Explore:1.06,Artrium:.70,Library:.94,Bazaar:1.13} as const;
 const compassPalette:Record<string,string>={
  '#e7b631':'#ba9b55','#d95a48':'#b66f57','#36a8ad':'#729d94','#3977ab':'#69828f',
  '#f4e3ba':'#eee1c5','#d64f3e':'#a85d49','#319b9d':'#608e83','#eec64d':'#d0b36b',
@@ -71,14 +71,12 @@ function ExploreArt({dark,reducedMotion,paused}:ArtProps){
 // A static, native color-matrix pass only for Bazaar. Keep its original alpha,
  // proportions and tonal detail, and leave the animated icons untouched.
 const bazaarSource=require('./bazaar-v73.png');
-const bazaarSaturation=0.58;
+const bazaarSaturation=0.22;
 function BazaarArt(){
- const [loaded,setLoaded]=useState(false);
  return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
-  {!loaded&&<Image source={bazaarSource} style={{position:'absolute',width:35,height:35}} resizeMode="contain" fadeDuration={0} accessible={false}/>}
   <Svg width={35} height={35} viewBox="0 0 35 35" accessible={false}>
    <Defs><Filter id="bazaar-editorial-saturation" x="0%" y="0%" width="100%" height="100%"><FeColorMatrix type="saturate" values={String(bazaarSaturation)}/></Filter></Defs>
-   <SvgImage href={bazaarSource} x={0} y={0} width={35} height={35} preserveAspectRatio="xMidYMid meet" filter="url(#bazaar-editorial-saturation)" onLoad={()=>setLoaded(true)}/>
+   <G filter="url(#bazaar-editorial-saturation)"><SvgImage href={bazaarSource} x={0} y={0} width={35} height={35} preserveAspectRatio="xMidYMid meet"/></G>
   </Svg>
  </View>;
 }

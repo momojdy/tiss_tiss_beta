@@ -142,7 +142,10 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   // Same root-relative placement as Flyz, Goodies, Gatherz and Prezo. App owns the Android bottom inset.
   const dockBottom=18;
   const dockExtra=Math.ceil(13*Math.max(1,fontScale))-13;
-  const dockEyeWidth=Math.max(96,Math.min(122,screenWidth*.29));
+  // Reserve a little extra space beside Home; all four labeled tabs share the rest equally.
+  const previousEyeWidth=Math.max(96,Math.min(122,screenWidth*.29));
+  const homeGap=small?8:10;
+  const homeSlotWidth=(screenWidth-30-previousEyeWidth)/4+homeGap;
   return <View style={{flex:1,minHeight:0,backgroundColor:p.outer,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:Math.max(0,insets.top-19)}}>
@@ -157,10 +160,8 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
           {tabs.map(name=>{
             const home=name==='Home',center=name==='Artrium',bazaar=name==='Bazaar';
             const [artWidth,artHeight]=artSize[name];
-            // Keep Explore artwork and caption together, away from the Home mark.
-            const exploreOffset=name==='Explore'?(small?10:14):0;
-            return <Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:home}} accessibilityHint={bazaar?'Opens marketplace. Long press for your personal cultural space.':undefined} accessibilityActions={bazaar?[{name:'personalSpace',label:'Open personal cultural space'}]:undefined} onAccessibilityAction={bazaar?e=>{if(e.nativeEvent.actionName==='personalSpace')open('Me');}:undefined} onLongPress={bazaar?()=>open('Me'):undefined} onPress={()=>{if(home){cancelJump();scroll.current?.scrollTo({y:0,animated:!reducedMotion});}else open(center?'Museum':bazaar?'Marketplace':name);}} style={{flex:center?0:1,width:center?dockEyeWidth:undefined,minWidth:0,height:(center?65:55)+dockExtra,alignItems:'center',justifyContent:home?'center':'flex-end',overflow:'visible',zIndex:center?2:undefined,transform:exploreOffset?[{translateX:exploreOffset}]:undefined}}>
-              <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible'}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?15:name==='Explore'?13.5:20)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
+            return <Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:home}} accessibilityHint={bazaar?'Opens marketplace. Long press for your personal cultural space.':undefined} accessibilityActions={bazaar?[{name:'personalSpace',label:'Open personal cultural space'}]:undefined} onAccessibilityAction={bazaar?e=>{if(e.nativeEvent.actionName==='personalSpace')open('Me');}:undefined} onLongPress={bazaar?()=>open('Me'):undefined} onPress={()=>{if(home){cancelJump();scroll.current?.scrollTo({y:0,animated:!reducedMotion});}else open(center?'Museum':bazaar?'Marketplace':name);}} style={{flex:home?0:1,width:home?homeSlotWidth:undefined,minWidth:0,height:(center?65:55)+dockExtra,alignItems:'center',justifyContent:home?'center':'flex-end',overflow:'visible',zIndex:center?2:undefined}}>
+              <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible',transform:[{translateX:-homeGap/2}]}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?15:name==='Explore'?13.5:20)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
                 <LivingArtIcon name={name} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
               </View>
               {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:1,left:0,right:0,fontFamily:serif,fontSize:11.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
