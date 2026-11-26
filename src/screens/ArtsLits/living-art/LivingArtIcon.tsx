@@ -96,7 +96,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const content=useMemo(()=>!ready||(reducedMotion&&name!=='Explore')?null:tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[ready,name,dark,reducedMotion]);
   if(name!=='Explore'&&(!ready||reducedMotion))return <View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}><Image source={stills[name][dark?'dark':'light']} resizeMode="contain" fadeDuration={0} accessible={false} style={{position:'absolute',left:-pad,top:-pad,width:w+2*pad,height:h+2*pad}}/></View>;
   return <ClockContext.Provider value={reducedMotion?0:clock}><View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
-    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#b3aa95':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
+    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#e0443e':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
     </Svg>
   </View></ClockContext.Provider>;
