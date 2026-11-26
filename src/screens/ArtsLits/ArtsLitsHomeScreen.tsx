@@ -47,6 +47,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const [menuVisible,setMenuVisible]=useState(false);
   const [spillTarget,setSpillTarget]=useState<PreviewPreferences['theme']|null>(null);
+  const homeCapture=useRef<View>(null),detailCapture=useRef<View>(null);
   const scroll=useRef<ScrollView>(null); const sectionOffsets=useRef(new Map<string,number>()); const pendingJump=useRef<string|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
@@ -154,10 +155,12 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const homeGap=small?8:10;
   const homeSlotWidth=(screenWidth-30-previousEyeWidth)/4+homeGap;
   const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else setSpillTarget(next);}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
-  const spillOverlay=spillTarget?<ThemeSpill color={palettes[spillTarget].paper} committed={prefs.theme===spillTarget} delay={active?0:120} onCovered={()=>setPrefs(v=>({...v,theme:spillTarget}))} onDone={()=>setSpillTarget(null)}/>:null;
+  const spillOverlay=spillTarget?<ThemeSpill captureTarget={active?detailCapture:homeCapture} committed={prefs.theme===spillTarget} delay={active?0:260} onReady={()=>setPrefs(v=>({...v,theme:spillTarget}))} onDone={()=>setSpillTarget(null)} onFallback={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);}}/>:null;
   const quickMenuProps={visible:menuVisible,close:()=>setMenuVisible(false),p,dark,reducedMotion,inbox,onAction:quickMenuAction};
   return <View style={{flex:1,minHeight:0,backgroundColor:p.outer,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
+    <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
+    <View ref={homeCapture} collapsable={false} style={{flex:1,minHeight:0,width:'100%',backgroundColor:p.outer,alignItems:'center'}}>
     <View style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:Math.max(0,insets.top-19)}}>
       <ScrollView ref={scroll} testID="arts-lits-home-scroll"
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
@@ -181,8 +184,10 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
         </View>
       </View>
     </View>
+    </View>
     {!active&&spillOverlay}
+    </View>
     {menuVisible&&!active&&<ArtsLitsQuickMenu {...quickMenuProps}/>}
-    <PreviewSheet onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitionOverlay={active?spillOverlay:null} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet captureRef={detailCapture} onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitionOverlay={active?spillOverlay:null} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }
