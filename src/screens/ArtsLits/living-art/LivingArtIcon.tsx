@@ -1,7 +1,7 @@
 import React, { createContext, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import { Image as AnimatedImage } from 'expo-image';
-import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix } from 'react-native-svg';
+import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix, Image as SvgImage } from 'react-native-svg';
 import { motionFor, motionProps, nums, type SvgNode } from './motion';
 
 export type LivingArtTab = 'Home' | 'Explore' | 'Artrium' | 'Library' | 'Bazaar';
@@ -68,8 +68,22 @@ function ExploreArt({dark,reducedMotion,paused}:ArtProps){
   <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={dark?'#f0e9dd':'#222522'} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>{content}</Svg>
  </View></ClockContext.Provider>;
 }
+// A static, native color-matrix pass only for Bazaar. Keep its original alpha,
+ // proportions and tonal detail, and leave the animated icons untouched.
+const bazaarSource=require('./bazaar-v73.png');
+const bazaarSaturation=0.58;
+function BazaarArt(){
+ const [loaded,setLoaded]=useState(false);
+ return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
+  {!loaded&&<Image source={bazaarSource} style={{position:'absolute',width:35,height:35}} resizeMode="contain" fadeDuration={0} accessible={false}/>}
+  <Svg width={35} height={35} viewBox="0 0 35 35" accessible={false}>
+   <Defs><Filter id="bazaar-editorial-saturation" x="0%" y="0%" width="100%" height="100%"><FeColorMatrix type="saturate" values={String(bazaarSaturation)}/></Filter></Defs>
+   <SvgImage href={bazaarSource} x={0} y={0} width={35} height={35} preserveAspectRatio="xMidYMid meet" filter="url(#bazaar-editorial-saturation)" onLoad={()=>setLoaded(true)}/>
+  </Svg>
+ </View>;
+}
 function LivingArtArtwork(props:ArtProps){
- if(props.name==='Bazaar')return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}><Image source={require('./bazaar-v73.png')} style={{width:35,height:35}} resizeMode="contain" accessible={false}/></View>;
+ if(props.name==='Bazaar')return <BazaarArt/>;
  if(props.name==='Explore')return <ExploreArt {...props}/>;
  return <RasterArt {...props} name={props.name}/>;
 }
