@@ -130,8 +130,9 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   function visibleSectionIdsForLayout(value:HomeLayout){const l=validateLayout(value),now=Date.now();return selectHomepageRows([...eligibleNative(l,now).map(r=>({id:r.id})),...selectDiscovery(l,profile,displayMode,region,locale,now).map(d=>({id:d.id}))],l,profile,displayMode).map(r=>r.id);}
   // Freeze the nav art from the first touch until scrolling has settled so its redraws never compete with touch and scroll handling.
   const gateTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const scrollGesture=useRef({touch:false,drag:false,momentum:false});
   function holdArt(){if(gateTimer.current)clearTimeout(gateTimer.current);gateTimer.current=null;setLivingArtGate(true);}
-  function releaseArt(ms:number){if(gateTimer.current)clearTimeout(gateTimer.current);gateTimer.current=setTimeout(()=>setLivingArtGate(false),ms);}
+  function releaseArt(ms:number){if(gateTimer.current)clearTimeout(gateTimer.current);gateTimer.current=setTimeout(()=>{const g=scrollGesture.current;if(!g.touch&&!g.drag&&!g.momentum)setLivingArtGate(false);},ms);}
   useEffect(()=>()=>{if(gateTimer.current)clearTimeout(gateTimer.current);setLivingArtGate(false);},[]);
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
   function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;const index=currentRows.current.findIndex(r=>r.id===target.id);if(index<0){cancelJump();return;}target.index=index;scroll.current.scrollToIndex({index,animated:target.attempts===0&&!reducedMotion,viewPosition:0});}
@@ -166,7 +167,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         initialNumToRender={7} maxToRenderPerBatch={3} updateCellsBatchingPeriod={40} windowSize={5} removeClippedSubviews={false}
         onViewableItemsChanged={onRowsVisible}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
-        onScrollToIndexFailed={onJumpFailed} onTouchStart={holdArt} onTouchEnd={()=>releaseArt(700)} onTouchCancel={()=>releaseArt(700)} onScrollBeginDrag={()=>{cancelJump();holdArt();}} onScrollEndDrag={()=>releaseArt(700)} onMomentumScrollBegin={holdArt} onMomentumScrollEnd={()=>releaseArt(300)}
+        onScrollToIndexFailed={onJumpFailed} onTouchStart={()=>{scrollGesture.current.touch=true;holdArt();}} onTouchEnd={()=>{scrollGesture.current.touch=false;releaseArt(700);}} onTouchCancel={()=>{scrollGesture.current.touch=false;releaseArt(700);}} onScrollBeginDrag={()=>{scrollGesture.current.drag=true;cancelJump();holdArt();}} onScrollEndDrag={()=>{scrollGesture.current.drag=false;scrollGesture.current.touch=false;releaseArt(700);}} onMomentumScrollBegin={()=>{scrollGesture.current.momentum=true;holdArt();}} onMomentumScrollEnd={()=>{scrollGesture.current.momentum=false;releaseArt(300);}}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
         <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
