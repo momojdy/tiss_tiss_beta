@@ -142,7 +142,7 @@ function NativeDockArt({width,centerWidth,extra,dark,reducedMotion,paused}:DockP
   useEffect(()=>{
     let cancelled=false,timer:ReturnType<typeof setTimeout>|undefined,idle:number|undefined;
     const cancel=()=>{if(timer!==undefined)clearTimeout(timer);if(idle!==undefined)(globalThis as typeof globalThis&{cancelIdleCallback?:(id:number)=>void}).cancelIdleCallback?.(idle);};
-    const schedule=()=>{cancel();if(cancelled||mounted||paused||gated)return;
+    const schedule=()=>{cancel();if(cancelled||mounted||paused||reducedMotion||gated)return;
       timer=setTimeout(()=>{if(cancelled||gated)return;
         const request=(globalThis as typeof globalThis&{requestIdleCallback?:(fn:()=>void)=>number}).requestIdleCallback;
         const activate=()=>{if(!cancelled&&!gated)setMounted(true);};
@@ -152,7 +152,7 @@ function NativeDockArt({width,centerWidth,extra,dark,reducedMotion,paused}:DockP
     const listener=()=>{if(mounted)sync();else schedule();};
     gateListeners.add(listener);schedule();
     return()=>{cancelled=true;cancel();gateListeners.delete(listener);};
-  },[mounted,paused,sync]);
+  },[mounted,paused,reducedMotion,sync]);
   const doc=useMemo(()=>mounted?{html:browserDocument(geometry,dark,reducedMotion),baseUrl:'about:blank'}:null,[mounted,geometry,dark,reducedMotion]);
   useEffect(()=>{if(ready)sync();},[ready,paused,reducedMotion,sync]);
   return <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{position:'absolute',left:-12,top:-42,width:width+24,height:65+extra+46,overflow:'hidden',zIndex:3}}>

@@ -6,6 +6,7 @@ const ts = require('typescript');
 const root = __dirname;
 let state = [], index = 0, width = 390, fontScale = 1, refs = [], refIndex = 0, platform = "android";
 let scheduled = new Map(), nextTimer = 0;
+const gateEvents=[];
 const queueTimer=(fn)=>{const id=++nextTimer;scheduled.set(id,fn);return id;};
 const cancelTimer=id=>scheduled.delete(id);
 const flushTimers=()=>{const jobs=[...scheduled.entries()];scheduled.clear();jobs.forEach(([,fn])=>fn());};
@@ -25,14 +26,14 @@ function load(name) {
   if (name === 'expo-linear-gradient') return {LinearGradient:'LinearGradient'};
   if (name === 'react-native-svg') return {default:'Svg',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
-  if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',LivingArtDock:'LivingArtDock',setLivingArtGate(){},artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
+  if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',LivingArtDock:'LivingArtDock',setLivingArtGate(value){gateEvents.push(value);},artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
   if (/\.(png|jpg)$/.test(name)) return name;
   const base=path.join(root,name); const file=[base,base+'.ts',base+'.tsx'].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile());
   if(!file) throw Error('Unexpected import '+name);
   if(modules.has(file))return modules.get(file);
   const module={exports:{}}; modules.set(file,module.exports);
-  const out=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+  const out=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:false}}).outputText;
   new Function('require','module','exports','setTimeout','clearTimeout',out)(load,module,module.exports,queueTimer,cancelTimer);return module.exports;
 }
 const Home=load('./ArtsLitsHomeScreen').default;
@@ -148,3 +149,12 @@ console.log('V10.2: row-local dedupe, actual card counts, four priority sections
 // Full showcase remains available; all original fixtures and profile switches stay intact.
 console.log('V10.1 regression gates passed: user-facing sheet titles, 4:5 covers, three history cards across non-new profiles, protected museum rows, visible-neighbor order, updated credits.');
 console.log(`Native component-tree checks passed: ${scenarios} combinations of widths, text scales, profiles, connection states and sponsorship; all three editorial routes, seven filters, pagination, and product routing. Native rendering still requires device testing.`);
+
+// Source event sequence: no timer before first-touch pause, no release in a fling, interruption recovers.
+state=[];refs=[];scheduled.clear();gateEvents.length=0;
+const gestureList=find(flatten(tree()),'arts-lits-home-scroll').props;
+gestureList.onTouchStart();assert.deepEqual(gateEvents,[true]);
+gestureList.onScrollBeginDrag();gestureList.onTouchEnd();gestureList.onScrollEndDrag();gestureList.onMomentumScrollBegin();flushTimers();assert.equal(gateEvents.at(-1),true);
+gestureList.onMomentumScrollEnd();flushTimers();assert.equal(gateEvents.at(-1),false);
+gestureList.onMomentumScrollBegin();gestureList.onTouchStart();gestureList.onTouchEnd();flushTimers();assert.equal(gateEvents.at(-1),false);
+console.log('B2: first-touch pause and interrupted momentum event sequences verified.');

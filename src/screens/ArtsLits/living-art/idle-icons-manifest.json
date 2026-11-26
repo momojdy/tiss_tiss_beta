@@ -3,15 +3,15 @@
     "source": "home-v73.ts",
     "width": 198,
     "height": 198,
-    "sha256": "fc96eaee32a1890a9c0aba8d6330229c0f8ca445218a2d1ee0a557cd18b2b58c",
-    "bytes": 37628
+    "sha256": "5eb6c665a7c2701ec4be1dc7cf05f4bea050675bdcda91b7c7afb7a7c947d950",
+    "bytes": 38083
   },
   "home-idle-dark.png": {
     "source": "home-v73.ts",
     "width": 198,
     "height": 198,
-    "sha256": "7a6797926f6bba53d9356583f3a9f42a6515d029f5ec7a34b227f11ebb116c98",
-    "bytes": 40217
+    "sha256": "d528cca87c60c80e18c79e89f7f8bb918f480abee5eca482e89a34027446a3e5",
+    "bytes": 40749
   },
   "artrium-idle-light.png": {
     "source": "artrium-v73.ts",
