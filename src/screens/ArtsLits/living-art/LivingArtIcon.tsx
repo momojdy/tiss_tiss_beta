@@ -71,7 +71,7 @@ function ExploreArt({dark,reducedMotion,paused}:ArtProps){
 // A static, native color-matrix pass only for Bazaar. Keep its original alpha,
  // proportions and tonal detail, and leave the animated icons untouched.
 const bazaarSource=require('./bazaar-v73.png');
-const bazaarSaturation=0.22;
+const bazaarSaturation=0.58;
 function BazaarArt(){
  return <View pointerEvents="none" accessible={false} style={{width:35,height:35,overflow:'hidden',alignItems:'center',justifyContent:'center'}}>
   <Svg width={35} height={35} viewBox="0 0 35 35" accessible={false}>
