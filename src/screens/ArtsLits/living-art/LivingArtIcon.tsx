@@ -50,6 +50,9 @@ function nativeProps(node:SvgNode,ctx:Context):NativeProps{
   for(const [k,v] of Object.entries(a))if(!ignore.has(k)&&!k.startsWith('data-')&&!k.startsWith('aria-'))out[camel(k)]=v;
   if(tag==='mask')out.maskType='luminance';
   if(cls.includes('home-w'))out.fill='currentColor';
+  // Shrink the W and its clearance outline together, about the original glyph center, then move left/down.
+  if(ctx.name==='Home'&&cls.split(/\s+/).includes('v30-logo-scale'))out.transform='translate(-51.2925 13.12) scale(1.017)';
+  
   if(cls==='home-spray'){out.fill='currentColor';out.opacity=.75;}
   if(cls.includes('home-ink-trail'))out.opacity=.56;
   if(cls.includes('v25-logo-clear'))out.stroke=ctx.dark?'#172324':'#fdfcf8';
@@ -96,7 +99,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const content=useMemo(()=>!ready||(reducedMotion&&name!=='Explore')?null:tree(name)[2].map((n,i)=>renderNode(n,{name,dark,reduced:reducedMotion,parentClass:'',parentStyle:'',inMask:false,cherries:false},i)),[ready,name,dark,reducedMotion]);
   if(name!=='Explore'&&(!ready||reducedMotion))return <View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}><Image source={stills[name][dark?'dark':'light']} resizeMode="contain" fadeDuration={0} accessible={false} style={{position:'absolute',left:-pad,top:-pad,width:w+2*pad,height:h+2*pad}}/></View>;
   return <ClockContext.Provider value={reducedMotion?0:clock}><View pointerEvents="none" accessible={false} style={{width:w,height:h,overflow:'visible'}}>
-    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#ffffff':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
+    <Svg width={w+2*pad} height={h+2*pad} viewBox={expanded} color={name==='Home'?(dark?'#f2e6d2':'#171612'):(dark?'#f0e9dd':'#222522')} style={{position:'absolute',left:-pad,top:-pad,overflow:'visible'}}>
       {content}
     </Svg>
   </View></ClockContext.Provider>;
