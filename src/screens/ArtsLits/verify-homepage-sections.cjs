@@ -37,7 +37,7 @@ function load(name) {
 const Home=load('./ArtsLitsHomeScreen').default;
 const {categories,profileOptions,connectionOptions,editorPicks,titleFor,destinations}=load('./model');
 const {catalog}=load('./catalog');
-const {discovery,defaultLayout,validateLayout,arrangeRows,showDiscovery,selectDiscovery,moveSection,entryEligible,resolveDiscovery,sampleMoney,requiredSections,sectionOrder,minimumItems,distinctItems,sampleDisclosure,canonicalAssetId,selectHomepageRows,previewRouteTitle,discoveryItem,sectionTitle,outsideOptionalBudget,sponsorEligible,preferNeighborImages,artworkSize,artworkAspectRatio}=load('./homeRegistry');
+const {discovery,defaultLayout,validateLayout,arrangeRows,showDiscovery,selectDiscovery,moveSection,entryEligible,resolveDiscovery,sampleMoney,requiredSections,sectionOrder,minimumItems,distinctItems,sampleDisclosure,canonicalAssetId,selectHomepageRows,previewRouteTitle,discoveryItem,sectionTitle,outsideOptionalBudget,sponsorEligible,preferNeighborImages,artworkSize,artworkAspectRatio,discoveryRailSlotHeight}=load('./homeRegistry');
 function tree(){index=0;refIndex=0;return Home({onBack(){}});}
 function flatten(node, out=[]){if(Array.isArray(node)){node.forEach(x=>flatten(x,out));return out;}if(!node||typeof node!=='object'||!node.props)return out;out.push(node);if(node.type==='FlatList')node.props.data.forEach((item,index)=>flatten(node.props.renderItem({item,index}),out));flatten(node.props.children,out);return out;}
 function find(nodes,id){const n=nodes.find(n=>n.props.testID===id);assert.ok(n,'Missing '+id);return n;}
@@ -127,6 +127,18 @@ for(const patch of [{enabled:false},{startsAt:'2026-11-27T00:00:00Z'},{endsAt:'2
 assert.equal(sponsorEligible(defaultLayout,'returning','HT','active',fixedNow),true);
 for(const d of discovery)for(const i of d.items)if(artworkAspectRatio(i.asset)){const dim=artworkSize(i.asset,208,156);assert.ok(Math.abs(dim.width/dim.height-artworkAspectRatio(i.asset))<1e-9);assert.ok(dim.width<=208+1e-9&&dim.height<=156+1e-9);}
 const rec103=discovery.find(d=>d.id==='recommended'),neighbor103={...discovery.find(d=>d.id==='merchandise'),items:[rec103.items[2]]};const preferred103=preferNeighborImages([neighbor103,rec103],[neighbor103.id,rec103.id],defaultLayout,'personalized').find(d=>d.id===rec103.id);assert.equal(preferred103.items.length,rec103.items.length);assert.deepEqual(preferred103.items.map(i=>i.id),rec103.items.map(i=>i.id));assert.notEqual(preferred103.items[2].assetId,rec103.items[2].assetId);assert.equal(preferNeighborImages([neighbor103,rec103],[neighbor103.id,rec103.id],defaultLayout,'showcase')[1].items[2].asset,rec103.items[2].asset);
+// B1: inspect rendered card slots, rather than just the helper calculations.
+for(const id of ['recently-viewed','audio-guides','comics','poetry','recommended','limited']){
+ const d=discovery.find(x=>x.id===id),tree=renderDiscovery(d);
+ const slots=d.items.map((_,i)=>find(tree,`arts-lits-discovery-slot-${id}-${i}`));
+ assert.equal(new Set(slots.map(n=>n.props.style.height)).size,1,id+' unequal image slots');
+ for(const slot of slots){assert.equal(slot.props.style.backgroundColor,'transparent');assert.equal(slot.props.style.justifyContent,'center');const photo=flatten(slot).find(n=>typeof n.type==='function'&&n.type.name==='Photo');if(photo&&artworkAspectRatio(photo.props.asset)){const {width,height}=photo.props.style;assert.ok(Math.abs(width/height-artworkAspectRatio(photo.props.asset))<1e-9);assert.ok(height<=slot.props.style.height+1e-9);}}
+}
+const curatedB1=discovery.find(x=>x.id==='curated'),curatedNodesB1=renderDiscovery(curatedB1);
+for(let i=1;i<curatedB1.items.length;i++){const slot=find(curatedNodesB1,`arts-lits-discovery-slot-curated-${i}`);assert.equal(slot.props.style.aspectRatio,1.4);assert.equal(slot.props.style.backgroundColor,'transparent');}
+assert.equal(discoveryRailSlotHeight([],130,false),130);assert.equal(discoveryRailSlotHeight(discovery.find(d=>d.id==='recently-viewed').items,130,false),156);
+for(const d of discovery)for(const i of d.items)for(const a of i.alternateAssets??[])assert.ok(load('./assets').referenceAssets[a],`Unknown alternate ${a}`);
+console.log('B1: aligned rail/feature slots and mapped alternate assets verified.');
 console.log('V10.3: '+sponsorCases+' sponsor scenarios, schedule/target eligibility, artwork aspect ratios, neighboring image preference without row loss.');
 console.log('V10.2: row-local dedupe, actual card counts, four priority sections at minimum budget, configurable priority overrides, proportional legacy covers verified.');
 // Full showcase remains available; all original fixtures and profile switches stay intact.
