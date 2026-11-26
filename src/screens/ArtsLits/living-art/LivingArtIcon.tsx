@@ -1,5 +1,5 @@
 import React, { createContext, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, InteractionManager, Platform, View } from 'react-native';
+import { Image, Platform, View } from 'react-native';
 import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix } from 'react-native-svg';
 import { motionFor, motionProps, nums, type SvgNode } from './motion';
 
@@ -11,7 +11,7 @@ export const artSize = {Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50
 // Loaded lazily: these four modules hold ~3 MB of SVG data, which must not be evaluated or parsed before the nav needs them.
 const source:Record<VectorName,()=>string> = {Home:()=>require('./home-v73').default,Explore:()=>require('./explore-v73').default,Artrium:()=>require('./artrium-v73').default,Library:()=>require('./library-v73').default};
 const viewBoxes:Record<VectorName,string> = {Home:'0 0 500 500',Explore:'0 0 72 64',Artrium:'0 0 2048 1572',Library:'33 48 407 380'};
-// Building the big icons is heavy, so they mount after the screen transition, one at a time.
+// Building the big icons is heavy, so they mount after the screen transition (400ms + stagger), one at a time.
 const mountDelay:Record<VectorName,number> = {Explore:0,Home:80,Library:160,Artrium:260};
 const cache:Partial<Record<VectorName,SvgNode>> = {};
 function tree(name:VectorName) { return cache[name] ?? (cache[name]=JSON.parse(source[name]()) as SvgNode); }
@@ -21,9 +21,11 @@ const web=Platform.OS==='web';
 const SPEED=3;
 const ClockContext=createContext(0);
 const listeners=new Set<(dt:number)=>void>();
-let raf=0,last=0,acc=0;
+let raf=0,last=0,acc=0,gated=false;
+// The screen pauses the art while the page is being dragged/flung so animation never competes with touch handling and scrolling.
+export function setLivingArtGate(paused:boolean){gated=paused;}
 // One shared ~30fps ticker for every animated icon; each icon accumulates its own clock.
-function loop(ts:number){raf=requestAnimationFrame(loop);const d=last?ts-last:0;last=ts;acc+=Math.min(d,100);if(acc<32)return;const dt=acc;acc=0;listeners.forEach(l=>l(dt));}
+function loop(ts:number){raf=requestAnimationFrame(loop);const d=last?ts-last:0;last=ts;if(gated){acc=0;return;}acc+=Math.min(d,100);if(acc<42)return;const dt=acc;acc=0;listeners.forEach(l=>l(dt));}
 function subscribe(l:(dt:number)=>void){listeners.add(l);if(listeners.size===1){last=0;acc=0;raf=requestAnimationFrame(loop);}return()=>{listeners.delete(l);if(!listeners.size)cancelAnimationFrame(raf);};}
 function Moving({tag,props,tracks,children}:{tag:string;props:NativeProps;tracks:ReturnType<typeof motionFor>;children:React.ReactNode}){
   const clock=useContext(ClockContext);
@@ -76,7 +78,7 @@ function VectorArt({name,dark,reducedMotion,paused}:ArtProps&{name:VectorName}){
   const [clock,setClock]=useState(0),elapsed=useRef(0);
   useEffect(()=>{if(paused||reducedMotion)return;return subscribe(dt=>{elapsed.current+=dt*SPEED;setClock(elapsed.current);});},[paused,reducedMotion]);
   const [ready,setReady]=useState(false);
-  useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;const h=InteractionManager.runAfterInteractions(()=>{t=setTimeout(()=>setReady(true),mountDelay[name]);});return()=>{h.cancel();if(t)clearTimeout(t);};},[name]);
+  useEffect(()=>{let t:ReturnType<typeof setTimeout>|undefined;t=setTimeout(()=>setReady(true),400+mountDelay[name]);return()=>{if(t)clearTimeout(t);};},[name]);
   const [w,h]=artSize[name],pad=name==='Artrium'||name==='Library'?22:4;
   const [x,y,vw,vh]=nums(viewBoxes[name]),s=Math.min(w/vw,h/vh);
   const expanded=[x-(w/s-vw)/2-pad/s,y-(h/s-vh)/2-pad/s,(w+2*pad)/s,(h+2*pad)/s].join(' ');

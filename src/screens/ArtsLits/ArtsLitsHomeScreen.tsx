@@ -11,7 +11,7 @@ import { palettes, frameMax } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard } from './components';
 import PreviewSheet from './PreviewSheet';
-import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
+import { LivingArtIcon, artSize, setLivingArtGate, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
 import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
@@ -148,7 +148,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         initialNumToRender={sectionOrder.length} maxToRenderPerBatch={sectionOrder.length} windowSize={11} removeClippedSubviews={false}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
-        onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={cancelJump}
+        onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={()=>{cancelJump();setLivingArtGate(true);}} onScrollEndDrag={e=>{const v=e.nativeEvent.velocity;if(!v||(Math.abs(v.y)<.05))setLivingArtGate(false);}} onMomentumScrollBegin={()=>setLivingArtGate(true)} onMomentumScrollEnd={()=>setLivingArtGate(false)}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
         <View testID="arts-lits-bottom-nav" onLayout={e=>setDockHeight(Math.ceil(e.nativeEvent.layout.height))} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
