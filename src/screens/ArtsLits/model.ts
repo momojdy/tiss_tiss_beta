@@ -4,8 +4,8 @@ export type Profile = 'returning' | 'new' | 'reader' | 'collector' | 'museum' | 
 export type Connection = 'live' | 'loading' | 'offline' | 'error' | 'empty';
 export type Language = 'normal' | 'long';
 export type Theme = 'light' | 'dark';
-export type Category = 'All' | 'Paintings' | 'Books' | 'Sculpture' | 'Prints' | 'Photography' | 'Ceramics';
-export const categories: readonly Category[] = ['All','Paintings','Books','Sculpture','Prints','Photography','Ceramics'];
+export type Category = 'All' | 'Paintings' | 'Books' | 'Sculpture' | 'Prints' | 'Photography' | 'Ceramics' | 'Handmade crafts' | 'Textiles' | 'Metal art' | 'Digital art' | 'Collectibles' | 'Decorative objects';
+export const categories: readonly Category[] = ['All','Paintings','Books','Sculpture','Prints','Photography','Ceramics','Handmade crafts','Textiles','Metal art','Digital art','Collectibles','Decorative objects'];
 export const profileOptions: readonly [Profile,string][] = [['returning','Returning customer'],['new','New customer'],['reader','Regular reader'],['collector','Art collector'],['museum','Museum enthusiast with pass'],['member','Paid member'],['comics','Comics enthusiast']];
 export const connectionOptions: readonly [Connection,string][] = [['live','Normal'],['loading','Loading then recover'],['offline','Offline'],['error','Error'],['empty','Empty catalog']];
 export const defaultFollowing = creators.map(c=>c[0]);

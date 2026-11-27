@@ -24,7 +24,7 @@ import type {QuickMenuAction,QuickMenuHostAction,QuickMenuInbox} from '../../sha
 import {HomeMotionProvider} from './living-art/HomeMotion';
 import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow } from './DiscoveryRows';
-import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
+import { preferNeighborImages, isExpandableDiscovery, discoveryExpanded, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -51,6 +51,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const sponsorAccess=sponsorEligible(effectiveLayout,profile,region,sponsorScenario,Date.now());
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const [menuVisible,setMenuVisible]=useState(false);
+  const [expandedDiscovery,setExpandedDiscovery]=useState<Record<string,boolean>>({});
   const [spillTarget,setSpillTarget]=useState<PreviewPreferences['theme']|null>(null);
   const spillProgress=useSpillClock();
   const spillStartedAt=useRef(0);
@@ -137,15 +138,23 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}));
     const selectedRows=selectHomepageRows([...eligibleNative(effectiveLayout,now),...extraRows],effectiveLayout,profile,displayMode);
     const preferred=preferNeighborImages(extras,selectedRows.map(r=>r.id),effectiveLayout,displayMode);
-    return selectedRows.map(r=>{const d=preferred.find(x=>x.id===r.id);return d?{id:r.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/>}:r;});
-  },[nativeRows,effectiveLayout,profile,displayMode,region,locale,sponsorScenario,p,inset,small,language,open]);
+    return selectedRows.map(r=>{const d=preferred.find(x=>x.id===r.id);return d?{id:r.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'} locale={locale} expanded={discoveryExpanded(d.id,effectiveLayout,displayMode,expandedDiscovery)} onToggle={isExpandableDiscovery(d.id)?()=>toggleDiscovery(d.id):undefined}/>}:r;});
+  },[nativeRows,effectiveLayout,profile,displayMode,region,locale,sponsorScenario,p,inset,small,language,open,expandedDiscovery]);
   // The layout editor uses the same actual profile, mode, eligibility and budget as the rendered homepage.
   function visibleSectionIdsForLayout(value:HomeLayout){const l=validateLayout(value),now=Date.now();return selectHomepageRows([...eligibleNative(l,now).map(r=>({id:r.id})),...selectDiscovery(l,profile,displayMode,region,locale,now).map(d=>({id:d.id}))],l,profile,displayMode).map(r=>r.id);}
   // Standard native scroll, same as the other feature homepages. No touch gate,
   // deferred batches, direction lock or retry timers. Use actual native row offsets.
   function cancelJump(){pendingJump.current=null;}
+  function toggleDiscovery(id:string,force?:boolean){
+    const current=discoveryExpanded(id,effectiveLayout,displayMode,expandedDiscovery);
+    const next=force??!current;if(next===current)return;
+    const position=rows.findIndex(r=>r.id===id);
+    for(const row of rows.slice(position+1))sectionOffsets.current.delete(row.id);
+    setExpandedDiscovery(old=>({...old,[id]:next}));
+  }
   function jumpToSection(id:string){
     if(!rows.some(r=>r.id===id)){setStack(['Section not shown']);return;}
+    if(isExpandableDiscovery(id))toggleDiscovery(id,true);
     setStack([]);const y=sectionOffsets.current.get(id);
     if(y===undefined){pendingJump.current=id;return;}
     cancelJump();scroll.current?.scrollTo({y,animated:!reducedMotion});
