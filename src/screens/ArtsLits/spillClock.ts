@@ -1,5 +1,6 @@
 import {useCallback,useSyncExternalStore} from 'react';
-export type SpillClock={get:()=>number;set:(progress:number)=>void;subscribe:(listener:()=>void)=>()=>void};
+import type {SharedValue} from 'react-native-reanimated';
+export type SpillClock={motion?:SharedValue<number>;get:()=>number;set:(progress:number)=>void;subscribe:(listener:()=>void)=>()=>void};
 export function createSpillClock():SpillClock{
  let progress=0;const listeners=new Set<()=>void>();
  return {get:()=>progress,set:next=>{if(next===progress)return;progress=next;listeners.forEach(listener=>listener());},subscribe:listener=>{listeners.add(listener);return()=>{listeners.delete(listener);};}};

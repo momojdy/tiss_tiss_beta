@@ -16,8 +16,8 @@ export const SPILL_EDGE_LAYERS=[
 export function advanceSpillElapsed(elapsed:number,delta:number){
  return Math.min(SPILL_SPREAD_MS+SPILL_REVEAL_MS,elapsed+Math.max(0,delta));
 }
-export function spillProgress(t:number){return Math.max(0,Math.min(1,t));}
-export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){
+export function spillProgress(t:number){'worklet';return Math.max(0,Math.min(1,t));}
+export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){'worklet';
  t=spillProgress(t);
  // Zero area at launch, continuously deforming lobes, and corner coverage
  // only near the end. Every ray advances instead of retreating or flooding
@@ -27,8 +27,8 @@ export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){
  return diagonal*(1.001*t+t*(1-t)*(texture+tongue)+lead*4*t*(1-t));
 }
 type Point={x:number;y:number};
-const fmt=(v:number)=>{return String(Math.round(v*1000)/1000);};
-export function spillFrontPoints(width:number,height:number,t:number,lead=0):Point[]{
+const fmt=(v:number)=>{'worklet';return String(Math.round(v*1000)/1000);};
+export function spillFrontPoints(width:number,height:number,t:number,lead=0):Point[]{'worklet';
  const diagonal=Math.hypot(width,height);
  return Array.from({length:SPILL_SAMPLES+1},(_,i)=>{
   const angle=i/SPILL_SAMPLES*Math.PI/2;
@@ -36,7 +36,7 @@ export function spillFrontPoints(width:number,height:number,t:number,lead=0):Poi
   return {x:i===SPILL_SAMPLES?0:radius*Math.cos(angle),y:i===0?0:radius*Math.sin(angle)};
  });
 }
-export function spillPath(width:number,height:number,t:number,lead=0){
+export function spillPath(width:number,height:number,t:number,lead=0){'worklet';
  if(t>=1)return `M0 0H${fmt(width)}V${fmt(height)}H0Z`;
  const points=spillFrontPoints(width,height,t,lead);
  let path=`M0 0L${fmt(points[0].x)} 0`;

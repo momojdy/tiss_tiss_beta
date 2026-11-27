@@ -120,7 +120,7 @@ console.log('Real Shelf/context card links retained with identical layout and in
 // The mask clips the presentation in measured screen coordinates, including
 // the padding of a detail panel. It never changes the original native subtree.
 const fakeReact={...React,useRef:initial=>({current:initial}),useState:initial=>[typeof initial==='function'?initial():{x:22,y:16,width:346,height:500},()=>{}],useId:()=>':test:',useCallback:fn=>fn,useMemo:fn=>fn()};
-const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'./SpillReveal':{SpillReveal:'SpillReveal'},'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'./liveThemeWave':{targetThemeTree}});
+const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'./SpillReveal':{SpillReveal:'SpillReveal'},'./spillScene':{SpillSceneContext:React.createContext(null)},'./SpillScrollView':{SpillScrollView:'ScrollView'},'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'./liveThemeWave':{targetThemeTree}});
 function flattenElements(node,out=[]){if(Array.isArray(node)){node.forEach(child=>flattenElements(child,out));return out;}if(React.isValidElement(node)){out.push(node);flattenElements(node.props.children,out);}return out;}
 const untouched=React.createElement('Text',{style:{color:palettes.light.ink}},'A partially covered label');
 const wave={from:palettes.light,to:palettes.dark,progress:.21,width:390,height:844};
@@ -133,7 +133,7 @@ assert.equal(scene.find(n=>n.props.testID==='arts-lits-spill-ink').props.pointer
 assert.deepEqual(reveal.props.children.props.children.props.style[0],native.StyleSheet.absoluteFill);
 const svg={default:'Svg',Defs:'Defs',G:'G',Mask:'Mask',Path:'Path'};
 for(const file of ['SpillReveal.tsx','SpillReveal.native.tsx']){
- const {SpillReveal}=loadTs(file,{'react-native':native,'react-native-svg':svg,'@react-native-masked-view/masked-view':{__esModule:true,default:'MaskedView'},'./themeSpillGeometry':mod.exports});
+ const {SpillReveal}=loadTs(file,{'react-native':native,'react-native-svg':svg,'@react-native-masked-view/masked-view':{__esModule:true,default:'MaskedView'},'./themeSpillGeometry':mod.exports,'./SpillPath':{SpillPath:'SpillPath'}});
  const rendered=SpillReveal({...reveal.props,children:untouched});
  const nodes=flattenElements(rendered);
  assert.ok(!nodes.some(n=>n.type==='ForeignObject'));
@@ -142,9 +142,9 @@ for(const file of ['SpillReveal.tsx','SpillReveal.native.tsx']){
  const maskNodes=file.includes('.native')?flattenElements(rendered.props.maskElement):nodes;
  const group=maskNodes.find(n=>n.type==='G');
  assert.equal(group.props.transform,'translate(-22 -16)');
- const paths=maskNodes.filter(n=>n.type==='Path');
+ const paths=maskNodes.filter(n=>n.type==='Path'||n.type==='SpillPath');
  assert.equal(paths.length,mod.exports.SPILL_EDGE_LAYERS.length);
- paths.forEach((path,i)=>assert.equal(path.props.d,spillPath(390,844,.21,mod.exports.SPILL_EDGE_LAYERS[i].lead)));
+ paths.forEach((path,i)=>{const d=path.type==='Path'?path.props.d:spillPath(path.props.width,path.props.height,path.props.progress,path.props.lead);assert.equal(d,spillPath(390,844,.21,mod.exports.SPILL_EDGE_LAYERS[i].lead));});
  if(file.includes('.native')){
   assert.equal(rendered.type,'MaskedView');
   assert.equal(rendered.props.androidRenderingMode,'software','Animated Android masks must refresh');

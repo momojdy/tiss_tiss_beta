@@ -15,7 +15,7 @@ import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, P
 import PreviewSheet from './PreviewSheet';
 import ArtsLitsQuickMenu from './ArtsLitsQuickMenu';
 import ThemeSpill,{SpillPaper} from './ThemeSpill';
-import {createSpillClock} from './spillClock';
+import {useSpillClock} from './useSpillClock';
 import type {LiveWave} from './liveThemeWave';
 import {SpillSurface,SpillScrollView} from './SpillSurface';
 import {mixColor} from './themeSpillGeometry';
@@ -51,7 +51,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const [menuVisible,setMenuVisible]=useState(false);
   const [spillTarget,setSpillTarget]=useState<PreviewPreferences['theme']|null>(null);
-  const [spillProgress]=useState(createSpillClock);
+  const spillProgress=useSpillClock();
   const spillStartedAt=useRef(0);
   const viewportHeight=useRef(windowHeight);
   const scroll=useRef<ScrollView>(null); const sectionOffsets=useRef(new Map<string,number>()); const pendingJump=useRef<string|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);

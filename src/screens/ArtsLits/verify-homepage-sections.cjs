@@ -228,3 +228,5 @@ assert.equal(nodes.filter(n=>n.type==='ThemeSpill').length,1);assert.equal(previ
 const scrollingDetailProps=preview(nodes);index=0;refIndex=0;state=[];refs=[];
 const scrollingDetail=flatten(realSheet(scrollingDetailProps));assert.equal(find(scrollingDetail,'arts-lits-detail-scroll').props.scrollEnabled,undefined);
 console.log('Active spill: homepage/detail scrolling enabled and a single root clock retained across navigation.');
+
+require('./verify-native-spill.cjs');

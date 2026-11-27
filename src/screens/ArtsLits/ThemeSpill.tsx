@@ -7,8 +7,8 @@ import {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_EDGE_LAYERS,advanceSpillElapsed,sp
 // Keep the approved frame-by-frame fluid motion. Only SVG surfaces subscribe
 // to this clock; the interactive page and the prepared card tree stay stable.
 // The decorative paper ignores input, leaving the real page scrollable.
-type Props={clock:SpillClock;onDone:()=>void;delay?:number;startedAt?:number};
-export default function ThemeSpill({clock,onDone,delay=0,startedAt}:Props){
+export type ThemeSpillProps={clock:SpillClock;onDone:()=>void;delay?:number;startedAt?:number};
+export default function ThemeSpill({clock,onDone,delay=0,startedAt}:ThemeSpillProps){
  const callbacks=useRef({onFrame:clock.set,onDone});callbacks.current={onFrame:clock.set,onDone};
  useEffect(()=>{
   let frame=0,first:number|undefined,lastPaint=-1,elapsed=0,alive=true;
@@ -31,7 +31,8 @@ export default function ThemeSpill({clock,onDone,delay=0,startedAt}:Props){
 // Antialiased cubic curves keep the waterline smooth at any display density.
 // The vector surface stays absolutely positioned in the lower background
 // sibling, underneath the separately stacked live content and navigation.
-export function SpillPaper({width,height,progress:staticProgress,color,clock}:{width:number;height:number;progress:number;color:string;clock?:SpillClock}){
+export type SpillPaperProps={width:number;height:number;progress:number;color:string;clock?:SpillClock};
+export function SpillPaper({width,height,progress:staticProgress,color,clock}:SpillPaperProps){
  const progress=useSpillProgress(clock,staticProgress);
  if(progress<=0||width<=0||height<=0)return null;
  const layers=progress<1?SPILL_EDGE_LAYERS:[];
