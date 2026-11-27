@@ -1,8 +1,7 @@
-import React,{createContext,forwardRef,useCallback,useContext,useId,useMemo,useRef,useState} from 'react';
+import React,{createContext,forwardRef,useCallback,useContext,useId,useMemo,useState} from 'react';
 import {ScrollView,StyleSheet,View,type LayoutChangeEvent,type ScrollViewProps,type StyleProp,type ViewStyle} from 'react-native';
-import Svg,{Defs,ForeignObject,G,Mask,Path} from 'react-native-svg';
+import {SpillReveal} from './SpillReveal';
 import {useSpillProgress} from './spillClock';
-import {SPILL_EDGE_LAYERS,spillPath} from './themeSpillGeometry';
 import {targetThemeTree,type LiveWave} from './liveThemeWave';
 
 type ScrollPosition={x:number;y:number;target:ScrollView|null};
@@ -31,15 +30,12 @@ export const SpillScrollView=forwardRef<ScrollView,SyncedScrollProps>(function S
 type Frame={x:number;y:number;width:number;height:number};
 type Props={wave:LiveWave|null;children:React.ReactNode;style?:StyleProp<ViewStyle>;originFromLayout?:boolean;paper?:boolean};
 export function SpillSurface({wave,children,style,originFromLayout=false,paper=true}:Props){
- const registry=useRef<ScrollRegistry>(new Map());
+ const [registry]=useState<ScrollRegistry>(()=>new Map());
  const [frame,setFrame]=useState<Frame>({x:0,y:0,width:0,height:0});
- const sourceScene=useMemo(()=>({presentation:false,scrolls:registry.current}),[]);
- const targetScene=useMemo(()=>({presentation:true,scrolls:registry.current}),[]);
+ const sourceScene=useMemo(()=>({presentation:false,scrolls:registry}),[registry]);
+ const targetScene=useMemo(()=>({presentation:true,scrolls:registry}),[registry]);
  const progress=useSpillProgress(wave?.clock,wave?.progress??0);
- const maskBase='spill-'+useId().replace(/[^a-zA-Z0-9_-]/g,'');
- // Refresh the native SVG's cached mask bitmap on each presented frame.
- // The card presentation and its scroll views stay mounted throughout.
- const maskId=maskBase+'-'+Math.round(progress*1000000);
+ const maskId='spill-'+useId().replace(/[^a-zA-Z0-9_-]/g,'');
  const from=wave?.from,to=wave?.to;
  const target=useMemo(()=>from&&to?targetThemeTree(children,from,to):null,[children,from,to]);
  const onLayout=useCallback((event:LayoutChangeEvent)=>{
@@ -50,20 +46,13 @@ export function SpillSurface({wave,children,style,originFromLayout=false,paper=t
  return <View style={style} onLayout={onLayout} collapsable={false}>
   <SceneContext.Provider value={sourceScene}>{children}</SceneContext.Provider>
   {wave&&frame.width>0&&frame.height>0&&<View testID="arts-lits-spill-ink" pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" collapsable={false} style={[StyleSheet.absoluteFill,{zIndex:200,elevation:20,overflow:'hidden'}]}>
-   <Svg width={frame.width} height={frame.height} viewBox={`0 0 ${frame.width} ${frame.height}`} pointerEvents="none">
-    <Defs><Mask id={maskId} maskType="alpha" maskUnits="userSpaceOnUse" x={0} y={0} width={frame.width} height={frame.height}>
-     <G transform={`translate(${-origin.x} ${-origin.y})`}>
-      {SPILL_EDGE_LAYERS.map(({lead,opacity})=><Path key={lead} d={spillPath(wave.width,wave.height,progress,lead)} fill="#ffffff" opacity={opacity}/>)}
-     </G>
-    </Mask></Defs>
-    <ForeignObject x={0} y={0} width={frame.width} height={frame.height} mask={`url(#${maskId})`}>
-     <SceneContext.Provider value={targetScene}>
-      <View pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{width:frame.width,height:frame.height,backgroundColor:paper?wave.to.paper:'transparent'}}>
-       {target}
-      </View>
-     </SceneContext.Provider>
-    </ForeignObject>
-   </Svg>
+   <SpillReveal width={frame.width} height={frame.height} waveWidth={wave.width} waveHeight={wave.height} progress={progress} x={origin.x} y={origin.y} maskId={maskId}>
+    <SceneContext.Provider value={targetScene}>
+     <View pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[StyleSheet.absoluteFill,{backgroundColor:paper?wave.to.paper:'transparent'}]}>
+      {target}
+     </View>
+    </SceneContext.Provider>
+   </SpillReveal>
   </View>}
  </View>;
 }

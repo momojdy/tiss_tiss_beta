@@ -2,10 +2,11 @@ import React from 'react';
 import type {SpillClock} from './spillClock';
 import type {Palette} from './design';
 export type LiveWave={from:Palette;to:Palette;progress:number;width:number;height:number;clock?:SpillClock};
+const passiveEvent=()=>{};
 const presentationCache=new WeakMap<React.ReactElement,Map<string,React.ReactNode>>();
 const dockColors=[['rgba(255,255,255,0.88)','rgba(20,32,33,0.88)'],['rgba(255,255,255,0.55)','rgba(129,201,192,0.40)'],['#ffffff55','#ffffff0a']] as const;
 // Build a passive presentation of the destination theme. Spatial blending is
-// exclusively the SVG mask's job: never choose an element's color by its centre.
+// exclusively the clipping mask's job: never choose a color by an element's centre.
 export function targetThemeTree(node:React.ReactNode,from:Palette,to:Palette):React.ReactNode{
  if(Array.isArray(node))return node.map(child=>targetThemeTree(child,from,to));
  if(!React.isValidElement(node))return node;
@@ -30,10 +31,13 @@ export function targetThemeTree(node:React.ReactNode,from:Palette,to:Palette):Re
  if(typeof props.dark==='boolean')next.dark=dark;
  if(props.background!==undefined&&props.color===from.paper){next.background=dark?to.ink:to.teal;next.color=to.paper;}
  if(props.children!==undefined)next.children=targetThemeTree(props.children as React.ReactNode,from,to);
- // Mirrors cannot own source refs, focus, layout callbacks, actions or test IDs.
- // Keep an explicit scroll identity before removing the source test ID.
+ // Preserve callback presence: SectionHead/ContextBlock conditionally render
+ // links from it. Removing callbacks changes card geometry before the spill.
+ // Stable no-ops keep identical markup without firing source side effects.
+ // Prefix test IDs so actual source/target card positions can be compared.
+ // Keep an explicit scroll identity before prefixing the source test ID.
  if(props.scrollEventThrottle!==undefined||props.contentContainerStyle!==undefined||props.horizontal!==undefined)next.spillScrollId=props.testID??props.accessibilityLabel;
- for(const key of Object.keys(next))if(key==='ref'||key==='testID'||key==='autoFocus'||/^on[A-Z]/.test(key))next[key]=key==='ref'?null:undefined;
+ for(const key of Object.keys(next))if(key==='ref'||key==='testID'||key==='autoFocus'||/^on[A-Z]/.test(key))next[key]=key==='ref'?null:key==='testID'?'arts-lits-target-'+props.testID:typeof props[key]==='function'?passiveEvent:undefined;
  if('autoFocus' in props)next.autoFocus=false;
  if('editable' in props||'value' in props){next.editable=false;next.showSoftInputOnFocus=false;}
  const result=React.cloneElement(node as React.ReactElement<Record<string,unknown>>,next);

@@ -94,29 +94,68 @@ for(const [from,to] of [[palettes.light,palettes.dark],[palettes.dark,palettes.l
  const target=targetThemeTree(original,from,to);
  assert.equal(original.props.ref,sourceRef);assert.equal(original.props.children[0].props.style.color,from.ink);
  assert.equal(original.props.children[2].props.onPress,onPress);
- assert.equal(target.props.ref,null);assert.equal(target.props.onLayout,undefined);assert.equal(target.props.testID,undefined);
+ assert.equal(target.props.ref,null);assert.equal(typeof target.props.onLayout,'function');assert.notEqual(target.props.onLayout,original.props.onLayout);assert.equal(target.props.testID,'arts-lits-target-source');
  assert.equal(target.props.children[0].props.style.color,to.ink);assert.equal(target.props.children[1].props.color,to.teal);
- assert.equal(target.props.children[1].props.dark,to===palettes.dark);assert.equal(target.props.children[2].props.onPress,undefined);
- assert.equal(target.props.children[3].props.spillScrollId,'scroll');assert.equal(target.props.children[3].props.onScroll,undefined);
+ assert.equal(target.props.children[1].props.dark,to===palettes.dark);assert.equal(typeof target.props.children[2].props.onPress,'function');assert.notEqual(target.props.children[2].props.onPress,onPress);
+ assert.equal(target.props.children[3].props.spillScrollId,'scroll');assert.equal(typeof target.props.children[3].props.onScroll,'function');
  assert.equal(target.props.children[3].props.ref,null);assert.equal(target.props.children[0].props.style.textShadowColor,undefined);
 }
-console.log('Spatial theme presentations: source identity preserved, no sampled-color snaps or halos, passive refs/actions removed.');
+console.log('Spatial theme presentations: source identity preserved, no sampled-color snaps or halos, passive refs/actions isolated without changing conditional markup.');
+
+// Actual Shelf headers and contextual cards must retain optional action links.
+const {SectionHead,ContextBlock,TextLink}=loadTs('components.tsx',{'react-native':{...native,StyleSheet:{...native.StyleSheet,create:s=>s}},'react-native-svg':{},'expo-linear-gradient':{},'./assets':{referenceAssets:{}},'./design':{serif:'serif',sans:'sans'},'./model':{shelfBooks:[]},'./SpillSurface':{SpillScrollView:'ScrollView'}});
+for(const Component of [SectionHead,ContextBlock]){
+ let fired=false;
+ const original=React.createElement(Component,{p:palettes.light,title:'Your shelf',description:'Reading corner',action:'Open library',onPress:()=>{fired=true;}});
+ const target=targetThemeTree(original,palettes.light,palettes.dark);
+ const before=Component(original.props),after=Component(target.props);
+ const sourceLink=React.Children.toArray(before.props.children).find(n=>React.isValidElement(n)&&n.type===TextLink);
+ const targetLink=React.Children.toArray(after.props.children).find(n=>React.isValidElement(n)&&n.type===TextLink);
+ assert.ok(sourceLink&&targetLink,'Passive cards retain callback-dependent action markup');
+ assert.deepEqual(targetLink.props.style,sourceLink.props.style);
+ targetLink.props.onPress();assert.equal(fired,false,'Passive callbacks never mutate the live source');
+}
+console.log('Real Shelf/context card links retained with identical layout and inert callbacks.');
 
 // The mask clips the presentation in measured screen coordinates, including
 // the padding of a detail panel. It never changes the original native subtree.
-const fakeReact={...React,useRef:initial=>({current:initial}),useState:()=>[{x:22,y:16,width:346,height:500},()=>{}],useId:()=>':test:',useCallback:fn=>fn,useMemo:fn=>fn()};
-const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'react-native-svg':{default:'Svg',Defs:'Defs',ForeignObject:'ForeignObject',G:'G',Mask:'Mask',Path:'Path'},'./themeSpillGeometry':mod.exports,'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'./liveThemeWave':{targetThemeTree}});
+const fakeReact={...React,useRef:initial=>({current:initial}),useState:initial=>[typeof initial==='function'?initial():{x:22,y:16,width:346,height:500},()=>{}],useId:()=>':test:',useCallback:fn=>fn,useMemo:fn=>fn()};
+const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'./SpillReveal':{SpillReveal:'SpillReveal'},'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'./liveThemeWave':{targetThemeTree}});
 function flattenElements(node,out=[]){if(Array.isArray(node)){node.forEach(child=>flattenElements(child,out));return out;}if(React.isValidElement(node)){out.push(node);flattenElements(node.props.children,out);}return out;}
 const untouched=React.createElement('Text',{style:{color:palettes.light.ink}},'A partially covered label');
 const wave={from:palettes.light,to:palettes.dark,progress:.21,width:390,height:844};
 const surface=SpillSurface({wave,children:untouched,originFromLayout:true});
 assert.equal(surface.props.children[0].props.children,untouched);
-const scene=flattenElements(surface),mask=scene.find(n=>n.type==='Mask'),foreign=scene.find(n=>n.type==='ForeignObject'),group=scene.find(n=>n.type==='G');
-assert.equal(group.props.transform,'translate(-22 -16)');assert.equal(mask.props.maskUnits,'userSpaceOnUse');assert.equal(foreign.props.mask,`url(#${mask.props.id})`);assert.equal(foreign.props.width,346);assert.equal(foreign.props.height,500);
+const scene=flattenElements(surface),reveal=scene.find(n=>n.type==='SpillReveal');
+assert.equal(reveal.props.x,22);assert.equal(reveal.props.y,16);
+assert.equal(reveal.props.width,346);assert.equal(reveal.props.height,500);
 assert.equal(scene.find(n=>n.props.testID==='arts-lits-spill-ink').props.pointerEvents,'none');
-const paths=scene.filter(n=>n.type==='Path');assert.equal(paths.length,mod.exports.SPILL_EDGE_LAYERS.length);
-paths.forEach((path,i)=>assert.equal(path.props.d,spillPath(390,844,.21,mod.exports.SPILL_EDGE_LAYERS[i].lead)));
-console.log('Pixel mask: original subtree retained, measured offsets and waterline shared exactly.');
+assert.deepEqual(reveal.props.children.props.children.props.style[0],native.StyleSheet.absoluteFill);
+const svg={default:'Svg',Defs:'Defs',G:'G',Mask:'Mask',Path:'Path'};
+for(const file of ['SpillReveal.tsx','SpillReveal.native.tsx']){
+ const {SpillReveal}=loadTs(file,{'react-native':native,'react-native-svg':svg,'@react-native-masked-view/masked-view':{__esModule:true,default:'MaskedView'},'./themeSpillGeometry':mod.exports});
+ const rendered=SpillReveal({...reveal.props,children:untouched});
+ const nodes=flattenElements(rendered);
+ assert.ok(!nodes.some(n=>n.type==='ForeignObject'));
+ const clipped=nodes.find(n=>n.props.testID==='arts-lits-clipped-content');
+ assert.equal(clipped.props.children,untouched,'Keep content in normal layout');
+ const maskNodes=file.includes('.native')?flattenElements(rendered.props.maskElement):nodes;
+ const group=maskNodes.find(n=>n.type==='G');
+ assert.equal(group.props.transform,'translate(-22 -16)');
+ const paths=maskNodes.filter(n=>n.type==='Path');
+ assert.equal(paths.length,mod.exports.SPILL_EDGE_LAYERS.length);
+ paths.forEach((path,i)=>assert.equal(path.props.d,spillPath(390,844,.21,mod.exports.SPILL_EDGE_LAYERS[i].lead)));
+ if(file.includes('.native')){
+  assert.equal(rendered.type,'MaskedView');
+  assert.equal(rendered.props.androidRenderingMode,'software','Animated Android masks must refresh');
+  assert.deepEqual(rendered.props.style,native.StyleSheet.absoluteFill);
+  assert.ok(!maskNodes.includes(untouched),'Only the mask is rendered into SVG');
+ }else{
+  assert.equal(nodes.find(n=>n.type==='Mask').props.maskUnits,'userSpaceOnUse');
+  assert.equal(clipped.props.style[1].maskImage,`url(#${reveal.props.maskId})`);
+ }
+}
+console.log('Native/CSS clipping: normal card layout, shared waterline and measured offsets, no SVG content layout.');
 
 // Coverage has several gradual intermediate values across the narrow wet edge.
 for(const t of [.2,.5,.8]){
@@ -133,7 +172,7 @@ const curveHash=require('node:crypto').createHash('sha256');
 for(let i=0;i<=180;i++)for(const lead of [.008,.003,0])curveHash.update(spillPath(390,844,i/180,lead));
 assert.equal(curveHash.digest('hex'),'adb788d5f1dd0249075f82ecbd21c27225005b7b971528a0cecdf93cdfd55cd9');
 const later=SpillSurface({wave:{...wave,progress:.22},children:untouched,originFromLayout:true});
-const laterNodes=flattenElements(later),laterMask=laterNodes.find(n=>n.type==='Mask');
-assert.notEqual(mask.props.id,laterMask.props.id,'Invalidate the native cached mask on each presented frame');
-assert.equal(laterNodes.find(n=>n.type==='ForeignObject').props.children.props.children.props.children,foreign.props.children.props.children.props.children,'Keep the prepared card scene stable while only its mask moves');
-console.log('Approved fluid frames preserved; native mask references refresh without replacing card content.');
+const laterReveal=flattenElements(later).find(n=>n.type==='SpillReveal');
+assert.equal(reveal.props.maskId,laterReveal.props.maskId,'Keep one clip instance while its path changes');
+assert.equal(laterReveal.props.children.props.children.props.children,reveal.props.children.props.children.props.children,'Keep prepared card content stable');
+console.log('Approved fluid frames preserved exactly; card content and clip identity stay stable.');
