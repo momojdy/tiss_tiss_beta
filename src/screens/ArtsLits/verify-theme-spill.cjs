@@ -35,3 +35,19 @@ assert.equal(mixColor('#f4f0e8','#142021',0),'#f4f0e8');assert.equal(mixColor('#
 console.log('Live palette wave: '+waveCases+' spatial samples checked.');
 
 let contrastCases=0;for(const [from,to,inkA,inkB] of [['#f4f0e8','#142021','#222522','#f0e9dd'],['#142021','#f4f0e8','#f0e9dd','#222522']])for(const [w,h] of [[320,568],[390,844],[460,1000]])for(let i=1;i<100;i++)for(const [x,y] of [[20,20],[w*.5,h*.5],[w-20,h-20],[w*.75,h*.25]]){const t=i/100;const paper=mixColor(from,to,paperWaveAmount(w,h,x,y,t));const ink=readableColor(mixColor(inkA,inkB,waveAmount(w,h,x,y,t)),paper,[inkA,inkB]);assert.ok(contrastRatio(ink,paper)>=4.5);contrastCases++;}console.log('Intermediate foreground contrast: '+contrastCases+' samples checked.');
+
+// The main front cannot retreat or flood the far corner prematurely.
+let advancingCases=0;
+for(let j=0;j<=128;j++){
+ const angle=j/128*Math.PI/2;
+ assert.equal(spillFrontRadius(1,0,angle),0);
+ for(let i=1;i<=1000;i++){
+  assert.ok(spillFrontRadius(1,i/1000,angle)>=spillFrontRadius(1,(i-1)/1000,angle));
+  advancingCases++;
+ }
+}
+for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
+ assert.equal(paperWaveAmount(w,h,w,h,.9)<1,true);
+ assert.equal(paperWaveAmount(w,h,w,h,1),1);
+}
+console.log('Monotonic liquid front: '+advancingCases+' ray/time samples checked.');

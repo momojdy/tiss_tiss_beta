@@ -6,12 +6,12 @@ export const SPILL_SAMPLES=32;
 export function spillProgress(t:number){return Math.max(0,Math.min(1,t));}
 export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){
  t=spillProgress(t);
- // A slow start, advancing lobes and a gradual final catch-up.
- const advance=.009+.991*(t+.095*Math.sin(Math.PI*t));
- const texture=(.16*Math.sin(5*angle-4.8*t+.8)+.075*Math.sin(11*angle+7.5*t-.7)+.035*Math.sin(19*angle-10*t+1.2));
- const tongue=.13*Math.pow(Math.max(0,Math.cos(3.8*angle-2.4*t+.3)),6);
- const envelope=Math.sin(Math.PI*Math.min(1,t*.96+.025));
- return diagonal*(1.26*advance*(1+envelope*(texture+tongue))+lead*Math.sin(Math.PI*t)*(.35+.65*advance));
+ // Zero area at launch, continuously deforming lobes, and corner coverage
+ // only near the end. Every ray advances instead of retreating or flooding
+ // the whole viewport early. Wet edges vanish as the main front catches up.
+ const texture=.32*Math.sin(5*angle-2*t+.8)+.12*Math.sin(11*angle+2.5*t-.7)+.06*Math.sin(19*angle-3.2*t+1.2);
+ const tongue=.10*Math.pow(Math.max(0,Math.cos(3.8*angle-1.8*t+.3)),4);
+ return diagonal*(1.001*t+t*(1-t)*(texture+tongue)+lead*4*t*(1-t));
 }
 type Point={x:number;y:number};
 const fmt=(v:number)=>String(Math.round(v*10)/10);
@@ -44,11 +44,9 @@ export function waveAmount(width:number,height:number,x:number,y:number,t:number
  const diagonal=Math.max(1,Math.hypot(width,height));
  x=Math.max(0,Math.min(width,x));y=Math.max(0,Math.min(height,y));
  const radius=spillFrontRadius(diagonal,t,Math.atan2(y,x));
- const band=diagonal*.105;
+ const band=diagonal*.045;
  const u=spillProgress((radius-Math.hypot(x,y)+band)/(2*band));
- // Limit the last part to a gradual finish even where the leading lobe arrives early.
- const settle=spillProgress(t*1.16);
- return (u*u*(3-2*u))*(.85+.15*settle);
+ return u*u*(3-2*u);
 }
 export function mixColor(from:string,to:string,t:number){
  t=spillProgress(t);if(t===0||from===to)return from;if(t===1)return to;

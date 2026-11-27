@@ -16,8 +16,9 @@ export default function ThemeSpill({onFrame,onDone,delay=0}:Props){
    if(first===undefined)first=now;
    const elapsed=now-first-delay;
    const t=spillProgress(elapsed/(SPILL_SPREAD_MS+SPILL_REVEAL_MS));
-   // Limit React tree repaints to ~30fps, while elapsed time remains exact.
-   if(t===1||last<0||now-last>=30){last=now;callbacks.current.onFrame(t);}
+   // Avoid a rigid ~20fps cadence on a 60Hz display: allow one frame of
+   // scheduling tolerance while keeping React repaints near 30fps.
+   if(t===1||last<0||now-last>=29){last=now;callbacks.current.onFrame(t);}
    if(t<1)frame=requestAnimationFrame(step);else callbacks.current.onDone();
   };
   frame=requestAnimationFrame(step);

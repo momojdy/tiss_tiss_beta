@@ -12,10 +12,11 @@ export function wavePalette(wave:LiveWave,x:number,y:number){
  const t=waveAmount(wave.width,wave.height,x,y,wave.progress);
  if(wave.progress<=0)return wave.from;if(wave.progress>=1)return wave.to;
  const mixed=blendPalette(wave.from,wave.to,t);
- const paper=mixColor(wave.from.paper,wave.to.paper,paperWaveAmount(wave.width,wave.height,x,y,wave.progress));
- const preferred=paperWaveAmount(wave.width,wave.height,x,y,wave.progress)>=.5?wave.to:wave.from;
+ const paperAmount=paperWaveAmount(wave.width,wave.height,x,y,wave.progress);
+ const paper=mixColor(wave.from.paper,wave.to.paper,paperAmount);
+ const preferred=paperAmount>=.5?wave.to:wave.from;
  const other=preferred===wave.to?wave.from:wave.to;
- return {...mixed,ink:readableColor(mixed.ink,paper,[preferred.ink,other.ink]),muted:readableColor(mixed.muted,paper,[preferred.muted,preferred.ink,other.ink]),teal:readableColor(mixed.teal,paper,[preferred.teal,preferred.ink,other.ink]),rust:readableColor(mixed.rust,paper,[preferred.rust,preferred.ink,other.ink])};
+ return {...mixed,paper,ink:readableColor(mixed.ink,paper,[preferred.ink,other.ink]),muted:readableColor(mixed.muted,paper,[preferred.muted,preferred.ink,other.ink]),teal:readableColor(mixed.teal,paper,[preferred.teal,preferred.ink,other.ink]),rust:readableColor(mixed.rust,paper,[preferred.rust,preferred.ink,other.ink])};
 }
 function mapIfChanged<T>(items:readonly T[],fn:(item:T,index:number)=>T):readonly T[]{
  let changed=false;const next=items.map((item,index)=>{const v=fn(item,index);if(v!==item)changed=true;return v;});return changed?next:items;
@@ -40,8 +41,8 @@ export function paintThemeTree(node:React.ReactNode,wave:LiveWave,bounds:WaveBou
  const props=node.props as Record<string,unknown>,next:Record<string,unknown>={};
  const put=(k:string,value:unknown)=>{if(value!==props[k])next[k]=value;};
  if(props.p===wave.from)put('p',p);
- if(props.style!==undefined)put('style',style(props.style));
- for(const k of ['color','fill','stroke','placeholderTextColor','selectionColor'])if(props[k]!==undefined)put(k,color(props[k]));
+ for(const k of ['style','labelStyle','contentContainerStyle','textStyle','titleStyle','inputStyle'])if(props[k]!==undefined)put(k,style(props[k]));
+ for(const k of ['color','fill','stroke','placeholderTextColor','selectionColor','underlineColorAndroid','backgroundColor','borderColor','tintColor'])if(props[k]!==undefined)put(k,color(props[k]));
  if(Array.isArray(props.colors))put('colors',mapIfChanged(props.colors,v=>v==='#ffffff55'&&wave.from.paper==='#f4f0e8'?mixColor(v,'#ffffff0a',amount):v==='#ffffff0a'&&wave.from.paper==='#142021'?mixColor(v,'#ffffff55',amount):color(v)));
  if(props.children!==undefined){
   const children=props.children as React.ReactNode;

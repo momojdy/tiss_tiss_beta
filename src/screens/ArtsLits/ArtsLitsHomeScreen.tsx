@@ -166,7 +166,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const dockMix=wave?waveAmount(wave.width,wave.height,screenWidth*.5,wave.height-dockBottom-32,wave.progress):0;
   const dockP=wave?blendPalette(p,wave.to,dockMix):p;
   const dockDark=spillTarget&&dockMix>=.5?spillTarget==='dark':dark;
-  const paperOuter=wave?mixColor(p.outer,wave.to.outer,spillProgress):p.outer;
+  const paperOuter=wave?mixColor(p.outer,wave.to.outer,waveAmount(wave.width,wave.height,0,wave.height*.5,wave.progress)):p.outer;
   const paintRow=(item:HomeRow)=>{
     if(!wave||wave.progress<=0)return item.content;
     const frame=rowFrames.current.get(item.id);if(!frame)return item.content;
