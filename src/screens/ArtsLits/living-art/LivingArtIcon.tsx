@@ -2,6 +2,7 @@ import React, { createContext, memo, useContext, useEffect, useMemo, useRef, use
 import { Image, View } from 'react-native';
 import { Image as AnimatedImage } from 'expo-image';
 import Svg, { G, Path, Polygon, Circle, Ellipse, Rect, Defs, Mask, ClipPath, LinearGradient, RadialGradient, Stop, Use, Filter, FeColorMatrix, Image as SvgImage } from 'react-native-svg';
+import {HomeMotion} from './HomeMotion';
 import { motionFor, motionProps, nums, type SvgNode } from './motion';
 
 export type LivingArtTab = 'Home' | 'Explore' | 'Artrium' | 'Library' | 'Bazaar';
@@ -81,6 +82,7 @@ function BazaarArt(){
  </View>;
 }
 function LivingArtArtwork(props:ArtProps){
+ if(props.name==='Home'&&!props.reducedMotion)return <HomeMotion dark={props.dark}/>;
  if(props.name==='Bazaar')return <BazaarArt/>;
  if(props.name==='Explore')return <ExploreArt {...props}/>;
  return <RasterArt {...props} name={props.name}/>;

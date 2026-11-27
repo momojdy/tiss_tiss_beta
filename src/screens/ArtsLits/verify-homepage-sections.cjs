@@ -29,6 +29,7 @@ function load(name) {
   if (name === 'expo-linear-gradient') return {LinearGradient:'LinearGradient'};
   if (name === 'react-native-svg') return {default:'Svg',SvgXml:'SvgXml',Circle:'Circle',Ellipse:'Ellipse',G:'G',Path:'Path'};
   if (name.includes('async-storage')||name.includes('netinfo')) return {default:{}};
+  if (name === './living-art/HomeMotion') return {HomeMotionProvider:'HomeMotionProvider'};
   if (name === './living-art/LivingArtIcon') return {LivingArtIcon:'LivingArtIcon',artSize:{Home:[58,58],Explore:[44,44],Artrium:[62,62],Library:[50,50],Bazaar:[35,35]}};
   if (name === './PreviewSheet') return {default:'PreviewSheet'};
   if (name === './ArtsLitsQuickMenu') return {default:'ArtsLitsQuickMenu'};
@@ -230,3 +231,5 @@ const scrollingDetail=flatten(realSheet(scrollingDetailProps));assert.equal(find
 console.log('Active spill: homepage/detail scrolling enabled and a single root clock retained across navigation.');
 
 require('./verify-native-spill.cjs');
+
+require('./living-art/verify-home-handoff.cjs');

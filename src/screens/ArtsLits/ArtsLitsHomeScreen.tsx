@@ -21,6 +21,7 @@ import {SpillSurface,SpillScrollView} from './SpillSurface';
 import {mixColor} from './themeSpillGeometry';
 import {FloatingQuickMenuButton} from '../../shared/quickMenu/FloatingQuickMenuButton';
 import type {QuickMenuAction,QuickMenuHostAction,QuickMenuInbox} from '../../shared/quickMenu/menuContract';
+import {HomeMotionProvider} from './living-art/HomeMotion';
 import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
 import { DiscoveryRow } from './DiscoveryRows';
 import { preferNeighborImages, sponsorEligible, type SponsorScenario, selectHomepageRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
@@ -167,7 +168,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const topPadding=Math.max(0,insets.top-19);
   const paperOuter=wave?mixColor(p.outer,wave.to.outer,wave.progress):p.outer;
   const quickMenuProps={visible:menuVisible,close:()=>setMenuVisible(false),p,dark,reducedMotion,inbox,onAction:quickMenuAction};
-  return <View style={{flex:1,minHeight:0,backgroundColor:paperOuter,alignItems:'center'}}>
+  return <HomeMotionProvider paused={!!active} reducedMotion={reducedMotion}><View style={{flex:1,minHeight:0,backgroundColor:paperOuter,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
     <View style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
@@ -204,5 +205,5 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     </View>
     {menuVisible&&!active&&<ArtsLitsQuickMenu {...quickMenuProps} inline/>}
     <PreviewSheet previewWave={menuVisible?surfaceWave:null} wave={active?wave:null} onOpenQuickMenu={()=>{if(!spillTarget){spillProgress.set(0);setMenuVisible(true);}}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitioning={!!spillTarget} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
-  </View>;
+  </View></HomeMotionProvider>;
 }

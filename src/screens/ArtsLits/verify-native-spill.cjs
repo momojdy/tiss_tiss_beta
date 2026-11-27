@@ -19,7 +19,8 @@ const animation={__esModule:true,default:{createAnimatedComponent:()=> 'Animated
  useSharedValue:shared,useAnimatedProps:fn=>fn,useAnimatedRef:()=>({current:{scrollTo(){}}}),
  useScrollOffset:(ref,offset)=>{if(ref)observed.push({ref,offset});return offset;},
  useAnimatedReaction:(prepare,react)=>reactions.push(()=>react(prepare())),
- scrollTo:(ref,x,y,animated)=>{ref.lastScroll={x,y,animated};},
+ scrollTo:()=>assert.fail('No programmatic native scroll during a gesture'),
+ setNativeProps:(ref,updates)=>{ref.lastProps=updates;},
  withTiming:(to,config,done)=>({to,config,done}),withDelay:(delay,animation)=>({...animation,delay}),
  cancelAnimation:()=>canceled++,Easing:{linear:'linear'},ReduceMotion:{Never:'never'},
 };
@@ -70,21 +71,23 @@ console.log('Native paper/mask wiring: one shared UI progress and identical cont
 const {SpillScrollView}=load('SpillScrollView.native.tsx',{'react':hooks,'react-native-reanimated':animation,'./spillScene':{SpillSceneContext:{}}});
 for(const horizontal of [false,true]){
  const registry=new Map();scene={presentation:false,scrolls:registry};
- const sourceRef={current:null};let contentEvents=0,scrollEvents=0;
- const source=SpillScrollView.render({testID:'reading',horizontal,onScroll:()=>scrollEvents++,onContentSizeChange:()=>contentEvents++},sourceRef);
+ const sourceRef={current:null},contentStyle={paddingHorizontal:16,gap:9,alignItems:'flex-end'},children=React.createElement('View',{style:{width:100,height:170}});let contentEvents=0,scrollEvents=0;
+ const source=SpillScrollView.render({testID:'reading',horizontal,contentContainerStyle:contentStyle,children,onScroll:()=>scrollEvents++,onContentSizeChange:()=>contentEvents++},sourceRef);
  const observation=observed.at(-1);assert.ok(sourceRef.current);assert.equal(source.props.scrollEnabled,undefined);
  observation.offset.set(175);scene={presentation:true,scrolls:registry};
- const target=SpillScrollView.render({spillScrollId:'reading',horizontal},null);
- const follow=reactions.at(-1);const nativeTarget=target.props.ref;
- follow();assert.equal(nativeTarget.lastScroll,undefined,'Do not scroll an unlaid-out destination');
- target.props.onContentSizeChange(2000,2000);follow();assert.deepEqual(nativeTarget.lastScroll,{x:horizontal?175:0,y:horizontal?0:175,animated:false});
+ const target=SpillScrollView.render({spillScrollId:'reading',horizontal,contentContainerStyle:contentStyle,children},null);
+ const follow=reactions.at(-1);const nativeTarget=target.props.innerViewRef;
+ follow();assert.equal(nativeTarget.lastProps,undefined,'Wait for passive content layout');
+ target.props.onContentSizeChange(2000,2000);follow();assert.deepEqual(nativeTarget.lastProps,{transform:[{translateX:horizontal?-175:0},{translateY:horizontal?0:-175}]});
  for(const offset of [300,540,240,0,-12,85]){
-  observation.offset.set(offset);follow();assert.deepEqual(nativeTarget.lastScroll,{x:horizontal?offset:0,y:horizontal?0:offset,animated:false});
+  observation.offset.set(offset);follow();assert.deepEqual(nativeTarget.lastProps,{transform:[{translateX:horizontal?-offset:0},{translateY:horizontal?0:-offset}]});
  }
+ assert.equal(target.props.removeClippedSubviews,false,'Keep translated cards mounted');
+ assert.equal(target.props.contentContainerStyle,contentStyle);assert.equal(target.props.children,children,'Translate the original native content view, without extra layout wrappers');
  assert.equal(scrollEvents,0,'UI mirroring does not require RN scroll callbacks');
  assert.equal(target.props.onScroll,undefined,'No scroll feedback loop from the passive scene');
  source.props.onContentSizeChange(2000,2000);assert.equal(contentEvents,1);
  source.props.onScroll({nativeEvent:{contentOffset:{x:0,y:20}}});assert.equal(scrollEvents,1,'Retain existing source callbacks');
  assert.equal(rnQueue.length,0);
 }
-console.log('Native scroll: vertical/horizontal offsets, pre-scrolled mounts, content readiness, reversals and overscroll follow entirely on UI.');
+console.log('Native scroll: vertical/horizontal offsets, pre-scrolled mounts, content readiness, reversals and overscroll translate on UI without native scroll commands.');
