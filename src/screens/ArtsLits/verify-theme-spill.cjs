@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript');
 const source=fs.readFileSync(path.join(__dirname,'themeSpillGeometry.ts'),'utf8'),mod={exports:{}};
 new Function('module','exports',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(mod,mod.exports);
-const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,SPILL_MAX_FRAME_MS,advanceSpillElapsed,spillBands,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
+const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,SPILL_MAX_FRAME_MS,advanceSpillElapsed,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
 assert.equal(SPILL_SPREAD_MS,5640);assert.equal(SPILL_REVEAL_MS,360);assert.equal(SPILL_SPREAD_MS+SPILL_REVEAL_MS,6000);assert.equal(spillProgress(-1),0);assert.equal(spillProgress(2),1);
 let frames=0;
 for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
@@ -57,23 +57,6 @@ console.log('Monotonic liquid front: '+advancingCases+' ray/time samples checked
 for(const hz of [30,60,90,120]){let elapsed=0;for(let i=0;i<hz*6;i++)elapsed=advanceSpillElapsed(elapsed,1000/hz);assert.ok(Math.abs(elapsed-6000)<.001);}
 assert.equal(SPILL_MAX_FRAME_MS,50);assert.equal(advanceSpillElapsed(0,2000),50);assert.equal(advanceSpillElapsed(500, -5),500);assert.equal(advanceSpillElapsed(5990,100),6000);
 console.log('Visual clock: four display refresh rates and delayed-frame cases checked.');
-
-// Background bands retain the corner-origin outline, wet edges and exact
-// viewport clipping without creating a native SVG surface.
-let bandCases=0;
-for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
- assert.deepEqual(spillBands(w,h,0),[]);
- assert.deepEqual(spillBands(w,h,1),[{left:0,top:0,width:w,height:h,key:'full'}]);
- for(let i=1;i<100;i++)for(const lead of [0,.055,.12]){
-  const bands=spillBands(w,h,i/100,lead);const keys=new Set();
-  for(const b of bands){assert.ok(b.left>=0&&b.top>=0&&b.width>0&&b.height>0&&b.left+b.width<=w+1e-8&&b.top+b.height<=h+1e-8);assert.ok(!keys.has(b.key));keys.add(b.key);}
-  bandCases++;
- }
- const early=spillBands(w,h,.2),late=spillBands(w,h,.8);
- const area=bands=>bands.reduce((sum,b)=>sum+b.width*b.height,0);
- assert.ok(area(early)>0&&area(early)<area(late)&&area(late)<w*h);
-}
-console.log('Native background bands: '+bandCases+' viewport/progress/edge cases checked.');
 
 // Render against the current RN API: the spill must stay out of flex layout,
 // even when the removed absoluteFillObject export is absent.

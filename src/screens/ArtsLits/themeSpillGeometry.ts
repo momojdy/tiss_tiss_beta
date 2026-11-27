@@ -2,14 +2,13 @@
 // in real screen coordinates (no stretched SVG or uniformly scaled silhouette).
 export const SPILL_SPREAD_MS=5640;
 export const SPILL_REVEAL_MS=360;
-export const SPILL_SAMPLES=32;
-export const SPILL_EDGE_WIDTH=.045;
-// Keep a bounded number of native wet-edge layers; the foreground samples
-// these exact cumulative opacities to stay readable as the paper passes.
+export const SPILL_SAMPLES=64;
+export const SPILL_EDGE_WIDTH=.012;
+// A narrow translucent meniscus, with no wide contour rings. The foreground
+// samples these exact opacities to stay readable as the waterline passes.
 export const SPILL_EDGE_LAYERS=[
- {lead:.12,opacity:.12},
- {lead:.08,opacity:.22},
- {lead:.04,opacity:.42},
+ {lead:.008,opacity:.08},
+ {lead:.003,opacity:.18},
  {lead:0,opacity:1},
 ] as const;
 // Keep the visual clock advancing even when a JS/native render is delayed.
@@ -24,12 +23,12 @@ export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){
  // Zero area at launch, continuously deforming lobes, and corner coverage
  // only near the end. Every ray advances instead of retreating or flooding
  // the whole viewport early. Wet edges vanish as the main front catches up.
- const texture=.32*Math.sin(5*angle-2*t+.8)+.12*Math.sin(11*angle+2.5*t-.7)+.06*Math.sin(19*angle-3.2*t+1.2);
- const tongue=.10*Math.pow(Math.max(0,Math.cos(3.8*angle-1.8*t+.3)),4);
+ const texture=.28*Math.sin(3*angle-1.4*t+.8)+.085*Math.sin(7*angle+1.8*t-.7);
+ const tongue=.07*Math.pow(Math.max(0,Math.cos(2.2*angle-1.4*t+.3)),4);
  return diagonal*(1.001*t+t*(1-t)*(texture+tongue)+lead*4*t*(1-t));
 }
 type Point={x:number;y:number};
-const fmt=(v:number)=>String(Math.round(v*10)/10);
+const fmt=(v:number)=>String(Math.round(v*1000)/1000);
 export function spillFrontPoints(width:number,height:number,t:number,lead=0):Point[]{
  const diagonal=Math.hypot(width,height);
  return Array.from({length:SPILL_SAMPLES+1},(_,i)=>{
@@ -104,35 +103,4 @@ export function paperWaveAmount(width:number,height:number,x:number,y:number,t:n
   if(r<=radius+leadScale*layer.lead)amount+=layer.opacity*(1-amount);
  }
  return amount;
-}
-
-// Rasterize the SAME cubic liquid outline into ordinary native background
-// bands. No SVG surface, native mask, or screenshot can cover the live page.
-export type SpillBand={left:number;top:number;width:number;height:number;key:string};
-export function spillBands(width:number,height:number,t:number,lead=0):SpillBand[]{
- if(width<=0||height<=0||t<=0)return [];
- if(t>=1)return [{left:0,top:0,width,height,key:'full'}];
- const points=spillFrontPoints(width,height,t,lead);
- const polygon:Point[]=[{x:0,y:0},points[0]];
- for(let i=0;i<points.length-1;i++){
-  const a=points[Math.max(0,i-1)],b=points[i],c=points[i+1],d=points[Math.min(points.length-1,i+2)];
-  const c1={x:b.x+(c.x-a.x)/6,y:b.y+(c.y-a.y)/6};
-  const c2={x:c.x-(d.x-b.x)/6,y:c.y-(d.y-b.y)/6};
-  for(let j=1;j<=4;j++){const u=j/4,v=1-u;polygon.push({x:v*v*v*b.x+3*v*v*u*c1.x+3*v*u*u*c2.x+u*u*u*c.x,y:v*v*v*b.y+3*v*v*u*c1.y+3*v*u*u*c2.y+u*u*u*c.y});}
- }
- polygon.push({x:0,y:0});
- const step=Math.max(3,Math.ceil(height/180)),out:SpillBand[]=[];
- for(let top=0;top<height;top+=step){
-  const h=Math.min(step,height-top),y=top+h/2,crossings:number[]=[];
-  for(let i=0;i<polygon.length-1;i++){
-   const a=polygon[i],b=polygon[i+1];
-   if((a.y<=y&&b.y>y)||(b.y<=y&&a.y>y))crossings.push(a.x+(y-a.y)*(b.x-a.x)/(b.y-a.y));
-  }
-  crossings.sort((a,b)=>a-b);
-  for(let j=0;j+1<crossings.length;j+=2){
-   const left=Math.max(0,Math.min(width,crossings[j])),right=Math.max(0,Math.min(width,crossings[j+1]));
-   if(right>left)out.push({left,top,width:right-left,height:h,key:top+':'+j});
-  }
- }
- return out;
 }

@@ -198,12 +198,19 @@ const triggerSource=fs.readFileSync(path.resolve(root,'../../shared/quickMenu/Fl
 console.log('B10: floating Quick Menu, unequal dots, detail overlay and theme/action return paths checked.');
 
 // Only the transparent tap blocker is above content. No native capture/decoder fallback.
-const spillSource=fs.readFileSync(path.join(root,'ThemeSpill.tsx'),'utf8');assert.ok(spillSource.includes('requestAnimationFrame(step)'));assert.ok(spillSource.includes('spillBands(width,height,progress,lead)'));assert.ok(!spillSource.includes('react-native-svg'));assert.ok(spillSource.includes('cancelAnimationFrame(frame)'));assert.ok(spillSource.includes('return null;'));assert.ok(spillSource.includes('zIndex:0,elevation:0'));assert.ok(!spillSource.includes('elevation:30'));assert.ok(!spillSource.includes('captureRef'));assert.ok(!spillSource.includes('onFallback'));require('./verify-theme-spill.cjs');console.log('B15: progressive live palette frames, content retention, final colors and detail route assertions added.');
+const spillSource=fs.readFileSync(path.join(root,'ThemeSpill.tsx'),'utf8');assert.ok(spillSource.includes('requestAnimationFrame(step)'));assert.ok(spillSource.includes('spillPath(width,height,progress,lead)'));assert.ok(spillSource.includes('react-native-svg'));assert.ok(!spillSource.includes('spillBands'));assert.ok(spillSource.includes('cancelAnimationFrame(frame)'));assert.ok(spillSource.includes('return null;'));assert.ok(spillSource.includes('zIndex:0,elevation:0'));assert.ok(!spillSource.includes('elevation:30'));assert.ok(!spillSource.includes('captureRef'));assert.ok(!spillSource.includes('onFallback'));require('./verify-theme-spill.cjs');console.log('B15: progressive live palette frames, content retention, final colors and detail route assertions added.');
 
 // B16: preserve the native foreground above the decorative background on every frame.
 const homeSource=fs.readFileSync(path.join(root,'ArtsLitsHomeScreen.tsx'),'utf8'),detailSource=fs.readFileSync(path.join(root,'PreviewSheet.tsx'),'utf8');assert.ok(homeSource.includes("zIndex:1,elevation:0,backgroundColor:'transparent'"));assert.ok(detailSource.includes("zIndex:1,elevation:0,backgroundColor:'transparent'"));assert.ok(homeSource.includes("pointerEvents={spillTarget?'none':'auto'}"));assert.ok(detailSource.includes("pointerEvents={props.themeTransitionOverlay?'none':'auto'}"));assert.ok(homeSource.includes('scrollEnabled={spillTarget?false:undefined}'));console.log('B16: explicit foreground/background layering and no elevated input blocker.');
 
-// B19: native background-only paint and an independently stacked foreground.
+// Smooth vector paper stays isolated beneath the independently stacked content.
 const paper=load('./ThemeSpill.tsx').SpillPaper;
-for(const progress of [.05,.25,.5,.75,.95,1]){const background=paper({width:390,height:844,progress,color:'#142021'});const n=flatten(background);assert.equal(background.props.pointerEvents,'none');assert.equal(background.props.collapsable,false);assert.ok(n.every(v=>v.type==='View'));assert.ok(n.slice(1).every(v=>v.props.style.position==='absolute'&&v.props.style.height<844));}
-assert.ok(detailSource.includes('testID="arts-lits-detail-live-foreground"'));assert.ok(detailSource.includes('elevation:panelWave?1:0'));console.log('B19: no SVG surface in the liquid background; stable native foreground layering checked.');
+for(const progress of [.05,.25,.5,.75,.95,1]){
+ const background=paper({width:390,height:844,progress,color:'#142021'}),n=flatten(background);
+ assert.equal(background.props.pointerEvents,'none');assert.equal(background.props.collapsable,false);
+ assert.equal(n.filter(v=>v.type==='View').length,1,'No rectangle strips along the waterline');
+ const svg=n.find(v=>v.type==='Svg'),paths=n.filter(v=>v.type==='Path');
+ if(progress<1){assert.ok(svg);assert.equal(svg.props.viewBox,'0 0 390 844');assert.equal(svg.props.pointerEvents,'none');assert.equal(paths.length,3);for(const path of paths){assert.ok(path.props.d.includes('C'));assert.ok(!/NaN|Infinity/.test(path.props.d));}}
+ else {assert.equal(svg,undefined);assert.equal(background.props.style[1].backgroundColor,'#142021');}
+}
+assert.ok(detailSource.includes('testID="arts-lits-detail-live-foreground"'));assert.ok(detailSource.includes('elevation:panelWave?1:0'));console.log('Smooth vector waterline and stable foreground layering checked.');
