@@ -2,8 +2,8 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript');
 const source=fs.readFileSync(path.join(__dirname,'themeSpillGeometry.ts'),'utf8'),mod={exports:{}};
 new Function('module','exports',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(mod,mod.exports);
-const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,SPILL_MAX_FRAME_MS,advanceSpillElapsed,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
-assert.equal(SPILL_SPREAD_MS,5640);assert.equal(SPILL_REVEAL_MS,360);assert.equal(SPILL_SPREAD_MS+SPILL_REVEAL_MS,6000);assert.equal(spillProgress(-1),0);assert.equal(spillProgress(2),1);
+const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,advanceSpillElapsed,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
+assert.equal(SPILL_SPREAD_MS,2820);assert.equal(SPILL_REVEAL_MS,180);assert.equal(SPILL_SPREAD_MS+SPILL_REVEAL_MS,3000);assert.equal(spillProgress(-1),0);assert.equal(spillProgress(2),1);
 let frames=0;
 for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
  const diagonal=Math.hypot(w,h);
@@ -52,11 +52,12 @@ for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
 }
 console.log('Monotonic liquid front: '+advancingCases+' ray/time samples checked.');
 
-// A normal display retains the six-second duration, while a stalled UI
-// cannot skip a large segment or jump straight to the target theme.
-for(const hz of [30,60,90,120]){let elapsed=0;for(let i=0;i<hz*6;i++)elapsed=advanceSpillElapsed(elapsed,1000/hz);assert.ok(Math.abs(elapsed-6000)<.001);}
-assert.equal(SPILL_MAX_FRAME_MS,50);assert.equal(advanceSpillElapsed(0,2000),50);assert.equal(advanceSpillElapsed(500, -5),500);assert.equal(advanceSpillElapsed(5990,100),6000);
-console.log('Visual clock: four display refresh rates and delayed-frame cases checked.');
+// Finish after three seconds at different refresh rates, including a busy
+// scrolling render. Frame delays count toward the duration, never extend it.
+for(const hz of [20,30,60,90,120]){let elapsed=0;for(let i=0;i<hz*3;i++)elapsed=advanceSpillElapsed(elapsed,1000/hz);assert.ok(Math.abs(elapsed-3000)<.001);}
+assert.equal(advanceSpillElapsed(0,2000),2000);assert.equal(advanceSpillElapsed(500,-5),500);assert.equal(advanceSpillElapsed(2990,100),3000);
+assert.equal(advanceSpillElapsed(1000,2000),3000);
+console.log('Three-second clock: five refresh rates and delayed-frame cases checked.');
 
 // Render against the current RN API: the spill must stay out of flex layout,
 // even when the removed absoluteFillObject export is absent.

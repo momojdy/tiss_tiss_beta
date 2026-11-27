@@ -1,7 +1,7 @@
 // Pure fluid-front geometry, independent of React Native. Angles are sampled
 // in real screen coordinates (no stretched SVG or uniformly scaled silhouette).
-export const SPILL_SPREAD_MS=5640;
-export const SPILL_REVEAL_MS=360;
+export const SPILL_SPREAD_MS=2820;
+export const SPILL_REVEAL_MS=180;
 export const SPILL_SAMPLES=64;
 export const SPILL_EDGE_WIDTH=.012;
 // A narrow translucent meniscus, with no wide contour rings. The foreground
@@ -11,11 +11,10 @@ export const SPILL_EDGE_LAYERS=[
  {lead:.003,opacity:.18},
  {lead:0,opacity:1},
 ] as const;
-// Keep the visual clock advancing even when a JS/native render is delayed.
-// A dropped frame must not turn a six-second spill into a sudden theme snap.
-export const SPILL_MAX_FRAME_MS=50;
+// Follow elapsed time so scrolling or a delayed frame cannot lengthen the
+// requested three-second transition.
 export function advanceSpillElapsed(elapsed:number,delta:number){
- return Math.min(SPILL_SPREAD_MS+SPILL_REVEAL_MS,elapsed+Math.max(0,Math.min(SPILL_MAX_FRAME_MS,delta)));
+ return Math.min(SPILL_SPREAD_MS+SPILL_REVEAL_MS,elapsed+Math.max(0,delta));
 }
 export function spillProgress(t:number){return Math.max(0,Math.min(1,t));}
 export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){

@@ -5,7 +5,7 @@ import {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_EDGE_LAYERS,advanceSpillElapsed,sp
 
 // No screenshot, image decoder, native mask or opaque foreground paint.
 // This clock drives the live palette and has NO native view at all.
-// Input is blocked at the existing page wrapper, not by an elevated overlay.
+// The decorative paper ignores input, leaving the real page scrollable.
 type Props={onFrame:(t:number)=>void;onDone:()=>void;delay?:number};
 export default function ThemeSpill({onFrame,onDone,delay=0}:Props){
  const callbacks=useRef({onFrame,onDone});callbacks.current={onFrame,onDone};
@@ -18,8 +18,7 @@ export default function ThemeSpill({onFrame,onDone,delay=0}:Props){
    if(lastTick!==undefined)elapsed=advanceSpillElapsed(elapsed,now-lastTick);
    lastTick=now;
    const t=spillProgress(elapsed/(SPILL_SPREAD_MS+SPILL_REVEAL_MS));
-   // Repaint at up to 60fps, but never jump over a large part of the front
-   // after a busy frame, background/resume, or menu dismissal.
+   // Repaint at up to 60fps, using real elapsed time even while scrolling.
    if(t===1||lastPaint<0||now-lastPaint>=15){lastPaint=now;callbacks.current.onFrame(t);}
    if(t<1)frame=requestAnimationFrame(step);
    else frame=requestAnimationFrame(()=>{if(alive)callbacks.current.onDone();});

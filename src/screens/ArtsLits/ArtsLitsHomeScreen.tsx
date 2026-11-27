@@ -160,7 +160,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const homeSlotWidth=(screenWidth-30-previousEyeWidth)/4+homeGap;
   const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else{setSpillProgress(0);setSpillTarget(next);}}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
   const wave:LiveWave|null=spillTarget?{from:p,to:palettes[spillTarget],progress:spillProgress,width:screenWidth,height:Math.max(1,viewportHeight.current||windowHeight)}:null;
-  const spillOverlay=spillTarget?<ThemeSpill onFrame={setSpillProgress} onDone={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}}/>:null;
+  const spillClock=spillTarget?<ThemeSpill onFrame={setSpillProgress} onDone={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}}/>:null;
   const topPadding=Math.max(0,insets.top-19);
   const floatingP=wave?wavePalette(wave,screenWidth-inset-24,Math.max(19,insets.top)+22):p;
   const floatingMix=wave?waveAmount(wave.width,wave.height,screenWidth-inset-24,Math.max(19,insets.top)+22,wave.progress):0;
@@ -180,12 +180,12 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   return <View style={{flex:1,minHeight:0,backgroundColor:paperOuter,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
-    <View pointerEvents={spillTarget?'none':'auto'} style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
+    <View style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
     <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper}}>
       {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
       <View testID="arts-lits-live-foreground" collapsable={false} style={{flex:1,minHeight:0,paddingTop:topPadding,position:'relative',zIndex:1,elevation:wave&&!active?1:0,backgroundColor:'transparent'}}>
       <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
-        style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} scrollEnabled={spillTarget?false:undefined} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
+        style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}>
         {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>{const {y,height}=e.nativeEvent.layout;rowFrames.current.set(item.id,{y,height});recordSection(item.id,y);}} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{paintRow(item)}</View>)}
@@ -208,9 +208,9 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
       </View>
     </View>
     </View>
-    {!active&&spillOverlay}
+    {spillClock}
     </View>
     {menuVisible&&!active&&<ArtsLitsQuickMenu {...quickMenuProps} inline/>}
-    <PreviewSheet wave={active?wave:null} onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitionOverlay={active?spillOverlay:null} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
+    <PreviewSheet wave={active?wave:null} onOpenQuickMenu={()=>{if(!spillTarget)setMenuVisible(true);}} onCloseQuickMenu={()=>setMenuVisible(false)} themeTransitioning={!!spillTarget} quickMenuOverlay={active&&menuVisible?<ArtsLitsQuickMenu {...quickMenuProps} inline/>:null} p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} sponsorScenario={sponsorScenario} setSponsorScenario={setSponsorScenario} sponsorAccess={sponsorAccess} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} visibleSectionIdsForLayout={visibleSectionIdsForLayout} draftLayout={draftLayout} previewLayout={v=>{setDraftLayout(validateLayout(v));setDisplayMode('cms');}} publishLayout={v=>{setPreviousLayout(layout);setLayout(validateLayout(v));setDraftLayout(null);setDisplayMode('cms');}} rollbackLayout={()=>{if(previousLayout){setLayout(previousLayout);setPreviousLayout(null);setDraftLayout(null);}}} canRollback={!!previousLayout} locale={locale} setLocale={setLocale} region={region} setRegion={setRegion} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }
