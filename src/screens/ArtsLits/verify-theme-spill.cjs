@@ -74,3 +74,61 @@ for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
  assert.ok(area(early)>0&&area(early)<area(late)&&area(late)<w*h);
 }
 console.log('Native background bands: '+bandCases+' viewport/progress/edge cases checked.');
+
+// Render against the current RN API: the spill must stay out of flex layout,
+// even when the removed absoluteFillObject export is absent.
+const React=require('react');
+const native={View:'View',Text:'Text',TextInput:'TextInput',Image:'Image',Pressable:'Pressable',ScrollView:'ScrollView',StyleSheet:{absoluteFill:{position:'absolute',top:0,right:0,bottom:0,left:0}}};
+function loadTs(file,imports){
+ const m={exports:{}};
+ const js=ts.transpileModule(fs.readFileSync(path.join(__dirname,file),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+ new Function('require','module','exports',js)(name=>name in imports?imports[name]:require(name),m,m.exports);
+ return m.exports;
+}
+const {SpillPaper}=loadTs('ThemeSpill.tsx',{'react-native':native,'react-native-svg':{default:'Svg',Path:'Path'},'./themeSpillGeometry':mod.exports});
+for(const progress of [.1,.5,.9,1]){
+ const paper=SpillPaper({width:390,height:844,progress,color:'#142021'});
+ const style=Object.assign({},...paper.props.style);
+ assert.equal(style.position,'absolute');
+ for(const side of ['top','right','bottom','left'])assert.equal(style[side],0);
+ assert.equal(style.zIndex,0);assert.equal(paper.props.pointerEvents,'none');
+}
+console.log('Current React Native layout: spill stays behind content and outside flex flow.');
+
+// Measure the existing hosts before a toggle. The second child is deliberately
+// near the top and the first near the bottom, defeating equal-slot estimates.
+const {paintThemeTree,wavePalette}=loadTs('liveThemeWave.tsx',{'react-native':native,'./themeSpillGeometry':mod.exports});
+const {palettes}=loadTs('design.ts',{'react-native':{Platform:{select:options=>options.default}}});
+const cache=new Map(),bounds={x:0,y:0,width:390,height:844};
+let layoutCalls=0;const onPress=()=>{},imageRef=React.createRef(),imageSource={uri:'museum.png'};
+const original=React.createElement('View',{},[
+ React.createElement('Text',{key:'lower',style:{color:palettes.light.ink},onLayout:()=>layoutCalls++},'Lower label'),
+ React.createElement('Text',{key:'upper',style:{color:palettes.light.ink}},'Upper label'),
+ React.createElement('Image',{key:'art',ref:imageRef,source:imageSource}),
+ React.createElement('Pressable',{key:'button',onPress},'Open work'),
+]);
+const measured=paintThemeTree(original,null,bounds,cache);
+measured.props.children[0].props.onLayout({nativeEvent:{layout:{x:20,y:730,width:100,height:20}}});
+measured.props.children[1].props.onLayout({nativeEvent:{layout:{x:20,y:10,width:100,height:20}}});
+assert.equal(layoutCalls,1);
+for(const [from,to] of [[palettes.light,palettes.dark],[palettes.dark,palettes.light]]){
+ const tree=React.cloneElement(original,{},original.props.children.map(child=>child.type==='Text'?React.cloneElement(child,{style:{color:from.ink}}):child));
+ for(const progress of [.1,.35,.65,.9,1]){
+  const wave={from,to,progress,width:390,height:844};
+  const painted=paintThemeTree(tree,wave,bounds,cache);
+  for(const [i,y] of [[0,740],[1,20]])assert.equal(painted.props.children[i].props.style.color,wavePalette(wave,70,y).ink);
+  painted.props.children.forEach((child,i)=>{assert.equal(child.type,original.props.children[i].type);assert.equal(child.key,original.props.children[i].key);});
+  assert.equal(painted.props.children[2].props.ref,imageRef);assert.equal(painted.props.children[2].props.source,imageSource);
+  assert.equal(painted.props.children[3].props.onPress,onPress);
+ }
+}
+console.log('Measured palette wave: both directions retain host identity, images, refs and handlers.');
+// Text crossing both papers gets a contrasting edge, removed once settled.
+for(const [from,to] of [[palettes.light,palettes.dark],[palettes.dark,palettes.light]]){
+ const text=React.createElement('Text',{style:{color:from.ink}},'A wide headline crossing the spill');
+ const wave={from,to,progress:.35,width:390,height:844};
+ const style=paintThemeTree(text,wave,bounds).props.style;
+ assert.ok(style.textShadowRadius>0);assert.ok(contrastRatio(style.textShadowColor,style.color)>=4.5);
+ assert.equal(paintThemeTree(text,{...wave,progress:1},bounds).props.style.textShadowRadius,undefined);
+}
+console.log('Split headline contrast: a temporary halo protects both theme directions.');

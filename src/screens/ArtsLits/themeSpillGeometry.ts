@@ -3,6 +3,15 @@
 export const SPILL_SPREAD_MS=5640;
 export const SPILL_REVEAL_MS=360;
 export const SPILL_SAMPLES=32;
+export const SPILL_EDGE_WIDTH=.045;
+// Keep a bounded number of native wet-edge layers; the foreground samples
+// these exact cumulative opacities to stay readable as the paper passes.
+export const SPILL_EDGE_LAYERS=[
+ {lead:.12,opacity:.12},
+ {lead:.08,opacity:.22},
+ {lead:.04,opacity:.42},
+ {lead:0,opacity:1},
+] as const;
 // Keep the visual clock advancing even when a JS/native render is delayed.
 // A dropped frame must not turn a six-second spill into a sudden theme snap.
 export const SPILL_MAX_FRAME_MS=50;
@@ -50,7 +59,7 @@ export function waveAmount(width:number,height:number,x:number,y:number,t:number
  const diagonal=Math.max(1,Math.hypot(width,height));
  x=Math.max(0,Math.min(width,x));y=Math.max(0,Math.min(height,y));
  const radius=spillFrontRadius(diagonal,t,Math.atan2(y,x));
- const band=diagonal*.045;
+ const band=Math.max(.001,diagonal*SPILL_EDGE_WIDTH*4*t*(1-t));
  const u=spillProgress((radius-Math.hypot(x,y)+band)/(2*band));
  return u*u*(3-2*u);
 }
@@ -89,10 +98,12 @@ export function paperWaveAmount(width:number,height:number,x:number,y:number,t:n
  t=spillProgress(t);if(t===0||t===1)return t;
  x=Math.max(0,Math.min(width,x));y=Math.max(0,Math.min(height,y));
  const d=Math.max(1,Math.hypot(width,height)),a=Math.atan2(y,x),r=Math.hypot(x,y);
- if(r<=spillFrontRadius(d,t,a))return 1;
- if(r<=spillFrontRadius(d,t,a,.055))return .34+.17*(1-.34);
- if(r<=spillFrontRadius(d,t,a,.12))return .17;
- return 0;
+ const radius=spillFrontRadius(d,t,a),leadScale=d*4*t*(1-t);
+ let amount=0;
+ for(const layer of SPILL_EDGE_LAYERS){
+  if(r<=radius+leadScale*layer.lead)amount+=layer.opacity*(1-amount);
+ }
+ return amount;
 }
 
 // Rasterize the SAME cubic liquid outline into ordinary native background
