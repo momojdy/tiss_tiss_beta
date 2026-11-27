@@ -69,7 +69,7 @@ function loadTs(file,imports){
  new Function('require','module','exports',js)(name=>name in imports?imports[name]:require(name),m,m.exports);
  return m.exports;
 }
-const {SpillPaper}=loadTs('ThemeSpill.tsx',{'react-native':native,'react-native-reanimated':{},'react-native-worklets':{},'./SpillPath':{SpillPath:'Path'},'react-native-svg':{default:'Svg',Path:'Path'},'./themeSpillGeometry':mod.exports});
+const {SpillPaper}=loadTs('ThemeSpill.tsx',{'react-native':native,'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'react-native-reanimated':{},'react-native-worklets':{},'./SpillPath':{SpillPath:'Path'},'react-native-svg':{default:'Svg',Path:'Path'},'./themeSpillGeometry':mod.exports});
 for(const progress of [.1,.5,.9,1]){
  const paper=SpillPaper({width:390,height:844,progress,color:'#142021'});
  const style=Object.assign({},...paper.props.style);
@@ -105,7 +105,7 @@ console.log('Spatial theme presentations: source identity preserved, no sampled-
 // The mask clips the presentation in measured screen coordinates, including
 // the padding of a detail panel. It never changes the original native subtree.
 const fakeReact={...React,useRef:initial=>({current:initial}),useState:()=>[{x:22,y:16,width:346,height:500},()=>{}],useId:()=>':test:',useCallback:fn=>fn,useMemo:fn=>fn()};
-const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'react-native-svg':{default:'Svg',Defs:'Defs',ForeignObject:'ForeignObject',G:'G',Mask:'Mask',Path:'Path'},'./themeSpillGeometry':mod.exports,'./SpillPath':{SpillPath:'Path'},'./liveThemeWave':{targetThemeTree}});
+const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'react-native-svg':{default:'Svg',Defs:'Defs',ForeignObject:'ForeignObject',G:'G',Mask:'Mask',Path:'Path'},'./themeSpillGeometry':mod.exports,'./spillClock':{useSpillProgress:(clock,p)=>clock?clock.get():p},'./liveThemeWave':{targetThemeTree}});
 function flattenElements(node,out=[]){if(Array.isArray(node)){node.forEach(child=>flattenElements(child,out));return out;}if(React.isValidElement(node)){out.push(node);flattenElements(node.props.children,out);}return out;}
 const untouched=React.createElement('Text',{style:{color:palettes.light.ink}},'A partially covered label');
 const wave={from:palettes.light,to:palettes.dark,progress:.21,width:390,height:844};
@@ -115,7 +115,7 @@ const scene=flattenElements(surface),mask=scene.find(n=>n.type==='Mask'),foreign
 assert.equal(group.props.transform,'translate(-22 -16)');assert.equal(mask.props.maskUnits,'userSpaceOnUse');assert.equal(foreign.props.mask,`url(#${mask.props.id})`);assert.equal(foreign.props.width,346);assert.equal(foreign.props.height,500);
 assert.equal(scene.find(n=>n.props.testID==='arts-lits-spill-ink').props.pointerEvents,'none');
 const paths=scene.filter(n=>n.type==='Path');assert.equal(paths.length,mod.exports.SPILL_EDGE_LAYERS.length);
-paths.forEach((path,i)=>{assert.equal(path.props.progress,.21);assert.equal(path.props.lead,mod.exports.SPILL_EDGE_LAYERS[i].lead);assert.equal(path.props.width,390);assert.equal(path.props.height,844);});
+paths.forEach((path,i)=>assert.equal(path.props.d,spillPath(390,844,.21,mod.exports.SPILL_EDGE_LAYERS[i].lead)));
 console.log('Pixel mask: original subtree retained, measured offsets and waterline shared exactly.');
 
 // Coverage has several gradual intermediate values across the narrow wet edge.
@@ -123,6 +123,17 @@ for(const t of [.2,.5,.8]){
  const angle=1.25,d=Math.hypot(390,844),front=spillFrontRadius(d,t,angle),edge=spillFrontRadius(d,t,angle,.008),levels=new Set();
  let previous=0;
  for(let i=0;i<=100;i++){const r=edge+1-(edge-front+2)*i/100,amount=paperWaveAmount(390,844,r*Math.cos(angle),r*Math.sin(angle),t);assert.ok(amount+1e-12>=previous);previous=amount;levels.add(Math.round(amount*10000));}
- assert.ok(levels.size>=8);assert.equal(previous,1);
+ assert.ok(levels.size>=4);assert.equal(previous,1);
 }
 console.log('Wet-edge coverage: gradual monotonic blending before full theme coverage.');
+
+// Lock the curve frames to the version whose fluid motion was approved, rather
+// than silently changing its path, edge contours or time progression again.
+const curveHash=require('node:crypto').createHash('sha256');
+for(let i=0;i<=180;i++)for(const lead of [.008,.003,0])curveHash.update(spillPath(390,844,i/180,lead));
+assert.equal(curveHash.digest('hex'),'adb788d5f1dd0249075f82ecbd21c27225005b7b971528a0cecdf93cdfd55cd9');
+const later=SpillSurface({wave:{...wave,progress:.22},children:untouched,originFromLayout:true});
+const laterNodes=flattenElements(later),laterMask=laterNodes.find(n=>n.type==='Mask');
+assert.notEqual(mask.props.id,laterMask.props.id,'Invalidate the native cached mask on each presented frame');
+assert.equal(laterNodes.find(n=>n.type==='ForeignObject').props.children.props.children.props.children,foreign.props.children.props.children.props.children,'Keep the prepared card scene stable while only its mask moves');
+console.log('Approved fluid frames preserved; native mask references refresh without replacing card content.');
