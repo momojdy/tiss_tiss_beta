@@ -15,8 +15,10 @@ import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, P
 import PreviewSheet from './PreviewSheet';
 import ArtsLitsQuickMenu from './ArtsLitsQuickMenu';
 import ThemeSpill,{SpillPaper} from './ThemeSpill';
-import {blendPalette,paintThemeTree,wavePalette,type LiveWave,type ThemeTreeLayout} from './liveThemeWave';
-import {mixColor,waveAmount} from './themeSpillGeometry';
+import {useSharedValue} from 'react-native-reanimated';
+import type {LiveWave} from './liveThemeWave';
+import {SpillSurface,SpillScrollView} from './SpillSurface';
+import {mixColor} from './themeSpillGeometry';
 import {FloatingQuickMenuButton} from '../../shared/quickMenu/FloatingQuickMenuButton';
 import type {QuickMenuAction,QuickMenuHostAction,QuickMenuInbox} from '../../shared/quickMenu/menuContract';
 import { LivingArtIcon, artSize, type LivingArtTab } from './living-art/LivingArtIcon';
@@ -49,9 +51,9 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const [menuVisible,setMenuVisible]=useState(false);
   const [spillTarget,setSpillTarget]=useState<PreviewPreferences['theme']|null>(null);
-  const [spillProgress,setSpillProgress]=useState(0);
+  const spillProgress=useSharedValue(0);
+  const spillStartedAt=useRef(0);
   const viewportHeight=useRef(windowHeight),scrollY=useRef(0),rowFrames=useRef(new Map<string,{y:number;height:number}>());
-  const themeLayouts=useRef(new Map<string,ThemeTreeLayout>());
   const scroll=useRef<ScrollView>(null); const sectionOffsets=useRef(new Map<string,number>()); const pendingJump=useRef<string|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsorAccess);
@@ -65,7 +67,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   useEffect(()=>NetInfo.addEventListener(s=>setConnected(s.isConnected===false||s.isInternetReachable===false?false:s.isConnected)),[]);
   useEffect(()=>{let alive=true;AccessibilityInfo.isReduceMotionEnabled().then(v=>{if(alive)setReducedMotion(v)}).catch(()=>{});const sub=AccessibilityInfo.addEventListener('reduceMotionChanged',setReducedMotion);return()=>{alive=false;sub.remove()};},[]);
   useEffect(()=>{const sub=BackHandler.addEventListener('hardwareBackPress',()=>{if(spillTarget)return true;if(menuVisible)setMenuVisible(false);else if(stack.length)back();else onBack();return true});return()=>sub.remove()},[spillTarget,menuVisible,stack.length,onBack]);
-  useEffect(()=>{if(reducedMotion&&spillTarget){setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}},[reducedMotion,spillTarget]);
+  useEffect(()=>{if(reducedMotion&&spillTarget){setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);spillProgress.set(0);}},[reducedMotion,spillTarget]);
   const head=(title:string,action?:string,target?:string,aside?:string)=><SectionHead p={p} title={title} action={action} onPress={target?()=>open(target):undefined} aside={aside} small={small} language={language}/>;
   const suffix=language==='long'?' — collection internationale':'';
   const marketReady=network==='ready'||network==='offline';
@@ -97,7 +99,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     ...(shown.following ? [{id:'following',content:(<Section>{head('Creators you follow','All','Creators')}<Rail inset={inset} label="Followed creators">{creators.filter(c=>prefs.following.includes(c[0])).map(c=><Pressable key={c[0]} accessibilityRole="button" onPress={()=>open(c[0])} style={{width:76,flexShrink:0,alignItems:'center'}}><View style={{width:68,height:68,marginBottom:7}}><Photo p={p} asset={c[2]} style={{width:68,height:68,borderRadius:34}}/>{(c[0]==='Amara Okafor'||c[0]==='Sofia Marin')&&<View style={{position:'absolute',right:1,top:1,width:11,height:11,borderRadius:6,backgroundColor:p.teal,borderWidth:2,borderColor:p.paper}}/>}</View><Serif p={p} size={14} style={{textAlign:'center'}}>{c[0]}</Serif><Small p={p} style={{marginTop:2,textAlign:'center'}}>{c[1]}</Small></Pressable>)}</Rail></Section>)}] : []),
     {id:'floors',content:(<Section>{head('Walk the floors','Map','Museum map')}<View style={{borderBottomWidth:1,borderColor:p.line}}>{floors.map((f,i)=><Pressable key={f[0]} accessibilityRole="button" accessibilityLabel={`Floor ${i}, ${f[0]}, ${floorAccess(i)}`} onPress={()=>open(f[0])} style={{flexDirection:'row',alignItems:'center',gap:12,minHeight:66,paddingVertical:11,borderTopWidth:1,borderColor:p.line}}><Serif p={p} size={31} style={{width:29,color:p.muted,lineHeight:31}}>{i}</Serif><View style={{flex:1}}><Serif p={p} size={small?16:18}>{f[0]+suffix}</Serif><Small p={p} style={{marginTop:4}}>{f[1]+suffix}</Small></View><View style={{flexDirection:'row',alignItems:'center',gap:5,maxWidth:'35%'}}><View style={{width:6,height:6,borderRadius:3,backgroundColor:floorAccess(i)==='Ticket'?p.rust:p.teal}}/><Small p={p} style={{color:floorAccess(i)==='Ticket'?p.rust:p.teal,textAlign:'right',flexShrink:1}}>{floorAccess(i)}</Small></View></Pressable>)}</View></Section>)},
     ...(shown.passes ? [{id:'passes',content:(<Section>{head('Your museum access','View','Museum passes')}<ContextBlock p={p} title={profile==='member'?'Arts & Lits membership':'Immersive Arts pass'} description={profile==='member'?'Sample membership: participating floors 4 and 5 included.':'Sample active pass: Floor 4. No actual ticket issued.'}/></Section>)}] : []),
-    {id:'exhibitions',content:(<Section>{head('Now showing','All','Exhibitions')}<ScrollView horizontal nestedScrollEnabled removeClippedSubviews={false} showsHorizontalScrollIndicator={false} accessibilityLabel="Current exhibitions" decelerationRate="fast" snapToOffsets={posterOffsets} style={{marginHorizontal:-inset,flexGrow:0,flexShrink:0,alignSelf:'stretch'}} contentContainerStyle={{paddingHorizontal:inset,gap:12,paddingBottom:4}}>{exhibitions.map(e=><Poster key={e[0]} p={p} title={e[0]} asset={e[2]} index={e[1]} accessLabel={`Floor ${e[1]} · ${floorAccess(e[1])}`} onPress={()=>open(e[0])} width={inner*.61} titleSize={Math.max(22,Math.min(31,width*.07))}/>)}</ScrollView></Section>)},
+    {id:'exhibitions',content:(<Section>{head('Now showing','All','Exhibitions')}<SpillScrollView horizontal nestedScrollEnabled removeClippedSubviews={false} showsHorizontalScrollIndicator={false} accessibilityLabel="Current exhibitions" decelerationRate="fast" snapToOffsets={posterOffsets} style={{marginHorizontal:-inset,flexGrow:0,flexShrink:0,alignSelf:'stretch'}} contentContainerStyle={{paddingHorizontal:inset,gap:12,paddingBottom:4}}>{exhibitions.map(e=><Poster key={e[0]} p={p} title={e[0]} asset={e[2]} index={e[1]} accessLabel={`Floor ${e[1]} · ${floorAccess(e[1])}`} onPress={()=>open(e[0])} width={inner*.61} titleSize={Math.max(22,Math.min(31,width*.07))}/>)}</SpillScrollView></Section>)},
     {id:'opening-soon',content:(<Section>{head('Opening soon','Calendar','Exhibitions')}<View style={{borderBottomWidth:1,borderColor:p.line}}>{future.map((f,i)=><Pressable key={f[0]} accessibilityRole="button" onPress={()=>open(f[0])} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:14,borderTopWidth:1,borderColor:p.line}}><View style={{width:small?38:48,alignItems:'center'}}><Serif p={p} size={30} style={{lineHeight:27}}>{['12','19','09'][i]}</Serif><Micro p={p} style={{color:p.teal,marginTop:4,fontSize:9,lineHeight:10.5,letterSpacing:1.4}}>{i===2?'Jan':'Dec'}</Micro></View><View style={{flex:1}}><Serif p={p} size={19} style={{lineHeight:20.9}}>{f[0]}</Serif><Small p={p} style={{marginTop:3}}>Floor {f[1]} · {f[1]<4?'Free':'Admission announced at opening'}</Small></View><Body p={p} style={{fontSize:11,letterSpacing:1,textTransform:'uppercase',textAlign:'right',textDecorationLine:'underline',maxWidth:small?65:88}}>{prefs.reminders.includes(f[0])?'Reminder set':'Remind me'}</Body></Pressable>)}</View></Section>)},
     {id:'free-books',content:(<Section>{head('Free to read','More','Free to read')}<Rail inset={inset} label="Free books">{BOOKS.slice(5).map(b=><FreeCover key={b[0]} p={p} title={b[0]} author={b[1]} onPress={()=>open(b[0])}/>)}</Rail></Section>)},
     {id:'new-books',content:(<Section>{head('New on the shelves','All','New literary releases')}<Rail inset={inset} label="New publications">{newBooks.map(n=><VisitCard key={n[0]} p={p} title={n[0]} asset={n[1]} description={n[2]} onPress={()=>open(n[3]??n[0])}/>)}</Rail></Section>)},
@@ -119,9 +121,9 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     {id:'market',content:(<Section testID="arts-lits-marketplace">{head('Available now',undefined,undefined,'From the studios')}
           <View style={{marginBottom:16,flexShrink:0}}>
             <View pointerEvents="none" style={{position:'absolute',bottom:0,left:0,right:0,height:1,backgroundColor:p.line}}/>
-            <ScrollView testID="arts-lits-marketplace-filters" horizontal nestedScrollEnabled removeClippedSubviews={false} showsHorizontalScrollIndicator={false} accessibilityLabel="Marketplace categories" style={{height:filterHeight,flexGrow:0,flexShrink:0,alignSelf:'stretch'}} contentContainerStyle={{gap:20,alignItems:'stretch'}}>
+            <SpillScrollView testID="arts-lits-marketplace-filters" horizontal nestedScrollEnabled removeClippedSubviews={false} showsHorizontalScrollIndicator={false} accessibilityLabel="Marketplace categories" style={{height:filterHeight,flexGrow:0,flexShrink:0,alignSelf:'stretch'}} contentContainerStyle={{gap:20,alignItems:'stretch'}}>
               {categories.map(c=><Pressable key={c} testID={`arts-lits-filter-${c.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={c} accessibilityState={{selected:c===category}} onPress={()=>{setCategory(c);setLimit(6)}} style={{minHeight:44,flexShrink:0,justifyContent:'center',paddingVertical:10,paddingHorizontal:2,borderBottomWidth:2,borderBottomColor:c===category?p.teal:'transparent'}}><Body p={p} style={{fontSize:13,lineHeight:18.2,color:c===category?p.ink:p.muted}}>{c}</Body></Pressable>)}
-            </ScrollView>
+            </SpillScrollView>
           </View>
           {marketReady&&<View testID="arts-lits-marketplace-grid" style={{flexDirection:'row',gap:12,alignItems:'flex-start',flexShrink:0}}>{[0,1].map(col=><View key={col} style={{width:(inner-12)/2,minWidth:0,gap:20,flexShrink:0}}>{products.items.filter((_,i)=>i%2===col).map(v=><Pressable key={v[0]} testID={`arts-lits-product-${v[0]}`} accessibilityRole="button" accessibilityLabel={`${v[1]}, ${v[4]}, ${sampleMoney(v[5],currency)} sample`} onPress={()=>open(v[0])} style={{width:'100%',flexShrink:0}}><Photo p={p} asset={v[3]} style={{width:(inner-12)/2,height:(inner-12)/2*v[6]}}/><Serif p={p} size={16} style={{lineHeight:18.4,marginTop:8,marginBottom:2}}>{v[1]}</Serif><Small p={p}>{v[4]}</Small><Body p={p} style={{fontSize:12,lineHeight:16.2,fontWeight:'600',marginTop:4}}>{sampleMoney(v[5],currency)} · sample</Body></Pressable>)}</View>)}</View>}
           <View accessibilityLiveRegion="polite" style={{paddingVertical:14,alignItems:'center',minHeight:52}}>{!marketReady?<><Small p={p} style={{textAlign:'center'}}>{network==='loading'?'Loading available works…':network==='error'?'Catalog could not be refreshed.':'No works available right now. Explore the museum or try another category.'}</Small>{network!=='loading'&&<TextLink p={p} label="Retry catalog" onPress={()=>changeConnection('loading')} chevron={false}/>}</>:products.hasMore?<TextLink p={p} label="Load more works" labelStyle={{fontSize:10,lineHeight:14,letterSpacing:1.2,textTransform:'uppercase',color:p.muted}} onPress={()=>setLimit(n=>n+6)} chevron={false}/>:<Small p={p} style={{textAlign:'center'}}>{products.total?'You’ve reached the end of this sample collection.':'No works in this category.'}</Small>}</View>
@@ -158,54 +160,43 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const previousEyeWidth=Math.max(96,Math.min(122,screenWidth*.29));
   const homeGap=small?8:10;
   const homeSlotWidth=(screenWidth-30-previousEyeWidth)/4+homeGap;
-  const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else{setSpillProgress(0);setSpillTarget(next);}}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
-  const wave:LiveWave|null=spillTarget?{from:p,to:palettes[spillTarget],progress:spillProgress,width:screenWidth,height:Math.max(1,viewportHeight.current||windowHeight)}:null;
-  const spillClock=spillTarget?<ThemeSpill onFrame={setSpillProgress} onDone={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);setSpillProgress(0);}}/>:null;
+  const quickMenuAction=(action:QuickMenuAction)=>{setMenuVisible(false);if(action==='dark'){if(spillTarget)return;const next=dark?'light':'dark';if(reducedMotion)setPrefs(v=>({...v,theme:next}));else{spillStartedAt.current=performance.now();spillProgress.set(0);setSpillTarget(next);}}else if(action==='saved'){if(active!=='Saved')open('Saved');}else if(action==='orders'){if(active!=='My Orders')open('My Orders');}else onUniversalAction(action);};
+  const wave:LiveWave|null=spillTarget?{from:p,to:palettes[spillTarget],progress:0,clock:spillProgress,width:screenWidth,height:Math.max(1,viewportHeight.current||windowHeight)}:null;
+  const spillClock=spillTarget?<ThemeSpill startedAt={spillStartedAt.current} clock={spillProgress} onDone={()=>{setPrefs(v=>({...v,theme:spillTarget}));setSpillTarget(null);spillProgress.set(0);}}/>:null;
   const topPadding=Math.max(0,insets.top-19);
-  const floatingP=wave?wavePalette(wave,screenWidth-inset-24,Math.max(19,insets.top)+22):p;
-  const floatingMix=wave?waveAmount(wave.width,wave.height,screenWidth-inset-24,Math.max(19,insets.top)+22,wave.progress):0;
-  const dockMix=wave?waveAmount(wave.width,wave.height,screenWidth*.5,wave.height-dockBottom-32,wave.progress):0;
-  const dockP=wave?blendPalette(p,wave.to,dockMix):p;
-  const dockDark=spillTarget&&dockMix>=.5?spillTarget==='dark':dark;
-  const paperOuter=wave?mixColor(p.outer,wave.to.outer,waveAmount(wave.width,wave.height,0,wave.height*.5,wave.progress)):p.outer;
-  const paintRow=(item:HomeRow)=>{
-    let layout=themeLayouts.current.get(item.id);
-    if(!layout){layout=new Map();themeLayouts.current.set(item.id,layout);}
-    const frame=rowFrames.current.get(item.id)??{y:0,height:0};
-    const y=frame.y-scrollY.current+topPadding;
-    const visibleWave=!active&&wave&&y+frame.height>=0&&y<=wave.height?wave:null;
-    return paintThemeTree(item.content,visibleWave,{x:inset,y,width:inner,height:frame.height},layout);
-  };
+  const paperOuter=wave?mixColor(p.outer,wave.to.outer,wave.progress):p.outer;
   const quickMenuProps={visible:menuVisible,close:()=>setMenuVisible(false),p,dark,reducedMotion,inbox,onAction:quickMenuAction};
   return <View style={{flex:1,minHeight:0,backgroundColor:paperOuter,alignItems:'center'}}>
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
     <View style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
     <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper}}>
-      {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
+      {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} clock={wave.clock} color={wave.to.paper}/>}
+      <SpillSurface wave={!active?wave:null} viewport={{top:scrollY.current,height:viewportHeight.current,rows:rowFrames.current}} style={{flex:1,minHeight:0}}>
       <View testID="arts-lits-live-foreground" collapsable={false} style={{flex:1,minHeight:0,paddingTop:topPadding,position:'relative',zIndex:1,elevation:wave&&!active?1:0,backgroundColor:'transparent'}}>
-      <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
+      <SpillScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={16}
         style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}>
-        {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>{const {y,height}=e.nativeEvent.layout;rowFrames.current.set(item.id,{y,height});recordSection(item.id,y);}} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{paintRow(item)}</View>)}
-      </ScrollView>
-      {!active&&!menuVisible&&<FloatingQuickMenuButton testID="arts-lits-floating-quick-menu" top={Math.max(19,insets.top)+1} right={inset} background={wave?mixColor(dark?'#f0e9dd':p.teal,spillTarget==='dark'?'#f0e9dd':wave.to.teal,floatingMix):dark?'#f0e9dd':p.teal} color={floatingP.paper} onPress={()=>{if(!spillTarget)setMenuVisible(true);}}/>}
+        {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>{const {y,height}=e.nativeEvent.layout;rowFrames.current.set(item.id,{y,height});recordSection(item.id,y);}} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>)}
+      </SpillScrollView>
+      {!active&&!menuVisible&&<FloatingQuickMenuButton testID="arts-lits-floating-quick-menu" top={Math.max(19,insets.top)+1} right={inset} background={dark?'#f0e9dd':p.teal} color={p.paper} onPress={()=>{if(!spillTarget)setMenuVisible(true);}}/>}
       <View pointerEvents={active?'none':'box-none'} accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'} testID="arts-lits-dock-position" style={{position:'absolute',left:14,right:14,bottom:dockBottom,zIndex:100}}>
-        <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:wave?mixColor(dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',spillTarget==='dark'?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',dockMix):dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:wave?mixColor(dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',spillTarget==='dark'?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',dockMix):dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
+        <View testID="arts-lits-bottom-nav" onLayout={e=>{const height=Math.ceil(e.nativeEvent.layout.height);setDockHeight(old=>old===height?old:height);}} accessibilityRole="tablist" style={{height:65+dockExtra,overflow:'visible',borderRadius:18,backgroundColor:dark?'rgba(20,32,33,0.88)':'rgba(255,255,255,0.88)',borderWidth:1,borderColor:dark?'rgba(129,201,192,0.40)':'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}}}>
           {tabs.map(name=>{
             const home=name==='Home',center=name==='Artrium',bazaar=name==='Bazaar';
             const [artWidth,artHeight]=artSize[name];
             return <Pressable key={name} testID={`arts-lits-tab-${name.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={name} accessibilityState={{selected:home}} accessibilityHint={bazaar?'Opens marketplace. Long press for your personal cultural space.':undefined} accessibilityActions={bazaar?[{name:'personalSpace',label:'Open personal cultural space'}]:undefined} onAccessibilityAction={bazaar?e=>{if(e.nativeEvent.actionName==='personalSpace')open('Me');}:undefined} onLongPress={bazaar?()=>open('Me'):undefined} onPress={()=>{if(home){cancelJump();scroll.current?.scrollTo({y:0,animated:!reducedMotion});}else open(center?'Museum':bazaar?'Marketplace':name);}} style={{flex:home?0:1,width:home?homeSlotWidth:undefined,minWidth:0,height:(center?65:55)+dockExtra,alignItems:'center',justifyContent:home?'center':'flex-end',overflow:'visible',zIndex:center?2:undefined}}>
               <View pointerEvents="none" style={home?{width:artWidth,height:artHeight,overflow:'visible',transform:[{translateX:-homeGap/2}]}:{position:'absolute',width:artWidth,height:artHeight,bottom:(center?11:name==='Explore'?13.5:20)+dockExtra,left:'50%',marginLeft:-artWidth/2,overflow:'visible'}}>
-                <LivingArtIcon name={name} dark={dockDark} reducedMotion={reducedMotion} paused={!!active}/>
+                <LivingArtIcon name={name} dark={dark} reducedMotion={reducedMotion} paused={!!active}/>
               </View>
-              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:1,left:0,right:0,fontFamily:serif,fontSize:11.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:wave?dockP.ink:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
+              {!home&&<Text accessible={false} style={{position:'absolute',bottom:center?6:1,left:0,right:0,fontFamily:serif,fontSize:11.5,lineHeight:13,textAlign:'center',includeFontPadding:false,color:dark?'#f0e9dd':'#222522'}}>{name}</Text>}
             </Pressable>;
           })}
         </View>
       </View>
       </View>
+      </SpillSurface>
     </View>
     </View>
     {spillClock}

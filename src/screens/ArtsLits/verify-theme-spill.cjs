@@ -69,7 +69,7 @@ function loadTs(file,imports){
  new Function('require','module','exports',js)(name=>name in imports?imports[name]:require(name),m,m.exports);
  return m.exports;
 }
-const {SpillPaper}=loadTs('ThemeSpill.tsx',{'react-native':native,'react-native-svg':{default:'Svg',Path:'Path'},'./themeSpillGeometry':mod.exports});
+const {SpillPaper}=loadTs('ThemeSpill.tsx',{'react-native':native,'react-native-reanimated':{},'react-native-worklets':{},'./SpillPath':{SpillPath:'Path'},'react-native-svg':{default:'Svg',Path:'Path'},'./themeSpillGeometry':mod.exports});
 for(const progress of [.1,.5,.9,1]){
  const paper=SpillPaper({width:390,height:844,progress,color:'#142021'});
  const style=Object.assign({},...paper.props.style);
@@ -79,40 +79,50 @@ for(const progress of [.1,.5,.9,1]){
 }
 console.log('Current React Native layout: spill stays behind content and outside flex flow.');
 
-// Measure the existing hosts before a toggle. The second child is deliberately
-// near the top and the first near the bottom, defeating equal-slot estimates.
-const {paintThemeTree,wavePalette}=loadTs('liveThemeWave.tsx',{'react-native':native,'./themeSpillGeometry':mod.exports});
+// The interactive source retains its exact palette, handlers and refs. A
+// passive destination has only final colors; the mask decides which pixels show.
+const {targetThemeTree}=loadTs('liveThemeWave.tsx',{});
 const {palettes}=loadTs('design.ts',{'react-native':{Platform:{select:options=>options.default}}});
-const cache=new Map(),bounds={x:0,y:0,width:390,height:844};
-let layoutCalls=0;const onPress=()=>{},imageRef=React.createRef(),imageSource={uri:'museum.png'};
-const original=React.createElement('View',{},[
- React.createElement('Text',{key:'lower',style:{color:palettes.light.ink},onLayout:()=>layoutCalls++},'Lower label'),
- React.createElement('Text',{key:'upper',style:{color:palettes.light.ink}},'Upper label'),
- React.createElement('Image',{key:'art',ref:imageRef,source:imageSource}),
- React.createElement('Pressable',{key:'button',onPress},'Open work'),
-]);
-const measured=paintThemeTree(original,null,bounds,cache);
-measured.props.children[0].props.onLayout({nativeEvent:{layout:{x:20,y:730,width:100,height:20}}});
-measured.props.children[1].props.onLayout({nativeEvent:{layout:{x:20,y:10,width:100,height:20}}});
-assert.equal(layoutCalls,1);
+const sourceRef=React.createRef(),onPress=()=>{};
 for(const [from,to] of [[palettes.light,palettes.dark],[palettes.dark,palettes.light]]){
- const tree=React.cloneElement(original,{},original.props.children.map(child=>child.type==='Text'?React.cloneElement(child,{style:{color:from.ink}}):child));
- for(const progress of [.1,.35,.65,.9,1]){
-  const wave={from,to,progress,width:390,height:844};
-  const painted=paintThemeTree(tree,wave,bounds,cache);
-  for(const [i,y] of [[0,740],[1,20]])assert.equal(painted.props.children[i].props.style.color,wavePalette(wave,70,y).ink);
-  painted.props.children.forEach((child,i)=>{assert.equal(child.type,original.props.children[i].type);assert.equal(child.key,original.props.children[i].key);});
-  assert.equal(painted.props.children[2].props.ref,imageRef);assert.equal(painted.props.children[2].props.source,imageSource);
-  assert.equal(painted.props.children[3].props.onPress,onPress);
- }
+ const original=React.createElement('View',{testID:'source',ref:sourceRef,onLayout:()=>{}},[
+  React.createElement('Text',{key:'label',style:{color:from.ink},testID:'label'},'A wide headline'),
+  React.createElement('Icon',{key:'icon',color:from.teal,dark:from===palettes.dark}),
+  React.createElement('Pressable',{key:'action',onPress},'Open'),
+  React.createElement('ScrollView',{key:'scroll',testID:'scroll',scrollEventThrottle:16,onScroll:()=>{},ref:sourceRef}),
+ ]);
+ const target=targetThemeTree(original,from,to);
+ assert.equal(original.props.ref,sourceRef);assert.equal(original.props.children[0].props.style.color,from.ink);
+ assert.equal(original.props.children[2].props.onPress,onPress);
+ assert.equal(target.props.ref,null);assert.equal(target.props.onLayout,undefined);assert.equal(target.props.testID,undefined);
+ assert.equal(target.props.children[0].props.style.color,to.ink);assert.equal(target.props.children[1].props.color,to.teal);
+ assert.equal(target.props.children[1].props.dark,to===palettes.dark);assert.equal(target.props.children[2].props.onPress,undefined);
+ assert.equal(target.props.children[3].props.spillScrollId,'scroll');assert.equal(target.props.children[3].props.onScroll,undefined);
+ assert.equal(target.props.children[3].props.ref,null);assert.equal(target.props.children[0].props.style.textShadowColor,undefined);
 }
-console.log('Measured palette wave: both directions retain host identity, images, refs and handlers.');
-// Text crossing both papers gets a contrasting edge, removed once settled.
-for(const [from,to] of [[palettes.light,palettes.dark],[palettes.dark,palettes.light]]){
- const text=React.createElement('Text',{style:{color:from.ink}},'A wide headline crossing the spill');
- const wave={from,to,progress:.35,width:390,height:844};
- const style=paintThemeTree(text,wave,bounds).props.style;
- assert.ok(style.textShadowRadius>0);assert.ok(contrastRatio(style.textShadowColor,style.color)>=4.5);
- assert.equal(paintThemeTree(text,{...wave,progress:1},bounds).props.style.textShadowRadius,undefined);
+console.log('Spatial theme presentations: source identity preserved, no sampled-color snaps or halos, passive refs/actions removed.');
+
+// The mask clips the presentation in measured screen coordinates, including
+// the padding of a detail panel. It never changes the original native subtree.
+const fakeReact={...React,useRef:initial=>({current:initial}),useState:()=>[{x:22,y:16,width:346,height:500},()=>{}],useId:()=>':test:',useCallback:fn=>fn,useMemo:fn=>fn()};
+const {SpillSurface}=loadTs('SpillSurface.tsx',{'react':fakeReact,'react-native':native,'react-native-svg':{default:'Svg',Defs:'Defs',ForeignObject:'ForeignObject',G:'G',Mask:'Mask',Path:'Path'},'./themeSpillGeometry':mod.exports,'./SpillPath':{SpillPath:'Path'},'./liveThemeWave':{targetThemeTree}});
+function flattenElements(node,out=[]){if(Array.isArray(node)){node.forEach(child=>flattenElements(child,out));return out;}if(React.isValidElement(node)){out.push(node);flattenElements(node.props.children,out);}return out;}
+const untouched=React.createElement('Text',{style:{color:palettes.light.ink}},'A partially covered label');
+const wave={from:palettes.light,to:palettes.dark,progress:.21,width:390,height:844};
+const surface=SpillSurface({wave,children:untouched,originFromLayout:true});
+assert.equal(surface.props.children[0].props.children,untouched);
+const scene=flattenElements(surface),mask=scene.find(n=>n.type==='Mask'),foreign=scene.find(n=>n.type==='ForeignObject'),group=scene.find(n=>n.type==='G');
+assert.equal(group.props.transform,'translate(-22 -16)');assert.equal(mask.props.maskUnits,'userSpaceOnUse');assert.equal(foreign.props.mask,`url(#${mask.props.id})`);assert.equal(foreign.props.width,346);assert.equal(foreign.props.height,500);
+assert.equal(scene.find(n=>n.props.testID==='arts-lits-spill-ink').props.pointerEvents,'none');
+const paths=scene.filter(n=>n.type==='Path');assert.equal(paths.length,mod.exports.SPILL_EDGE_LAYERS.length);
+paths.forEach((path,i)=>{assert.equal(path.props.progress,.21);assert.equal(path.props.lead,mod.exports.SPILL_EDGE_LAYERS[i].lead);assert.equal(path.props.width,390);assert.equal(path.props.height,844);});
+console.log('Pixel mask: original subtree retained, measured offsets and waterline shared exactly.');
+
+// Coverage has several gradual intermediate values across the narrow wet edge.
+for(const t of [.2,.5,.8]){
+ const angle=1.25,d=Math.hypot(390,844),front=spillFrontRadius(d,t,angle),edge=spillFrontRadius(d,t,angle,.008),levels=new Set();
+ let previous=0;
+ for(let i=0;i<=100;i++){const r=edge+1-(edge-front+2)*i/100,amount=paperWaveAmount(390,844,r*Math.cos(angle),r*Math.sin(angle),t);assert.ok(amount+1e-12>=previous);previous=amount;levels.add(Math.round(amount*10000));}
+ assert.ok(levels.size>=8);assert.equal(previous,1);
 }
-console.log('Split headline contrast: a temporary halo protects both theme directions.');
+console.log('Wet-edge coverage: gradual monotonic blending before full theme coverage.');

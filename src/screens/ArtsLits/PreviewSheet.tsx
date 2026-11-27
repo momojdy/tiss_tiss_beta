@@ -8,11 +8,11 @@ import { Body, Icon, Photo, Serif, Small, type Open } from './components';
 import { DiscoveryRow } from './DiscoveryRows';
 import {FloatingQuickMenuButton} from '../../shared/quickMenu/FloatingQuickMenuButton';
 import {SpillPaper} from './ThemeSpill';
-import {paintThemeTree,wavePalette,type LiveWave,type ThemeTreeLayout} from './liveThemeWave';
-import {mixColor,waveAmount} from './themeSpillGeometry';
+import type {LiveWave} from './liveThemeWave';
+import {SpillSurface,SpillScrollView} from './SpillSurface';
 import { artworkAspectRatio, outsideOptionalBudget, type SponsorScenario, defaultLayout, discovery, pinnedStart, fixedEnd, requiredSections, profilePriority, defaultProfilePriorities, moveSection, resolveDiscovery, sectionTitle, discoveryItem, previewRouteTitle, nativeExploreLinks, entryEligible, previewCurrencies, sampleMoney, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion, type LayoutEntry } from './homeRegistry';
 type Props={wave:LiveWave|null;onOpenQuickMenu:()=>void;onCloseQuickMenu:()=>void;quickMenuOverlay:React.ReactNode;themeTransitioning:boolean;p:Palette;width:number;stack:string[];open:Open;close:()=>void;back:()=>void;preferences:PreviewPreferences;togglePref:(k:'saved'|'reminders'|'following',v:string)=>void;profile:Profile;setProfile:(p:Profile)=>void;connection:Connection;setConnection:(c:Connection)=>void;sponsor:boolean;setSponsor:(v:boolean)=>void;sponsorScenario:SponsorScenario;setSponsorScenario:(v:SponsorScenario)=>void;sponsorAccess:boolean;language:Language;setLanguage:(v:Language)=>void;reducedMotion:boolean;layout:HomeLayout;visibleSectionIdsForLayout:(l:HomeLayout)=>string[];publishLayout:(l:HomeLayout)=>void;displayMode:DisplayMode;setDisplayMode:(m:DisplayMode)=>void;draftLayout:HomeLayout|null;previewLayout:(l:HomeLayout)=>void;rollbackLayout:()=>void;canRollback:boolean;locale:PreviewLocale;setLocale:(l:PreviewLocale)=>void;region:PreviewRegion;setRegion:(r:PreviewRegion)=>void;currency:PreviewCurrency;setCurrency:(c:PreviewCurrency)=>void};
-export default function PreviewSheet(props:Props){const {p,width,stack,open,close,back,preferences,togglePref,profile,setProfile,connection,setConnection,language,setLanguage,reducedMotion}=props;const name=stack[stack.length-1],insets=useSafeAreaInsets();const panelHeight=useRef(0);const [draft,setDraft]=useState<HomeLayout>(props.layout);
+export default function PreviewSheet(props:Props){const {p,width,stack,open,close,back,preferences,togglePref,profile,setProfile,connection,setConnection,language,setLanguage,reducedMotion}=props;const name=stack[stack.length-1],insets=useSafeAreaInsets();const [panelHeight,setPanelHeight]=useState(0);const [draft,setDraft]=useState<HomeLayout>(props.layout);
   useEffect(()=>{if(name==='Homepage layout preview')setDraft(props.draftLayout??props.layout)},[name,props.layout,props.draftLayout]);const [query,setQuery]=useState('');const [expanded,setExpanded]=useState<string|null>(null);const scroller=useRef<ScrollView>(null),heading=useRef<Text>(null),input=useRef<TextInput>(null);const offsets=useRef<Record<number,number>>({});const lastDepth=useRef(0);const scrollY=useRef(0);
   useEffect(()=>{if(!name){setQuery('');setExpanded(null);offsets.current={};lastDepth.current=0;scrollY.current=0;return;}const prior=lastDepth.current;const depth=stack.length;if(prior>0&&depth>prior)offsets.current[prior]=scrollY.current;const y=depth<prior?offsets.current[depth]??0:0;lastDepth.current=depth;setExpanded(null);const t=setTimeout(()=>{scroller.current?.scrollTo({y,animated:false});if(name==='Search')input.current?.focus();else if(Platform.OS==='web')heading.current?.focus();else{const n=findNodeHandle(heading.current);if(n)AccessibilityInfo.setAccessibilityFocus(n);}},100);return()=>clearTimeout(t);},[name,stack.length]);
   const description=(text:string)=><Body p={p} style={{color:p.muted,lineHeight:22,marginBottom:8}}>{text}</Body>;
@@ -52,28 +52,25 @@ export default function PreviewSheet(props:Props){const {p,width,stack,open,clos
     if(museum&&name!=='The Museum')return <>{detail(museum[1],museum[0])}{description(museum[2])}{description('Sample partner museum, not an actual partnership.')}{link('Museum discovery')}</>;
     const d=destinations[name];return d?<>{description(d[0])}{d.slice(1).map((x,i)=>link(x,undefined,i===0))}</>:<>{description('This destination is outside the homepage design scope.')}{link('Explore','Explore Arts & Lits')}</>;
   }
-  const panelWave=props.wave?{...props.wave,width,height:Math.max(1,panelHeight.current||props.wave.height*.7)}:null;
-  const headerP=panelWave?wavePalette(panelWave,width*.35,40):p;
-  const menuMix=props.wave?waveAmount(props.wave.width,props.wave.height,props.wave.width-40,insets.top+22,props.wave.progress):0;
-  const menuP=props.wave?wavePalette(props.wave,props.wave.width-40,insets.top+22):p;
+  const panelWave=props.wave?{...props.wave,width,height:Math.max(1,panelHeight||props.wave.height*.7)}:null;
+  const headerP=p;
   const detailContent=content();
-  const themeLayouts=useRef(new Map<string,ThemeTreeLayout>());
-  let themeLayout=themeLayouts.current.get(name??'');
-  if(!themeLayout){themeLayout=new Map();themeLayouts.current.set(name??'',themeLayout);}
   return <Modal visible={!!name} transparent animationType={reducedMotion?'none':'slide'} onRequestClose={props.themeTransitioning?()=>{}:props.quickMenuOverlay?props.onCloseQuickMenu:back} onShow={()=>{if(name==='Search')input.current?.focus();}} statusBarTranslucent={Platform.OS==='android'}>
     <View style={{flex:1}}>
     <View style={{flex:1}}>
     <KeyboardAvoidingView behavior={Platform.OS==='ios'?'padding':undefined} style={{flex:1,backgroundColor:'#0006',justifyContent:'flex-end',alignItems:'center'}}>
       <Pressable accessibilityRole="button" accessibilityLabel="Close detail" style={{flex:1,width:'100%'}} onPress={close}/>
-      <View testID="arts-lits-detail-panel" accessibilityViewIsModal collapsable={false} onLayout={e=>{panelHeight.current=e.nativeEvent.layout.height;}} style={{width,maxHeight:'85%',backgroundColor:p.paper,borderTopWidth:3,borderTopColor:headerP.teal,paddingHorizontal:22,paddingTop:16,paddingBottom:25+insets.bottom}}>
-        {panelWave&&<SpillPaper width={width} height={panelWave.height} progress={panelWave.progress} color={panelWave.to.paper}/>}
+      <View testID="arts-lits-detail-panel" accessibilityViewIsModal collapsable={false} onLayout={e=>{setPanelHeight(e.nativeEvent.layout.height);}} style={{width,maxHeight:'85%',backgroundColor:p.paper,borderTopWidth:3,borderTopColor:headerP.teal,paddingHorizontal:22,paddingTop:16,paddingBottom:25+insets.bottom}}>
+        {panelWave&&<SpillPaper width={width} height={panelWave.height} progress={panelWave.progress} clock={panelWave.clock} color={panelWave.to.paper}/>}
+        <SpillSurface wave={panelWave} originFromLayout style={{flexShrink:1,minHeight:0}}>
         <View testID="arts-lits-detail-live-foreground" collapsable={false} style={{flexShrink:1,minHeight:0,position:'relative',zIndex:1,elevation:panelWave?1:0,backgroundColor:'transparent'}}>
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10,zIndex:1,elevation:0}}>{stack.length>1&&<Pressable accessibilityRole="button" accessibilityLabel="Previous detail" onPress={back} style={{width:44,height:44,justifyContent:'center',alignItems:'center'}}><Icon name="back" color={headerP.ink}/></Pressable>}<Text ref={heading} accessibilityRole="header" accessible style={{flex:1,fontFamily:Platform.OS==='ios'?'Georgia':'serif',fontSize:33,letterSpacing:-1,color:headerP.ink,marginVertical:8}}>{name?displayTitle(name):''}</Text><Pressable accessibilityRole="button" accessibilityLabel="Close detail" onPress={close} style={{width:44,height:44,justifyContent:'center',alignItems:'center'}}><Icon name="close" color={headerP.ink}/></Pressable></View>
-        <ScrollView testID="arts-lits-detail-scroll" ref={scroller} style={{zIndex:1,elevation:0,backgroundColor:'transparent'}} onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:4}}>{paintThemeTree(detailContent,panelWave,{x:22,y:80-scrollY.current,width:width-44,height:Math.max(1,(panelWave?.height??panelHeight.current)-80)},themeLayout)}</ScrollView>
+        <SpillScrollView testID="arts-lits-detail-scroll" ref={scroller} style={{zIndex:1,elevation:0,backgroundColor:'transparent'}} onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={16} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:4}}>{detailContent}</SpillScrollView>
         </View>
+        </SpillSurface>
       </View>
     </KeyboardAvoidingView>
-    {name&&!props.quickMenuOverlay&&<FloatingQuickMenuButton testID="arts-lits-detail-floating-quick-menu" top={Math.max(19,insets.top)+1} background={props.wave?mixColor(preferences.theme==='dark'?'#f0e9dd':p.teal,props.wave.to.paper==='#142021'?'#f0e9dd':props.wave.to.teal,menuMix):preferences.theme==='dark'?'#f0e9dd':p.teal} color={menuP.paper} onPress={props.onOpenQuickMenu}/>}
+    {name&&!props.quickMenuOverlay&&<SpillSurface wave={props.wave} originFromLayout paper={false} style={{position:'absolute',top:Math.max(19,insets.top)+1,right:18,width:49,height:42,zIndex:45}}><FloatingQuickMenuButton testID="arts-lits-detail-floating-quick-menu" top={0} right={0} background={preferences.theme==='dark'?'#f0e9dd':p.teal} color={p.paper} onPress={props.onOpenQuickMenu}/></SpillSurface>}
     </View>
     {props.quickMenuOverlay}
     </View>
