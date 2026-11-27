@@ -179,9 +179,9 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     <StatusBar style={dark?'light':'dark'}/>
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
     <View pointerEvents={spillTarget?'none':'auto'} style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
-    <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:topPadding}}>
+    <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper}}>
       {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
-      <View testID="arts-lits-live-foreground" collapsable={false} style={{flex:1,minHeight:0,position:'relative',zIndex:1,elevation:wave&&!active?1:0,backgroundColor:'transparent'}}>
+      <View testID="arts-lits-live-foreground" collapsable={false} style={{flex:1,minHeight:0,paddingTop:topPadding,position:'relative',zIndex:1,elevation:wave&&!active?1:0,backgroundColor:'transparent'}}>
       <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
         style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} scrollEnabled={spillTarget?false:undefined} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
