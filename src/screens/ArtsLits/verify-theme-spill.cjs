@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript');
 const source=fs.readFileSync(path.join(__dirname,'themeSpillGeometry.ts'),'utf8'),mod={exports:{}};
 new Function('module','exports',ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(mod,mod.exports);
-const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
+const {SPILL_SPREAD_MS,SPILL_REVEAL_MS,SPILL_SAMPLES,SPILL_MAX_FRAME_MS,advanceSpillElapsed,spillFrontRadius,spillFrontPoints,spillPath,spillProgress,waveAmount,mixColor,contrastRatio,readableColor,paperWaveAmount}=mod.exports;
 assert.equal(SPILL_SPREAD_MS,5640);assert.equal(SPILL_REVEAL_MS,360);assert.equal(SPILL_SPREAD_MS+SPILL_REVEAL_MS,6000);assert.equal(spillProgress(-1),0);assert.equal(spillProgress(2),1);
 let frames=0;
 for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
@@ -51,3 +51,9 @@ for(const [w,h] of [[320,568],[390,844],[460,1000],[844,390],[1024,1366]]){
  assert.equal(paperWaveAmount(w,h,w,h,1),1);
 }
 console.log('Monotonic liquid front: '+advancingCases+' ray/time samples checked.');
+
+// A normal display retains the six-second duration, while a stalled UI
+// cannot skip a large segment or jump straight to the target theme.
+for(const hz of [30,60,90,120]){let elapsed=0;for(let i=0;i<hz*6;i++)elapsed=advanceSpillElapsed(elapsed,1000/hz);assert.ok(Math.abs(elapsed-6000)<.001);}
+assert.equal(SPILL_MAX_FRAME_MS,50);assert.equal(advanceSpillElapsed(0,2000),50);assert.equal(advanceSpillElapsed(500, -5),500);assert.equal(advanceSpillElapsed(5990,100),6000);
+console.log('Visual clock: four display refresh rates and delayed-frame cases checked.');

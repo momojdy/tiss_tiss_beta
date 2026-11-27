@@ -168,7 +168,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
   const dockDark=spillTarget&&dockMix>=.5?spillTarget==='dark':dark;
   const paperOuter=wave?mixColor(p.outer,wave.to.outer,waveAmount(wave.width,wave.height,0,wave.height*.5,wave.progress)):p.outer;
   const paintRow=(item:HomeRow)=>{
-    if(!wave||wave.progress<=0)return item.content;
+    if(active||!wave||wave.progress<=0)return item.content;
     const frame=rowFrames.current.get(item.id);if(!frame)return item.content;
     const y=frame.y-scrollY.current+topPadding;
     if(y+frame.height<0||y>wave.height)return item.content;
@@ -180,7 +180,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     <View style={{flex:1,minHeight:0,width:'100%',alignItems:'center'}}>
     <View pointerEvents={spillTarget?'none':'auto'} style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
     <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:topPadding}}>
-      {wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
+      {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
       <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
         style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} scrollEnabled={!spillTarget} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"

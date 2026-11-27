@@ -3,6 +3,12 @@
 export const SPILL_SPREAD_MS=5640;
 export const SPILL_REVEAL_MS=360;
 export const SPILL_SAMPLES=32;
+// Keep the visual clock advancing even when a JS/native render is delayed.
+// A dropped frame must not turn a six-second spill into a sudden theme snap.
+export const SPILL_MAX_FRAME_MS=50;
+export function advanceSpillElapsed(elapsed:number,delta:number){
+ return Math.min(SPILL_SPREAD_MS+SPILL_REVEAL_MS,elapsed+Math.max(0,Math.min(SPILL_MAX_FRAME_MS,delta)));
+}
 export function spillProgress(t:number){return Math.max(0,Math.min(1,t));}
 export function spillFrontRadius(diagonal:number,t:number,angle:number,lead=0){
  t=spillProgress(t);
