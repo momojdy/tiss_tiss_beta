@@ -94,3 +94,34 @@ export function paperWaveAmount(width:number,height:number,x:number,y:number,t:n
  if(r<=spillFrontRadius(d,t,a,.12))return .17;
  return 0;
 }
+
+// Rasterize the SAME cubic liquid outline into ordinary native background
+// bands. No SVG surface, native mask, or screenshot can cover the live page.
+export type SpillBand={left:number;top:number;width:number;height:number;key:string};
+export function spillBands(width:number,height:number,t:number,lead=0):SpillBand[]{
+ if(width<=0||height<=0||t<=0)return [];
+ if(t>=1)return [{left:0,top:0,width,height,key:'full'}];
+ const points=spillFrontPoints(width,height,t,lead);
+ const polygon:Point[]=[{x:0,y:0},points[0]];
+ for(let i=0;i<points.length-1;i++){
+  const a=points[Math.max(0,i-1)],b=points[i],c=points[i+1],d=points[Math.min(points.length-1,i+2)];
+  const c1={x:b.x+(c.x-a.x)/6,y:b.y+(c.y-a.y)/6};
+  const c2={x:c.x-(d.x-b.x)/6,y:c.y-(d.y-b.y)/6};
+  for(let j=1;j<=4;j++){const u=j/4,v=1-u;polygon.push({x:v*v*v*b.x+3*v*v*u*c1.x+3*v*u*u*c2.x+u*u*u*c.x,y:v*v*v*b.y+3*v*v*u*c1.y+3*v*u*u*c2.y+u*u*u*c.y});}
+ }
+ polygon.push({x:0,y:0});
+ const step=Math.max(3,Math.ceil(height/180)),out:SpillBand[]=[];
+ for(let top=0;top<height;top+=step){
+  const h=Math.min(step,height-top),y=top+h/2,crossings:number[]=[];
+  for(let i=0;i<polygon.length-1;i++){
+   const a=polygon[i],b=polygon[i+1];
+   if((a.y<=y&&b.y>y)||(b.y<=y&&a.y>y))crossings.push(a.x+(y-a.y)*(b.x-a.x)/(b.y-a.y));
+  }
+  crossings.sort((a,b)=>a-b);
+  for(let j=0;j+1<crossings.length;j+=2){
+   const left=Math.max(0,Math.min(width,crossings[j])),right=Math.max(0,Math.min(width,crossings[j+1]));
+   if(right>left)out.push({left,top,width:right-left,height:h,key:top+':'+j});
+  }
+ }
+ return out;
+}

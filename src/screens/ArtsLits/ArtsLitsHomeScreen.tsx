@@ -181,8 +181,9 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
     <View pointerEvents={spillTarget?'none':'auto'} style={{flex:1,minHeight:0,width:'100%',backgroundColor:paperOuter,alignItems:'center'}}>
     <View collapsable={false} onLayout={e=>{viewportHeight.current=e.nativeEvent.layout.height;}} style={{flex:1,minHeight:0,width:screenWidth,backgroundColor:p.paper,paddingTop:topPadding}}>
       {!active&&wave&&<SpillPaper width={wave.width} height={wave.height} progress={wave.progress} color={wave.to.paper}/>}
+      <View testID="arts-lits-live-foreground" collapsable={false} style={{flex:1,minHeight:0,position:'relative',zIndex:1,elevation:wave&&!active?1:0,backgroundColor:'transparent'}}>
       <ScrollView ref={scroll} testID="arts-lits-home-scroll" onScroll={e=>{scrollY.current=e.nativeEvent.contentOffset.y;}} scrollEventThrottle={32}
-        style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} scrollEnabled={!spillTarget} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
+        style={{flex:1,minHeight:0,zIndex:1,elevation:0,backgroundColor:'transparent'}} scrollEnabled={spillTarget?false:undefined} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}>
         {rows.map(item=><View key={item.id} testID={'arts-lits-section-'+item.id} collapsable={false} onLayout={e=>{const {y,height}=e.nativeEvent.layout;rowFrames.current.set(item.id,{y,height});recordSection(item.id,y);}} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{paintRow(item)}</View>)}
@@ -201,6 +202,7 @@ export default function ArtsLitsHomeScreen({onBack,onUniversalAction,inbox}:{onB
             </Pressable>;
           })}
         </View>
+      </View>
       </View>
     </View>
     </View>
