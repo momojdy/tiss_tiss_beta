@@ -60,3 +60,5 @@ Full details/gallery/tours, owner/agent profile, Saved comparison, Visits, Inqui
 - Founder correction: Explore/home tab uses the main Wantiss homepage's circular treatment (60dp button slot, 56×56dp circle, radius 28, 54dp logo), adapted to Habita's theme border and existing brown/cream branded logo. No visible Explore label or redundant selection dot; accessible tab name and scroll-to-home action preserved. Remaining dock tabs and dimensions unchanged.
 
 - Dark logo correction: the exact supplied cream 500×500 transparent PNG is now bundled separately as assets/home-brand-dark.png (SHA-256 cfddc623327a48356ff76c59e33d643cf4cb2c5b56411284a3d78fbc551809e1). Theme selection swaps the two original files directly. No tint, recoloring, resampling or geometry change. This supersedes the earlier dark-tint fallback and transfer limitation.
+
+- Founder correction: the light-mode bottom dock uses warm Habita sand #E4D7BC at the existing 88% opacity instead of white, with a matching muted sand border at 55% opacity. Existing translucent/mirror treatment, dark-mode colors, home PNGs, dimensions, shadows and layout are unchanged.
