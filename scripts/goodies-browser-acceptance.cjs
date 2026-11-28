@@ -14,7 +14,7 @@ module.exports=async({exportRoot,actors,base,anonKey,pg,scenario,report})=>{
  const text=()=>evaluate('document.body.innerText');
  const wait=async(predicate,message)=>{for(let i=0;i<100;i++){assert.equal(evidence.uncaughtErrors.length,0,'Uncaught browser error: '+evidence.uncaughtErrors.join(';'));if(await predicate())return;await delay(200);}throw Error(message+'; visible text: '+String(await text()).slice(-3000));};
  async function press(label){
-  const point=await evaluate(`(()=>{const matches=[...document.querySelectorAll('button,[role=button],[tabindex="0"]')].filter(e=>e.innerText?.trim()===${JSON.stringify(label)});const e=matches.find(e=>e.getBoundingClientRect().width>0);if(!e)return null;e.scrollIntoView({block:'center',inline:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2};})()`);
+  const point=await evaluate(`(()=>{const matches=[...document.querySelectorAll('button,[role=button],[tabindex="0"]')].filter(e=>e.getAttribute('aria-label')===${JSON.stringify(label)}||e.innerText?.trim()===${JSON.stringify(label)}||[...e.querySelectorAll('*')].some(c=>!c.children.length&&c.textContent?.trim()===${JSON.stringify(label)})).sort((a,b)=>(a.innerText?.length||0)-(b.innerText?.length||0));const e=matches.find(e=>e.getBoundingClientRect().width>0);if(!e)return null;e.scrollIntoView({block:'center',inline:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2};})()`);
   assert.ok(point,'Visible interactive control not found: '+label);
   await cdp('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...point});await cdp('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...point});
  }
@@ -30,7 +30,12 @@ module.exports=async({exportRoot,actors,base,anonKey,pg,scenario,report})=>{
   const browserEnv={...process.env};for(const k of Object.keys(browserEnv))if(/TOKEN|SECRET|PASSWORD|DATABASE_URL|SERVICE_ROLE/.test(k))delete browserEnv[k];
   browser=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-sync','--no-first-run','--proxy-server=http://127.0.0.1:'+denyProxy.address().port,'--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--user-data-dir='+path.join(state,'profile'),'about:blank'],{env:browserEnv,stdio:['ignore','ignore','pipe'],detached:true});
   let stderr='';browser.stderr.on('data',c=>stderr=(stderr+c).slice(-4096));
-  let ws;for(let i=0;i<100&&!ws;i++){ws=stderr.match(/DevTools listening on (ws:\/\/127\.0\.0\.1:\d+\/devtools\/browser\/[a-z0-9-]+)/i)?.[1];await delay(100);}assert.ok(ws,'Browser local controller unavailable');
+  let ws;const portFile=path.join(state,'profile','DevToolsActivePort');
+  for(let i=0;i<300&&!ws;i++){
+   assert.equal(browser.exitCode,null,'Browser exited before exposing its controller');
+   if(fs.existsSync(portFile)){const [port,endpoint]=fs.readFileSync(portFile,'utf8').trim().split('\n');if(/^\d+$/.test(port)&&/^\/devtools\/browser\/[a-z0-9-]+$/i.test(endpoint||''))ws='ws://127.0.0.1:'+port+endpoint;}
+   ws??=stderr.match(/DevTools listening on (ws:\/\/127\.0\.0\.1:\d+\/devtools\/browser\/[a-z0-9-]+)/i)?.[1];if(!ws)await delay(100);
+  }assert.ok(ws,'Browser local controller unavailable ('+browser.exitCode+'/'+browser.signalCode+'): '+stderr.slice(-1200));
   connection=new WebSocket(ws);await new Promise((resolve,reject)=>{connection.addEventListener('open',resolve,{once:true});connection.addEventListener('error',()=>reject(Error('Browser connection failed')),{once:true});});
   connection.addEventListener('message',event=>{const m=JSON.parse(event.data);if(m.id){const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}return;}
    if(m.method==='Runtime.exceptionThrown')evidence.uncaughtErrors.push((m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text).slice(0,500));
