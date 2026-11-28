@@ -1,7 +1,17 @@
 name: Habita homepage validation
 on:
   push:
-    branches: ['habita/native-homepage-v17']
+    branches: [main]
+    paths:
+      - 'src/screens/Habita/**'
+      - 'src/screens/Main/mainHomeScreen.tsx'
+      - 'src/shared/quickMenu/**'
+      - 'src/lib/wantissCms.ts'
+      - 'App.tsx'
+      - 'tests/habita-homepage.test.cjs'
+      - 'scripts/import-habita-v17.cjs'
+      - 'package*.json'
+      - '.github/workflows/habita-homepage-validation.yml'
   workflow_dispatch:
 permissions:
   contents: read

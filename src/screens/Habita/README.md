@@ -1,6 +1,6 @@
 # Habita — native homepage integration (V17)
 
-Status: development branch; visual acceptance and production readiness OPEN. No WebView. Current scope homepage only, no full subpage or transaction flow.
+Status: merged into main, development-only runtime access; visual acceptance and production readiness OPEN. No WebView. Current scope homepage only, no full subpage or transaction flow.
 
 ## Founder decisions
 - One real-estate marketplace for Haiti and Dominican Republic, both visible by default; sale/rent discovery, sell via provider onboarding. Not Stayz accommodation.
@@ -12,7 +12,7 @@ Status: development branch; visual acceptance and production readiness OPEN. No 
 - Historic pitch: $17/mo 1–4 listings, $24/mo 4+ (four-listing overlap unresolved), first 200 eligible customers three months free, OTP abuse prevention. No approved property transaction commission. No billing changes in this phase.
 
 ## Current integration
-Consumer baseline 4257770ee17eb20687b1a4870e9ac7509b6d0750. Admin baseline 686069c54861ae626bd629c28c0b4963a35104a2. Branch habita/native-homepage-v17. Fixture records illustrative; route dev-only; live data not yet available. Native maps, filter/search/geo/canonical units, local user-scoped saved/recent/unit storage, UI-thread panorama initial implementation. Do not merge without acceptance.
+Consumer baseline 4257770ee17eb20687b1a4870e9ac7509b6d0750. Admin baseline 686069c54861ae626bd629c28c0b4963a35104a2. Merged into main via PR #37 (consumer) and PR #5 (admin). Fixture records illustrative; route dev-only; live data not yet available. Native maps, filter/search/geo/canonical units, local user-scoped saved/recent/unit storage, UI-thread panorama initial implementation. Do not enable the production route or publish fixture data without acceptance.
 
 To import original assets from the frozen source run from repository root:
 ```sh
@@ -32,5 +32,6 @@ Full details/gallery/tours, owner/agent profile, Saved comparison, Visits, Inqui
 
 ## Integration checkpoint (28 November 2026)
 - V17 fixture data re-extracted from HTML, independently compared using canonical JSON checksum 84d35d42 (FNV-1a); 48 exact records match. All 27 original photographs are committed in assets/ and registered in media.ts. Each Git blob SHA matches the original local file byte-for-byte. A regression test checks all asset hashes, sizes and registry entries.
-- Shared published CMS key habita.home, copy and category/location imagery; same contract in paired admin branch habita/homepage-cms-v17. Shared account language and preferred currency read. No independent FX; until host provides a verified shared conversion, original USD prices remain explicitly identified. Locale translations and content publication/refresh tests remain open.
-- Native screen builds and visual diff still not verified. The branch is development-only, no production data fallback, no main merge. Live database unchanged.
+- Shared published CMS key habita.home, copy and category/location imagery; same contract in paired admin main. Shared account language and preferred currency read. No independent FX; until host provides a verified shared conversion, original USD prices remain explicitly identified. Locale translations and content publication/refresh tests remain open.
+- Dedicated Habita validation passed for consumer and admin: TypeScript and Android/iOS bundle exports; consumer regression and asset integrity tests passed. Device rendering, gesture tests and visual diff remain unverified. Runtime access is development-only, no production data fallback. Live database unchanged.
+- Founder-directed workflow (28 November 2026): all subsequent Wantiss repository changes are to be made directly on main in both tiss_tiss_beta and tiss-admin; do not create feature branches. Preserve known-good commit SHAs, run validation, and retain the production acceptance gates. General CI has unresolved Goodies CMS source coverage and Konsoliss preview synchronization failures; these were reported in unchanged feature files during Habita validation.
