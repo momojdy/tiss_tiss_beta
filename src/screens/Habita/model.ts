@@ -45,3 +45,6 @@ export function validPolygon(a:Point[]):boolean{
  let area=0;for(let i=0;i<a.length;i++){const j=(i+1)%a.length;area+=cross(a[0],a[i],a[j]);for(let k=i+2;k<a.length;k++){const l=(k+1)%a.length;if(l===i)continue;if(intersect(a[i],a[j],a[k],a[l]))return false;}}
  return Math.abs(area)>1e-10;
 }
+
+/** Same membership rule as applied and saved searches. */
+export function propertiesInBoundary(candidates:readonly Listing[],points:Point[]):Listing[]{return points.length<3?[]:candidates.filter(p=>matchesGeo(p,{kind:'polygon',points}));}
