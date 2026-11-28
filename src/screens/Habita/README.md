@@ -29,3 +29,8 @@ Read-only live database inspection found profiles, user_settings and shared want
 
 ## Later pages (not started)
 Full details/gallery/tours, owner/agent profile, Saved comparison, Visits, Inquiries, Me, provider listing/subscription/OTP management, verification and admin operations. Trusted row only after verification policy approved. Production billing, transaction commissions, title certification and legal rules unresolved. Keep original detailed founder README and consolidated specification in the integration pack as source of authority.
+
+## Integration checkpoint (28 November 2026)
+- V17 fixture data re-extracted from HTML, independently compared using canonical JSON checksum 84d35d42 (FNV-1a); 48 exact records match. All 27 original photos extracted in local integration pack and SHA-256 verified, not yet transferred into branch. Run importer with frozen file, commit assets and registry.
+- Shared published CMS key habita.home, copy and category/location imagery; same contract in paired admin branch habita/homepage-cms-v17. Shared account language and preferred currency read. No independent FX; until host provides a verified shared conversion, original USD prices remain explicitly identified. Locale translations and content publication/refresh tests remain open.
+- Native screen builds and visual diff still not verified. The branch is development-only, no production data fallback, no main merge. Live database unchanged.
