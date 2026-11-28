@@ -34,3 +34,14 @@ export function results(list:readonly Listing[],f:Filters){const a=list.filter(p
 export function panorama(a:Listing[],pin?:string){const p=a.slice(0,13);const selected=a.find(x=>x.id===pin);if(selected&&!p.some(x=>x.id===pin))p[p.length-1]=selected;return p;}
 export const curated=[['Featured properties','featured',['h7','d7','h11','d11','h1','d1']],['Recently listed','new',['h12','d12','h13','d13','h2','d4']],['Virtual tours','tours',['h4','d2','h14','d14','h15','d15','h5','d5','h24','d24']],['Available for rent','rent',['h16','d16','h17','d17','h18','d18','h19','d19','h8','d8']],['Land & investment','land',['h3','d3','h20','d20','h9','d9','h21','d21']],['Commercial spaces','commercial',['h6','d6','h23','d23','h22','d22','h10','d10']]] as const;
 export function discovery(list:readonly Listing[],excluded:string[]){const used=new Set(excluded);return curated.map(([title,key,ids])=>{const items=mixed(ids.map(id=>list.find(p=>p.id===id)).filter((p):p is Listing=>!!p&&!used.has(p.id))).slice(0,key==='featured'?4:6);items.forEach(p=>used.add(p.id));return {title,key,items};});}
+
+/** Reject degenerate or self-crossing boundaries before applying a search. */
+export function validPolygon(a:Point[]):boolean{
+ if(a.length<3||a.length>200||a.some(p=>!Number.isFinite(p.latitude)||!Number.isFinite(p.longitude)||Math.abs(p.latitude)>90||Math.abs(p.longitude)>180))return false;
+ if(new Set(a.map(p=>p.latitude+','+p.longitude)).size!==a.length)return false;
+ const cross=(p:Point,q:Point,r:Point)=>(q.longitude-p.longitude)*(r.latitude-p.latitude)-(q.latitude-p.latitude)*(r.longitude-p.longitude);
+ const on=(p:Point,q:Point,r:Point)=>Math.abs(cross(p,q,r))<1e-12&&r.longitude>=Math.min(p.longitude,q.longitude)&&r.longitude<=Math.max(p.longitude,q.longitude)&&r.latitude>=Math.min(p.latitude,q.latitude)&&r.latitude<=Math.max(p.latitude,q.latitude);
+ const intersect=(p:Point,q:Point,r:Point,s:Point)=>{const x=cross(p,q,r),y=cross(p,q,s),z=cross(r,s,p),w=cross(r,s,q);return (x*y<0&&z*w<0)||on(p,q,r)||on(p,q,s)||on(r,s,p)||on(r,s,q)};
+ let area=0;for(let i=0;i<a.length;i++){const j=(i+1)%a.length;area+=cross(a[0],a[i],a[j]);for(let k=i+2;k<a.length;k++){const l=(k+1)%a.length;if(l===i)continue;if(intersect(a[i],a[j],a[k],a[l]))return false;}}
+ return Math.abs(area)>1e-10;
+}
