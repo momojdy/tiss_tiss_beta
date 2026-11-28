@@ -1,4 +1,4 @@
-import React,{useCallback,useEffect,useRef,useState} from 'react';
+import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {Alert,Modal,Pressable,StatusBar,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Feather} from '@expo/vector-icons';
@@ -20,9 +20,10 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
  useEffect(()=>{blocked.value=!ready||applying||layout.width<=0||layout.height<=0},[ready,applying,layout,blocked]);
  const reset=useCallback(()=>{epoch.current++;busy.current=false;setApplying(false);setTracing(false);setShape([]);samples.value=[];path.value=''},[samples,path]);
  const begin=useCallback(()=>{setShape([]);setTracing(true)},[]);
- const finish=useCallback((raw:ScreenPoint[])=>{if(!alive.current)return;setTracing(false);setShape(finishStroke(raw));path.value=''},[path]);
+ const finish=useCallback((raw:ScreenPoint[])=>{if(!alive.current)return;setTracing(false);const next=finishStroke(raw);setShape(next);if(!next.length)path.value=''},[path]);
  const cancelled=useCallback(()=>{if(alive.current){setTracing(false);setShape([]);path.value=''}},[path]);
- const gesture=Gesture.Pan().minDistance(0).maxPointers(1).onBegin(e=>{if(blocked.value)return;samples.value=[{x:e.x,y:e.y}];path.value='M'+e.x+' '+e.y;runOnJS(begin)()}).onUpdate(e=>{if(blocked.value||!samples.value.length)return;const a=samples.value,last=a[a.length-1];if(a.length<2000&&Math.hypot(e.x-last.x,e.y-last.y)>=2){samples.value=[...a,{x:e.x,y:e.y}];path.value+=' L'+e.x+' '+e.y}}).onEnd(e=>{if(blocked.value||!samples.value.length)return;runOnJS(finish)([...samples.value,{x:e.x,y:e.y}]);samples.value=[]}).onFinalize(()=>{if(samples.value.length){samples.value=[];path.value='';runOnJS(cancelled)()}});
+ useEffect(()=>{if(shape.length)path.value=''},[shape,path]);
+ const gesture=useMemo(()=>Gesture.Pan().minDistance(0).maxPointers(1).onBegin(e=>{if(blocked.value)return;samples.value=[{x:e.x,y:e.y}];path.value='M'+e.x+' '+e.y;runOnJS(begin)()}).onUpdate(e=>{if(blocked.value||!samples.value.length)return;const a=samples.value,last=a[a.length-1];if(a.length<2000&&Math.hypot(e.x-last.x,e.y-last.y)>=2){samples.value=[...a,{x:e.x,y:e.y}];path.value+=' L'+e.x+' '+e.y}}).onEnd(e=>{if(blocked.value||!samples.value.length)return;path.value+=' Z';runOnJS(finish)([...samples.value,{x:e.x,y:e.y}]);samples.value=[]}).onFinalize(()=>{if(samples.value.length){samples.value=[];path.value='';runOnJS(cancelled)()}}),[blocked,samples,path,begin,finish,cancelled]);
  const animatedProps=useAnimatedProps(()=>({d:path.value}));
  const cancel=()=>{epoch.current++;onCancel()};
  const apply=async()=>{if(busy.current||!ready||tracing||shape.length<3||!map.current)return;const native=map.current,ticket=++epoch.current;busy.current=true;setApplying(true);try{const points:Point[]=[];for(let i=0;i<shape.length;i+=12){const batch=await Promise.all(shape.slice(i,i+12).map(p=>native.coordinateForPoint(p)));if(!alive.current||ticket!==epoch.current)return;points.push(...batch)}if(!boundaryCoordinatesValid(points)||!validPolygon(points)){Alert.alert(t('Draw a valid area'),t('Choose at least three distinct points without crossed edges.'));return}onApply(points)}catch{if(alive.current&&ticket===epoch.current)Alert.alert(t('Draw a valid area'),t('The map could not convert this boundary. Try again.'))}finally{if(alive.current&&ticket===epoch.current){busy.current=false;setApplying(false)}}};

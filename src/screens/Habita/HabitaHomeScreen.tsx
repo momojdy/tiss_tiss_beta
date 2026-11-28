@@ -47,6 +47,13 @@ function Card({p,u,saved,onSave,onOpen,preview=false,kind='',width,height}:{p:Li
  </View>;
 }
 function Heading({title,onPress,label='View all'}:{title:string;onPress?:()=>void;label?:string}){const t=useCopy();return <View style={styles.heading}><Text style={styles.headingText}>{t(title)}</Text>{onPress&&<Pressable onPress={onPress}><Text style={styles.tileMeta}>{t(label)} →</Text></Pressable>}</View>}
+// Android captures custom marker views as bitmaps; stop continuous capture once
+// the label/color has rendered. This reduces work during pinch and map motion.
+function HabitaPriceMarker({latitude,longitude,label,selected,onPress}:{latitude:number;longitude:number;label:string;selected:boolean;onPress:()=>void}){
+ const [tracking,setTracking]=useState(true);
+ useEffect(()=>{if(Platform.OS!=='android')return;setTracking(true);const id=setTimeout(()=>setTracking(false),250);return()=>clearTimeout(id)},[label,selected]);
+ return <Marker coordinate={{latitude,longitude}} tracksViewChanges={Platform.OS!=='android'||tracking} onPress={onPress}><View style={[styles.marker,{backgroundColor:selected?S:E}]}><Text style={{color:selected?E:S,fontWeight:'700',fontSize:12}}>{label}</Text></View></Marker>
+}
 export default function HabitaHomeScreen({onBack,onUniversalAction}:Props){
  const content=useHabitaHomeContent(),t=(key:string,values:Record<string,string|number>={})=>translate(content.payload.copy,key,values),money=(n:number)=>(content.currency==='USD'?'$':'US$')+n.toLocaleString('en-US',{maximumFractionDigits:2}),theme=useFeatureTheme('habita.v17.theme');
  const {width,height}=useWindowDimensions(),insets=useSafeAreaInsets(),small=width<=340,cardWidth=Math.min(390,small?width*.87-29.59:width*.85-28.91),headerHeight=Math.max(100,insets.top+44),stage=Math.max(420,Math.min(600,height*.83-headerHeight)),navHeight=65,dockBottom=Math.max(18,insets.bottom);
@@ -60,6 +67,10 @@ export default function HabitaHomeScreen({onBack,onUniversalAction}:Props){
  const map=useRef<MapView>(null),scroll=useRef<ScrollView>(null);
  const mapAppearance=useMemo(()=>nativeMapAppearance(theme.dark,mapType),[theme.dark,mapType]);
  const updateCamera=useCallback((r:Region)=>{cameraRef.current=r;setCamera(r)},[]);
+ // Keep initialRegion immutable for the lifetime of each map mount. Do not feed
+ // native gesture updates back as initial/controlled camera props.
+ const mapVisible=mode!=='list',initialNativeRegion=useMemo(()=>cameraRef.current,[mapVisible]);
+ const settleCamera=useCallback((r:Region)=>{updateCamera(r);setMapGesture(false)},[updateCamera]);
  const moveCamera=(r:Region,duration=300)=>{updateCamera(r);map.current?.animateToRegion(r,duration)};
  useEffect(()=>{if(mode==='list'){setMapReady(false);setMapGesture(false)}},[mode]);
  const [storeKey,setStoreKey]=useState<string|null>(null),[storageError,setStorageError]=useState<string|null>(null),[unitMenu,setUnitMenu]=useState(false),[railVisible,setRailVisible]=useState(true);
@@ -106,8 +117,8 @@ export default function HabitaHomeScreen({onBack,onUniversalAction}:Props){
   <ScrollView ref={scroll} scrollEnabled={!drawing&&!mapGesture} onScroll={e=>{const y=e.nativeEvent.contentOffset.y;setRailVisible(v=>{const next=y<stage-70;return next===v?v:next;})}} scrollEventThrottle={32} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom:navHeight+dockBottom+24}}>
    <View style={{height:mode==='list'?88:mapHeight,backgroundColor:theme.dark?'#293f47':'#b5cbd0',overflow:'hidden'}} onLayout={fitBoundary}>
     {mode!=='list'&&Platform.OS==='web'&&<View style={[StyleSheet.absoluteFill,{alignItems:'center',justifyContent:'center'}]}><Text style={{color:controlInk}}>{t('Native map unavailable on web')}</Text></View>}
-    {mode!=='list'&&Platform.OS!=='web'&&<MapView testID="habita-native-live-map" ref={map} style={StyleSheet.absoluteFill} initialRegion={camera} {...mapAppearance} showsUserLocation={false} showsMyLocationButton={false} showsCompass={false} rotateEnabled={false} pitchEnabled={false} scrollEnabled zoomEnabled zoomTapEnabled onMapReady={()=>setMapReady(true)} onTouchStart={()=>setMapGesture(true)} onTouchEnd={e=>{if(!e.nativeEvent.touches.length)setMapGesture(false)}} onTouchCancel={()=>setMapGesture(false)} onRegionChangeComplete={updateCamera}>
-     {clusters.map(group=>{const a=group[0],latitude=group.reduce((s,p)=>s+p.lat,0)/group.length,longitude=group.reduce((s,p)=>s+p.lon,0)/group.length,isActive=group.some(p=>p.id===active);return <Marker key={group.map(p=>p.id).join('-')} coordinate={{latitude,longitude}} onPress={()=>onCluster(group)}><View style={[styles.marker,{backgroundColor:isActive?S:E}]}><Text style={{color:isActive?E:S,fontWeight:'700',fontSize:12}}>{group.length>1?group.length:a.price>=1000?'$'+Math.round(a.price/1000)+'k':money(a.price)}</Text></View></Marker>})}
+    {mode!=='list'&&Platform.OS!=='web'&&<MapView testID="habita-native-live-map" ref={map} style={StyleSheet.absoluteFill} initialRegion={initialNativeRegion} {...mapAppearance} showsUserLocation={false} showsMyLocationButton={false} showsCompass={false} rotateEnabled={false} pitchEnabled={false} scrollEnabled zoomEnabled zoomTapEnabled onMapReady={()=>setMapReady(true)} onTouchStart={()=>setMapGesture(true)} onTouchEnd={e=>{if(!e.nativeEvent.touches.length)setMapGesture(false)}} onTouchCancel={()=>setMapGesture(false)} onRegionChangeComplete={settleCamera}>
+     {clusters.map(group=>{const a=group[0],latitude=group.reduce((s,p)=>s+p.lat,0)/group.length,longitude=group.reduce((s,p)=>s+p.lon,0)/group.length,isActive=group.some(p=>p.id===active);return <HabitaPriceMarker key={group.map(p=>p.id).join('-')} latitude={latitude} longitude={longitude} selected={isActive} label={group.length>1?String(group.length):a.price>=1000?'$'+Math.round(a.price/1000)+'k':money(a.price)} onPress={()=>onCluster(group)}/>})}
      {f.geo?.kind==='polygon'&&<Polygon coordinates={f.geo.points} strokeColor={boundaryInk(theme.dark)} fillColor={theme.dark?'#9bcdd815':'#438fae12'} strokeWidth={3}/>}
      {f.geo?.kind==='rect'&&<Polygon coordinates={[{latitude:f.geo.north,longitude:f.geo.west},{latitude:f.geo.north,longitude:f.geo.east},{latitude:f.geo.south,longitude:f.geo.east},{latitude:f.geo.south,longitude:f.geo.west}]} strokeColor={boundaryInk(theme.dark)} fillColor={theme.dark?'#9bcdd815':'#438fae12'} strokeWidth={3}/>}
     </MapView>}
