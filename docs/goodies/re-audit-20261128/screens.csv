@@ -1,0 +1,74 @@
+role,route_or_module,source,line,source_registration,installed_acceptance
+customer,wantiss,src/features/Goodies/GoodiesApp.tsx,172,PASS,NOT VERIFIED
+customer,home,src/features/Goodies/GoodiesApp.tsx,173,PASS,NOT VERIFIED
+customer,cats,src/features/Goodies/GoodiesApp.tsx,174,PASS,NOT VERIFIED
+customer,orders,src/features/Goodies/GoodiesApp.tsx,175,PASS,NOT VERIFIED
+customer,cart,src/features/Goodies/GoodiesApp.tsx,176,PASS,NOT VERIFIED
+customer,grouporder,src/features/Goodies/GoodiesApp.tsx,177,PASS,NOT VERIFIED
+customer,explore,src/features/Goodies/GoodiesApp.tsx,178,PASS,NOT VERIFIED
+customer,search,src/features/Goodies/GoodiesApp.tsx,179,PASS,NOT VERIFIED
+customer,catlist,src/features/Goodies/GoodiesApp.tsx,180,PASS,NOT VERIFIED
+customer,store,src/features/Goodies/GoodiesApp.tsx,181,PASS,NOT VERIFIED
+customer,reviews,src/features/Goodies/GoodiesApp.tsx,182,PASS,NOT VERIFIED
+customer,product,src/features/Goodies/GoodiesApp.tsx,183,PASS,NOT VERIFIED
+customer,checkout,src/features/Goodies/GoodiesApp.tsx,184,PASS,NOT VERIFIED
+customer,help-pay,src/features/Goodies/GoodiesApp.tsx,185,PASS,NOT VERIFIED
+customer,addcard,src/features/Goodies/GoodiesApp.tsx,186,PASS,NOT VERIFIED
+customer,cardauth,src/features/Goodies/GoodiesApp.tsx,187,PASS,NOT VERIFIED
+customer,confirm,src/features/Goodies/GoodiesApp.tsx,188,PASS,NOT VERIFIED
+customer,track,src/features/Goodies/GoodiesApp.tsx,189,PASS,NOT VERIFIED
+customer,notifs,src/features/Goodies/GoodiesApp.tsx,190,PASS,NOT VERIFIED
+customer,promos,src/features/Goodies/GoodiesApp.tsx,191,PASS,NOT VERIFIED
+customer,flashdeals,src/features/Goodies/GoodiesApp.tsx,192,PASS,NOT VERIFIED
+customer,favs,src/features/Goodies/GoodiesApp.tsx,193,PASS,NOT VERIFIED
+customer,byo,src/features/Goodies/GoodiesApp.tsx,194,PASS,NOT VERIFIED
+customer,help,src/features/Goodies/GoodiesApp.tsx,195,PASS,NOT VERIFIED
+customer,settings,src/features/Goodies/screens/Account.tsx,400,PASS,NOT VERIFIED
+customer,profile,src/features/Goodies/screens/Account.tsx,401,PASS,NOT VERIFIED
+customer,addresses,src/features/Goodies/screens/Account.tsx,402,PASS,NOT VERIFIED
+customer,payments,src/features/Goodies/screens/Account.tsx,403,PASS,NOT VERIFIED
+customer,contact,src/features/Goodies/screens/Account.tsx,404,PASS,NOT VERIFIED
+customer,storechat,src/features/Goodies/screens/Account.tsx,405,PASS,NOT VERIFIED
+customer,supdone,src/features/Goodies/screens/Account.tsx,406,PASS,NOT VERIFIED
+customer,policies,src/features/Goodies/screens/Account.tsx,407,PASS,NOT VERIFIED
+customer,policy,src/features/Goodies/screens/Account.tsx,408,PASS,NOT VERIFIED
+customer,ndetail,src/features/Goodies/screens/Account.tsx,409,PASS,NOT VERIFIED
+vendor/shared,feature,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,explore,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,charts,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,actions,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,activity,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,messages,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,conversation,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,notifications,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,search,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,promotions,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,registration,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,audit,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,help,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,security,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,businessInfo,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesTools,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesStore,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesProducts,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesBuilder,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesRequests,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesOrders,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+vendor/shared,goodiesReviews,src/screens/businessSpace/BusinessSpaceScreen.tsx,,PASS,NOT VERIFIED
+admin,Overview,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Merchants,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Product review,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Customer reviews,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Orders,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Delivery reports,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Couriers,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Support,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Settlement,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Promotions,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Fees,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Delivery surcharge,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Analytics,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Goodies assets,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+admin,Content editor,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,,PASS,NOT VERIFIED
+courier,GoodiesCourierScreen,existing registered host integration,,SOURCE_TRACE,NOT VERIFIED
+shared Wallet,WalletHelpPay,existing registered host integration,,SOURCE_TRACE,NOT VERIFIED

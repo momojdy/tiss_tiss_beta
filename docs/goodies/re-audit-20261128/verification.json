@@ -1,0 +1,17 @@
+{
+  "customer": {
+    "passed": 318,
+    "failed": 0
+  },
+  "admin": {
+    "passed": 74,
+    "failed": 0
+  },
+  "reproductions": {
+    "passed": 47,
+    "failed": 0
+  },
+  "localPostgres": "PASS: isolated financial/Shared Bill/courier/restriction/FX races and separate promotion/rollback checks",
+  "localEdge": "NOT VERIFIED: assertion package not cached; invocation had no network permission",
+  "scope": "Local source/test evidence; not installed-device or real-provider acceptance"
+}

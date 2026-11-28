@@ -6,7 +6,7 @@ for(const flag of ['--inventory','--catalog','--output'])if(!process.argv.includ
 const inventoryPath=value('--inventory'),catalogPath=value('--catalog'),output=path.resolve(value('--output'));
 if(!output.startsWith(path.resolve('docs/goodies')+path.sep))throw Error('Output must remain in docs/goodies');
 const inventory=JSON.parse(fs.readFileSync(inventoryPath)),raw=JSON.parse(fs.readFileSync(catalogPath));
-const catalog=(raw.entries||raw.functions||raw).filter(row=>!row.schema||row.schema==='public').map(row=>({name:row.name,names:row.input_names||row.names?.slice(0,row.inputCount)||[],count:row.arg_count??row.inputCount,defaults:row.default_count??row.defaultCount,authenticated:row.authenticated_execute}));
+const catalog=(Array.isArray(raw)?raw:raw.entries||raw.functions||[]).filter(row=>!row.schema||row.schema==='public').map(row=>({name:row.name,names:row.input_names||row.names?.slice(0,row.inputCount)||[],count:row.arg_count??row.inputCount,defaults:row.default_count??row.defaultCount,authenticated:row.authenticated_execute}));
 function expression(text){const ast=ts.createSourceFile('args.ts','const value='+text+';',99,true);return ast.statements[0]?.declarationList?.declarations[0]?.initializer;}
 function names(node){if(!node)return[];if(ts.isStringLiteralLike(node))return[node.text];if(ts.isConditionalExpression(node))return[...names(node.whenTrue),...names(node.whenFalse)];return[];}
 function keys(node){

@@ -20,14 +20,14 @@ function mirror(dir,rel=''){for(const entry of fs.readdirSync(dir,{withFileTypes
  if(relative==='GoodiesApp.tsx'){code=code.replace('push, refreshLiveSchedules','push, setPreviewOnly, refreshLiveSchedules').replace('push, refreshGoodiesAccess','push, setPreviewOnly, refreshGoodiesAccess').replace('initialRoute}: {','initialRoute, previewMode=false}: {').replace('initialRoute?:string})','initialRoute?:string;previewMode?:boolean})').replace('    let active = true;\n    let stopSync:', '    setPreviewOnly(previewMode);\n    let active = true;\n    let stopSync:').replace('if (active) stopSync = startGoodiesSync();','if (active && !previewMode) stopSync = startGoodiesSync();').replace("from '../../screens/Wallet/WalletAddNewCardScreen'","from './screens/AddCard'");}
  if(relative==='screens/Shop.tsx')code=code.replaceAll("Platform.OS === 'web'",'false').replaceAll("Platform.OS !== 'web'",'true');
  if(relative==='screens/Payments.tsx')code=code.replace("from '../../../components/wallet/WalletBalance'","from './WalletBalance'");
- if(relative==='GoodiesQuickMenu.tsx')code=code.replace("from '../gatherz/GatherzQuickMenu'","from './previewMenu'");
+ if(relative==='GoodiesQuickMenu.tsx')code=code.replace("from '../gatherz/GatherzQuickMenu'","from './previewMenu'").replace("from '../../shared/quickMenu/ThinMenuIcon'","from './previewMenu'").replace("from '../../shared/inbox/useUnreadSummary'","from './previewUnread'");
  write(relative,code,[origin]);
 }}}
 for(const copy of previousCopies){if(copy.origins?.length&&copy.origins.every(origin=>origin.file.startsWith('src/features/Goodies/')&&!fs.existsSync(path.join(customer,origin.file)))){const obsolete=path.resolve(target,copy.target);if(!obsolete.startsWith(target+path.sep))throw Error('Invalid generated preview path');fs.rmSync(obsolete,{force:true});}}
 mirror(path.join(customer,'src/features/Goodies'));
 const builderTemplates='src/screens/businessSpace/goodiesTemplates.ts';write('previewBuilderTemplates.ts',fs.readFileSync(path.join(customer,builderTemplates),'utf8'),[builderTemplates]);
 const locales='src/lib/locales.ts';write('previewLocales.ts',fs.readFileSync(path.join(customer,locales),'utf8'),[locales]);
-const menu='src/features/gatherz/GatherzQuickMenu.tsx';write('previewMenu.tsx',"import React from 'react';\nimport Svg,{Circle,Path,Rect,Line,Polyline,G} from 'react-native-svg';\n"+declarations(menu,['ThinMenuIcon']),[menu]);
+const menu='src/shared/quickMenu/ThinMenuIcon.tsx';write('previewMenu.tsx',"import React from 'react';\nimport Svg,{Circle,Path,Rect,Line,Polyline,G} from 'react-native-svg';\n"+declarations(menu,['ThinMenuIcon']),[menu]);
 const balance='src/components/wallet/WalletBalance.tsx';write('screens/WalletBalance.tsx',fs.readFileSync(path.join(customer,balance),'utf8').replace("from '../../lib/supabase'","from '../previewRuntime'").replace('import { supabase }','import { previewBackend as supabase }').replace('useRef<View>','useRef<React.ElementRef<typeof View>>'),[balance]);
 
 const card='src/features/Goodies/screens/CardAuthentication.tsx';write('screens/CardAuthentication.tsx',fs.readFileSync(path.join(customer,card),'utf8').replace("from 'react-native-webview'","from '../previewNative'"),[card]);

@@ -1,0 +1,1370 @@
+repository,file,line,component,element,event,handler_reference,called_functions,source_status,installed_status
+admin,src/features/admin/auth/AuthFlow.tsx,198,AuthFlow,AuthField,onChangeText,,setEmail;setPassword,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,199,AuthFlow,AuthField,onChangeText,setPassword,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,199,AuthFlow,AuthField,onSubmitEditing,signIn,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,200,AuthFlow,LinkText,onPress,,message;setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,201,AuthFlow,PrimaryButton,onPress,signIn,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,204,AuthFlow,SecondaryButton,onPress,,message;setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,211,AuthFlow,PrimaryButton,onPress,,message;setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,216,AuthFlow,AuthField,onChangeText,setEmail,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,218,AuthFlow,PrimaryButton,onPress,sendReset,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,219,AuthFlow,SecondaryButton,onPress,,message;setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,225,AuthFlow,AuthField,onChangeText,setEmail,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,226,AuthFlow,AuthField,onChangeText,setResetCode,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,228,AuthFlow,PrimaryButton,onPress,verifyResetCode,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,229,AuthFlow,SecondaryButton,onPress,sendReset,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,230,AuthFlow,SecondaryButton,onPress,,message;setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,235,AuthFlow,AuthField,onChangeText,setPassword,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,237,AuthFlow,AuthField,onChangeText,setConfirm,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,238,AuthFlow,PrimaryButton,onPress,savePassword,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,242,AuthFlow,AuthField,onChangeText,setPassword,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,244,AuthFlow,AuthField,onChangeText,setConfirm,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,245,AuthFlow,PrimaryButton,onPress,savePassword,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/auth/AuthFlow.tsx,251,AuthFlow,SecondaryButton,onPress,,setView,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,83,ApplicationDrawer.chooseBusiness,Object callback/action,onSubmit,,String;assignApplicationBusiness;businessCandidates.find;closeAll;hydrateAdminState;open;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,91,ApplicationDrawer.startReview,Object callback/action,onSubmit,,String;closeAll;hydrateAdminState;reviewBusinessApplication;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,93,ApplicationDrawer.requestInfo,Object callback/action,onSubmit,,String;closeAll;hydrateAdminState;reviewBusinessApplication;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,103,ApplicationDrawer.approve,Object callback/action,onSubmit,,String;closeAll;hydrateAdminState;reviewBusinessApplication;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,110,ApplicationDrawer.reject,Object callback/action,onSubmit,,String;closeAll;hydrateAdminState;reviewBusinessApplication;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,116,ApplicationDrawer,OutlineBtn,onPress,"guard(REQ.review, chooseBusiness)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,117,ApplicationDrawer,OutlineBtn,onPress,"guard(REQ.review, startReview)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,118,ApplicationDrawer,OutlineBtn,onPress,"guard(REQ.review, requestInfo)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,119,ApplicationDrawer,OutlineBtn,onPress,"guard(REQ.approve, approve)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,120,ApplicationDrawer,OutlineBtn,onPress,"guard(REQ.approve, reject)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,124,ApplicationDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,131,ApplicationDrawer,Object callback/action,onPress,chooseBusiness,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,148,ApplicationDrawer,OutlineBtn,onPress,,Linking.openURL;getBusinessApplicationDocumentUrl;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,152,ApplicationDrawer,OutlineBtn,onPress,,reloadServerDocs;setBusinessApplicationDocumentStatus;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,156,ApplicationDrawer,OutlineBtn,onPress,,String;form;reloadServerDocs;setBusinessApplicationDocumentStatus;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,160,ApplicationDrawer,Object callback/action,onSubmit,,String;reloadServerDocs;setBusinessApplicationDocumentStatus;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,170,ApplicationDrawer,Object callback/action,onPress,,closeAll;nav.go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,189,DocumentDrawer.reject,Object callback/action,onSubmit,,res,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,197,DocumentDrawer,OutlineBtn,onPress,"guard(REQ.review, () => res('verified', 'Document verified'))",guard;res,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,198,DocumentDrawer,OutlineBtn,onPress,"guard(REQ.review, reject)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,199,DocumentDrawer,OutlineBtn,onPress,"guard(REQ.review, () => res('missing', 'Replacement requested'))",guard;res,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,200,DocumentDrawer,OutlineBtn,onPress,,closeAll;open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,204,DocumentDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,212,DocumentDrawer,Pill,onPress,,Math.max;setZoom,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,213,DocumentDrawer,Pill,onPress,,Math.min;setZoom,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,214,DocumentDrawer,Pill,onPress,download,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,230,CaseDrawer.resolve,Object callback/action,onSubmit,,aud;bump;closeAll;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,231,CaseDrawer,OutlineBtn,onPress,"guard(REQ.review, assignMe)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,231,CaseDrawer,OutlineBtn,onPress,"guard(REQ.review, resolve)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,233,CaseDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/ApplicationDrawers.tsx,253,useAssignWork,Object callback/action,onSubmit,,String;String(v.a).split;findById;finish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,50,StaffDrawer.edit,EditAccessSheet,onClose,done,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,50,StaffDrawer.edit,EditAccessSheet,onSaved,,reopen;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,54,StaffDrawer.suspend,Object callback/action,onSubmit,,"String;[String(v.r), String(v.nt)].filter;[String(v.r), String(v.nt)].filter(Boolean).join;hydrateAdminState;reopen;setStaffStatusBackend;toast",SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,57,StaffDrawer.restore,Object callback/action,onSubmit,,String;hydrateAdminState;reopen;setStaffStatusBackend;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,62,StaffDrawer.revoke,Object callback/action,onSubmit,,"String;[String(v.r), String(v.nt)].join;hydrateAdminState;reopen;setStaffStatusBackend;toast",SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,66,StaffDrawer.reinstate,Object callback/action,onSubmit,,String;hydrateAdminState;reopen;setStaffStatusBackend;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,69,StaffDrawer.cancel,Object callback/action,onSubmit,,hydrateAdminState;reopen;setStaffStatusBackend;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,74,StaffDrawer,OutlineBtn,onPress,"guard(P, edit)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,74,StaffDrawer,OutlineBtn,onPress,"guard(P, suspend)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,74,StaffDrawer,OutlineBtn,onPress,"guard(P, revoke)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,75,StaffDrawer,OutlineBtn,onPress,"guard(P, restore)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,75,StaffDrawer,OutlineBtn,onPress,"guard(P, revoke)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,76,StaffDrawer,OutlineBtn,onPress,"guard(P, reinstate)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,77,StaffDrawer,OutlineBtn,onPress,"guard(P, resend)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,77,StaffDrawer,OutlineBtn,onPress,"guard(P, cancel)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,89,StaffDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,170,EditAccessSheet,DialogCard,onClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,172,EditAccessSheet,Field,onChange,,String;setPermission,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,173,EditAccessSheet,Field,onChange,,String;setLevel,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,174,EditAccessSheet,Field,onChange,,String;setUntil,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,175,EditAccessSheet,Field,onChange,,String;setError;setWhy,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,177,EditAccessSheet,OutlineBtn,onPress,,save,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,183,EditAccessSheet,OutlineBtn,onPress,,revoke,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,186,EditAccessSheet,OutlineBtn,onPress,onClose,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,205,useInvite,Object callback/action,onSubmit,,String;String(v.e).trim;String(v.e).trim().toLowerCase;can;closeAll;hydrateAdminState;inviteStaffBackend;needs;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,224,useRoleEditor,Object callback/action,onSubmit,,can;needs,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,238,useNewRole,Object callback/action,onSubmit,,can;needs,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,254,AccountDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,279,AccountDrawer.restrict,Object callback/action,onSubmit,,String;applyAccountRestrictionBackend;done;hydrateAdminState;new Date(end + 'T23:59:59.999Z').toISOString;new Date(start + 'T00:00:00.000Z').toISOString,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,315,AccountDrawer.restrictGoodies,Object callback/action,onSubmit,,String;applyAccountRestrictionBackend;done;hydrateAdminState;new Date().toISOString;new Date(end+'T23:59:59.999Z').toISOString,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,340,AccountDrawer.lift,Object callback/action,onSubmit,,String;done;hydrateAdminState;liftAccountRestrictionBackend,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,351,AccountDrawer.editSusp,Object callback/action,onSubmit,,String;done;hydrateAdminState;new Date(end + 'T23:59:59.999Z').toISOString;updateAccountRestrictionBackend,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,361,AccountDrawer.uphold,Object callback/action,onSubmit,,String;done;hydrateAdminState;upholdBan,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,364,AccountDrawer.receiveAppeal,Object callback/action,onSubmit,,String;done;hydrateAdminState;markAppeal,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,375,AccountDrawer,OutlineBtn,onPress,pause,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,376,AccountDrawer,OutlineBtn,onPress,,restrict,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,377,AccountDrawer,OutlineBtn,onPress,,restrictGoodies,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,378,AccountDrawer,OutlineBtn,onPress,,restrictGoodies,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,379,AccountDrawer,OutlineBtn,onPress,ban,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,380,AccountDrawer,OutlineBtn,onPress,receiveAppeal,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,381,AccountDrawer,OutlineBtn,onPress,uphold,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,386,AccountDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,396,AccountDrawer,OutlineBtn,onPress,,editSusp,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,396,AccountDrawer,OutlineBtn,onPress,,lift,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,397,AccountDrawer,OutlineBtn,onPress,,lift,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,402,AccountDrawer,Object callback/action,onPress,,closeAll;nav.go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/overlays/PeopleDrawers.tsx,420,AuditDrawer,DrawerBody,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,89,ContentScreen.newContent,Object callback/action,onSubmit,,Array.isArray;JSON.parse;String;reload;saveCmsVersion;setBusy;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,125,ContentScreen.pickAsset,Object callback/action,onSubmit,,"String;String(values.feature).toLowerCase;String(values.feature).toLowerCase().replace;String(values.key).replace;String(values.placement).toLowerCase;String(values.placement).toLowerCase().replace;[String(values.feature).toLowerCase().replace(/[^a-z0-9]+/g, '.'), String(values.placement).toLowerCase().replace(/[^a-z0-9]+/g, '.'), String(values.key).replace(/^[.]+|[.]+$/g, '')].filter;[String(values.feature).toLowerCase().replace(/[^a-z0-9]+/g, '.'), String(values.placement).toLowerCase().replace(/[^a-z0-9]+/g, '.'), String(values.key).replace(/^[.]+|[.]+$/g, '')].filter(Boolean).join;reload;setBusy;toast;uploadCmsAsset",SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,158,ContentScreen.cloneStatus,Object callback/action,onSubmit,,archiveCmsVersion;publishCmsVersion;reload;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,204,ContentScreen.openQuickCreate,QuickCreateSheet,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,212,ContentScreen.stageContentDraft,Object callback/action,onSubmit,,String;String(values.reason || '').trim;bump;reload;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,239,ContentScreen.editBannerDraft,Object callback/action,onSubmit,,String;String(values.title || '').trim;bump;reload;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,266,ContentScreen.editPromotionDraft,Object callback/action,onSubmit,,String;bump;reload;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,286,ContentScreen.editAnnouncementDraft,Object callback/action,onSubmit,,bump;reload;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,298,ContentScreen,OutlineBtn,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,301,ContentScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,303,ContentScreen,SelectMenu,onChange,changeSection,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,307,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,316,ContentScreen,Object callback/action,onPress,,editBannerDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,319,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,323,ContentScreen,Object callback/action,onPress,,editPromotionDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,326,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,330,ContentScreen,Object callback/action,onPress,,editAnnouncementDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,336,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,337,ContentScreen,OutlineBtn,onPress,,editBannerDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,337,ContentScreen,Object callback/action,onPress,,editBannerDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,340,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,341,ContentScreen,OutlineBtn,onPress,,editPromotionDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,341,ContentScreen,Object callback/action,onPress,,editPromotionDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,344,ContentScreen,OutlineBtn,onPress,openQuickCreate,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,345,ContentScreen,OutlineBtn,onPress,,editAnnouncementDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,345,ContentScreen,Object callback/action,onPress,,editAnnouncementDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,351,ContentScreen,Object callback/action,onPress,,editBannerDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,352,ContentScreen,Object callback/action,onPress,,editBannerDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,354,ContentScreen,Object callback/action,onPress,,editPromotionDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,355,ContentScreen,Object callback/action,onPress,,editAnnouncementDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,361,ContentScreen,OutlineBtn,onPress,,stageContentDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,362,ContentScreen,OutlineBtn,onPress,,stageContentDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,377,ContentScreen,Object callback/action,onPress,,String;stageContentDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,380,ContentScreen,OutlineBtn,onPress,,pickAsset,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,381,ContentScreen,OutlineBtn,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,384,ContentScreen,TextInput,onChangeText,setAssetSearch,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,385,ContentScreen,SelectMenu,onChange,setAssetFeature,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,386,ContentScreen,SelectMenu,onChange,setAssetPlacement,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,392,ContentScreen,OutlineBtn,onPress,,setAssetStatus,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,393,ContentScreen,OutlineBtn,onPress,,setAssetStatus,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,403,ContentScreen,SelectMenu,onChange,,setCustomerFeature;setEditorGroup,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,407,ContentScreen,FeaturePicker,onChange,setCustomerFeature,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,408,ContentScreen,OutlineBtn,onPress,,editorTarget;go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,413,ContentScreen,OutlineBtn,onPress,,newContent,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,414,ContentScreen,OutlineBtn,onPress,,pickAsset,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,415,ContentScreen,OutlineBtn,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,424,ContentScreen,OutlineBtn,onPress,,cloneStatus,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/ContentScreen.tsx,425,ContentScreen,OutlineBtn,onPress,,cloneStatus,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,338,CustomerPageEditorScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,339,CustomerPageEditorScreen,OutlineBtn,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,340,CustomerPageEditorScreen,OutlineBtn,onPress,startBlankDraft,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,348,CustomerPageEditorScreen,SelectMenu,onChange,,setActualAuthEditor;setActualGoodiesPreview;setActualKonsolissPreview;setElementKey;setPageChoice;setPageGroup;setPageKey;setPageStack,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,374,CustomerPageEditorScreen,SelectMenu,onChange,,Boolean;label.toLowerCase;setActualAuthEditor;setActualGoodiesPreview;setActualKonsolissPreview;setElementKey;setError;setPageChoice;setPageKey;setPageStack,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,419,CustomerPageEditorScreen,SelectMenu,onChange,,setEditorMode;setPageStack;setViewMode,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,446,CustomerPageEditorScreen,CustomerPagePreview,onSelectElement,,setElementKey,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,447,CustomerPageEditorScreen,CustomerPagePreview,onNavigate,navigatePhone,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,448,CustomerPageEditorScreen,CustomerPagePreview,onBack,backPhone,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,460,CustomerPageEditorScreen,Pill,onPress,,setElementKey;setPageKey;setPageStack,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,461,CustomerPageEditorScreen,OutlineBtn,onPress,addPage,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,466,CustomerPageEditorScreen,TextInput,onChangeText,updatePageTitle,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,472,CustomerPageEditorScreen,Object callback/action,onPress,,setElementKey,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,481,CustomerPageEditorScreen,TextInput,onChangeText,,updateElement,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,485,CustomerPageEditorScreen,OutlineBtn,onPress,,moveElement,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,486,CustomerPageEditorScreen,OutlineBtn,onPress,,moveElement,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,487,CustomerPageEditorScreen,OutlineBtn,onPress,toggleElement,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,492,CustomerPageEditorScreen,OutlineBtn,onPress,,addElement,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,493,CustomerPageEditorScreen,OutlineBtn,onPress,,addElement,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,503,CustomerPageEditorScreen,TextInput,onChangeText,,setError;setJson,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,512,CustomerPageEditorScreen,OutlineBtn,onPress,,JSON.stringify;setError;setJson,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,513,CustomerPageEditorScreen,OutlineBtn,onPress,,createDraft,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,514,CustomerPageEditorScreen,OutlineBtn,onPress,,setConfirmPublish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,521,CustomerPageEditorScreen,OutlineBtn,onPress,,publishSelected,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,522,CustomerPageEditorScreen,OutlineBtn,onPress,,setConfirmPublish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/CustomerPageEditorScreen.tsx,538,CustomerPageEditorScreen,Object callback/action,onPress,,openRow,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,160,GoodiesBuilderConfigEditor.nameInput,TextInput,onChangeText,onChange,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,168,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,setIngredientsAttempt,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,172,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,180,GoodiesBuilderConfigEditor,PromoColorPicker,onChange,,patchBuilder,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,191,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,upload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,192,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,upload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,193,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,patchItem,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,202,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,useRequest,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,210,GoodiesBuilderConfigEditor,OutlineBtn,onPress,save,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,211,GoodiesBuilderConfigEditor,OutlineBtn,onPress,,remove,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,212,GoodiesBuilderConfigEditor,OutlineBtn,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx,214,GoodiesBuilderConfigEditor,OutlineBtn,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,165,GoodiesConsumerPreview,Pressable,onPress,,emit;onLocaleChange,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,168,GoodiesConsumerPreview,Pressable,onPress,,setZoom,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,171,GoodiesConsumerPreview,Pressable,onPress,,navigate;setPreviewScenario;setScenario,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,173,GoodiesConsumerPreview,Pressable,onPress,,onSelectTarget;setChoices,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,178,GoodiesConsumerPreview,Pressable,onPress,,navigate,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,184,GoodiesConsumerPreview,Pressable,onPress,,setBuilderMenuOpen,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,195,GoodiesConsumerPreview,Pressable,onPress,,navigate;setBuilderMenuOpen;setSelectedBuilderId,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesConsumerPreview.tsx,209,GoodiesConsumerPreview,WalletHelpPayScreen,onBack,,navigate,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,287,GoodiesEditor.metaInput,TextInput,onChangeText,,setMeta,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,291,GoodiesEditor.toggleLive,OutlineBtn,onPress,,setMeta,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,456,GoodiesEditor.promoColorPicker,Pressable,onPress,,setPromoColor,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,458,GoodiesEditor.promoColorPicker,PromoColorPicker,onChange,,setPromoColor,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,466,GoodiesEditor,OutlineBtn,onPress,,toggleMode,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,467,GoodiesEditor,OutlineBtn,onPress,,toggleMode,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,472,GoodiesEditor,OutlineBtn,onPress,,save,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,473,GoodiesEditor,OutlineBtn,onPress,,load;loadAssets,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,474,GoodiesEditor,OutlineBtn,onPress,discardStarter,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,475,GoodiesEditor,OutlineBtn,onPress,,setConfirmPublish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,482,GoodiesEditor,OutlineBtn,onPress,,publish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,483,GoodiesEditor,OutlineBtn,onPress,,setConfirmPublish,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,491,GoodiesEditor,PromoColorPicker,onChange,,edit,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,498,GoodiesEditor,Pressable,onPress,,jumpToReview,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,503,GoodiesEditor,OutlineBtn,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,509,GoodiesEditor,OutlineBtn,onPress,startStarter,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,515,GoodiesEditor,GoodiesConsumerPreview,onLocaleChange,setEditLanguage,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,515,GoodiesEditor,GoodiesConsumerPreview,onSelectTarget,select,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,515,GoodiesEditor,GoodiesConsumerPreview,onPickBuilder,pickBuilder,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,520,GoodiesEditor,GoodiesBuilderConfigEditor,onRows,setByoRows,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,520,GoodiesEditor,GoodiesBuilderConfigEditor,onDraft,setByoDraft,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,520,GoodiesEditor,GoodiesBuilderConfigEditor,onClose,,setByoFocus,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,525,GoodiesEditor,OutlineBtn,onPress,,setEditLanguage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,531,GoodiesEditor,OutlineBtn,onPress,createLabel,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,536,GoodiesEditor,TextInput,onChangeText,setText,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,537,GoodiesEditor,OutlineBtn,onPress,,setSelectedTranslationReviewed;textKeyFor,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,542,GoodiesEditor,TextInput,onChangeText,setEmoji,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,552,GoodiesEditor,OutlineBtn,onPress,,uploadHomeImage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,553,GoodiesEditor,OutlineBtn,onPress,,uploadHomeImage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,555,GoodiesEditor,OutlineBtn,onPress,,publishHomeImage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,560,GoodiesEditor,TextInput,onChangeText,setAssetSearch,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,565,GoodiesEditor,Pressable,onPress,,pickAsset,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,574,GoodiesEditor,TextInput,onChangeText,setLinkText,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,576,GoodiesEditor,OutlineBtn,onPress,applyLink,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,577,GoodiesEditor,OutlineBtn,onPress,,setImage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,582,GoodiesEditor,OutlineBtn,onPress,,setSelection,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,599,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,600,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,601,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,619,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,620,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,637,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,638,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,639,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,640,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,664,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,671,GoodiesEditor,OutlineBtn,onPress,,setEditLanguage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,676,GoodiesEditor,OutlineBtn,onPress,,setPageChoice,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,683,GoodiesEditor,TextInput,onChangeText,,setLabelText,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,684,GoodiesEditor,OutlineBtn,onPress,,setLabelTranslationReviewed,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,693,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,694,GoodiesEditor,OutlineBtn,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesEditor.tsx,699,GoodiesEditor,TextInput,onChangeText,,Number;Number.isFinite;edit;next.lib.find;value.trim,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,160,GoodiesIngredientRequests,OutlineBtn,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,164,GoodiesIngredientRequests,TextInput,onChangeText,setRules,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,165,GoodiesIngredientRequests,OutlineBtn,onPress,saveRules,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,169,GoodiesIngredientRequests,OutlineBtn,onPress,,setRequestPage;setShowAll,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,184,GoodiesIngredientRequests,TextInput,onChangeText,,setNotes,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,186,GoodiesIngredientRequests,OutlineBtn,onPress,,review,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,187,GoodiesIngredientRequests,OutlineBtn,onPress,,replacePhoto,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,188,GoodiesIngredientRequests,OutlineBtn,onPress,,review,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,189,GoodiesIngredientRequests,OutlineBtn,onPress,,review,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,194,GoodiesIngredientRequests,OutlineBtn,onPress,,setRequestPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,195,GoodiesIngredientRequests,OutlineBtn,onPress,,setRequestPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,200,GoodiesIngredientRequests,TextInput,onChangeText,setNewName,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,202,GoodiesIngredientRequests,OutlineBtn,onPress,,setNewBuilder,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,203,GoodiesIngredientRequests,OutlineBtn,onPress,,newName.trim;saveLib,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,204,GoodiesIngredientRequests,OutlineBtn,onPress,,newName.trim;saveLibWithPhoto,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,214,GoodiesIngredientRequests,OutlineBtn,onPress,,saveLibWithPhoto,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesIngredientRequests.tsx,215,GoodiesIngredientRequests,OutlineBtn,onPress,,saveLib,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,17,GoodiesPageContentFields.field,TextInput,onChangeText,,setLocalizedText;update,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,18,GoodiesPageContentFields.field,OutlineBtn,onPress,,read;setLocalizedText;update,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,29,GoodiesPageContentFields,TextInput,onChangeText,,edit,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,29,GoodiesPageContentFields,OutlineBtn,onPress,,edit,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,32,GoodiesPageContentFields,OutlineBtn,onPress,,edit;moveContentEntry,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,33,GoodiesPageContentFields,OutlineBtn,onPress,,edit;moveContentEntry,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,34,GoodiesPageContentFields,OutlineBtn,onPress,,edit;next[list.key].splice,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/content/GoodiesPageContentFields.tsx,37,GoodiesPageContentFields,OutlineBtn,onPress,,edit;list.create,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,42,BusinessDetailsScreen.changeVerification,Object callback/action,onSubmit,,String;String(values.reason || '').trim;hydrateAdminState;setBusinessVerification;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,59,BusinessDetailsScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,69,BusinessDetailsScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,76,BusinessDetailsScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,97,BusinessDetailsScreen,OutlineBtn,onPress,"guard(REQ.ecosystem, () => changeVerification('verified', 'Verify', 'Verify business'))",changeVerification;guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,98,BusinessDetailsScreen,OutlineBtn,onPress,"guard(REQ.ecosystem, () => changeVerification('pending', 'Withdraw verification for', 'Withdraw verification'))",changeVerification;guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,99,BusinessDetailsScreen,OutlineBtn,onPress,"guard(REQ.ecosystem, () => changeVerification('restricted', 'Restrict', 'Restrict business'))",changeVerification;guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx,109,BusinessDetailsScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,47,EcosystemScreen.addService,Object callback/action,onSubmit,,String;String(v.n || '').trim;String(v.reason || '').trim;db.SVC.some;name.toLowerCase;name.toLowerCase().replace;row[0].toLowerCase;saveCmsVersion;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,72,EcosystemScreen.grid,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,74,EcosystemScreen.grid,Pressable,onPress,,bump,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,94,EcosystemScreen.table,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,101,EcosystemScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,102,EcosystemScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,106,EcosystemScreen,SearchInput,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,107,EcosystemScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,109,EcosystemScreen,Pill,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,110,EcosystemScreen,Seg,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,111,EcosystemScreen,Pill,onPress,exportCsv,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,112,EcosystemScreen,Btn,onPress,addService,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/EcosystemScreen.tsx,113,EcosystemScreen,Pill,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/ServiceHubScreen.tsx,39,ServiceHubScreen,Pill,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/ServiceHubScreen.tsx,43,ServiceHubScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/ServiceHubScreen.tsx,44,ServiceHubScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/ServiceHubScreen.tsx,53,ServiceHubScreen,Object callback/action,onPress,,openModule,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/ecosystem/ServiceHubScreen.tsx,63,ServiceHubScreen,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,195,GoodiesAdminScreen.resolveReport,Object callback/action,onPress,,current;goodiesRequest;loadReports;runMutation;toast;updated.find,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,255,GoodiesAdminScreen.cancelOrder,Object callback/action,onPress,,current;goodiesRequest;loadOrderPage;reload;runMutation;toast,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,306,GoodiesAdminScreen.switchRow,Pressable,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,311,GoodiesAdminScreen,Pressable,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,314,GoodiesAdminScreen,Pressable,onPress,,setModule,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,316,GoodiesAdminScreen,Pressable,onPress,,loadAnalytics;loadCouriers;loadOrderPage;loadReports,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,318,GoodiesAdminScreen,TextInput,onChangeText,,setRejection,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,318,GoodiesAdminScreen,Pressable,onPress,,setRejection,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,318,GoodiesAdminScreen,Pressable,onPress,,reviewProduct,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,328,GoodiesAdminScreen,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,335,GoodiesAdminScreen,Pressable,onPress,,setMerchant,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,344,GoodiesAdminScreen,Pressable,onPress,,reviewProduct,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,344,GoodiesAdminScreen,Pressable,onPress,,setRejection,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,348,GoodiesAdminScreen,Pressable,onPress,,setReviewsAttempt,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,349,GoodiesAdminScreen,Pressable,onPress,,reviewCustomerRating,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,349,GoodiesAdminScreen,Pressable,onPress,,setReviewRejectId;setReviewRejectNote,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,350,GoodiesAdminScreen,TextInput,onChangeText,setReviewRejectNote,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,350,GoodiesAdminScreen,Pressable,onPress,,reviewCustomerRating,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,350,GoodiesAdminScreen,Pressable,onPress,,setReviewRejectId,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,351,GoodiesAdminScreen,Pressable,onPress,,setReviewsPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,351,GoodiesAdminScreen,Pressable,onPress,,setReviewsPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,355,GoodiesAdminScreen,Pressable,onPress,,loadSupportTickets,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,361,GoodiesAdminScreen,Pressable,onPress,,updateSupportTicket,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,362,GoodiesAdminScreen,Pressable,onPress,,updateSupportTicket,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,362,GoodiesAdminScreen,Pressable,onPress,,updateSupportTicket,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,366,GoodiesAdminScreen,Pressable,onPress,,Math.max;setSupportPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,367,GoodiesAdminScreen,Pressable,onPress,,setSupportPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,378,GoodiesAdminScreen,Pressable,onPress,,cancelOrder,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,381,GoodiesAdminScreen,Pressable,onPress,,setOrderPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,381,GoodiesAdminScreen,Pressable,onPress,,setOrderPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,382,GoodiesAdminScreen,Pressable,onPress,,setCourierPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,382,GoodiesAdminScreen,Pressable,onPress,,setCourierPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,396,GoodiesAdminScreen,Pressable,onPress,,resolveReport,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,397,GoodiesAdminScreen,Pressable,onPress,,resolveReport,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,405,GoodiesAdminScreen,Pressable,onPress,,setCourierAccess,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,412,GoodiesAdminScreen,TextInput,onChangeText,setAdditionalStoreFee,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,414,GoodiesAdminScreen,TextInput,onChangeText,setExtraDistancePerKm,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,417,GoodiesAdminScreen,TextInput,onChangeText,setMaxStops,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,420,GoodiesAdminScreen,Pressable,onPress,,saveDeliverySurcharge,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,425,GoodiesAdminScreen,TextInput,onChangeText,setFee,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,426,GoodiesAdminScreen,TextInput,onChangeText,setTips,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,432,GoodiesAdminScreen,Pressable,onPress,,saveFees,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,436,GoodiesAdminScreen,Pressable,onPress,,loadAnalytics,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAdminScreen.tsx,444,GoodiesAdminScreen,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx,110,GoodiesAssetLibrary,TextInput,onChangeText,setSearch,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx,113,GoodiesAssetLibrary,OutlineBtn,onPress,,reload,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,41,GoodiesSettlementAdmin,Pressable,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,43,GoodiesSettlementAdmin,TextInput,onChangeText,setReason,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,43,GoodiesSettlementAdmin,TextInput,onChangeText,setReference,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,43,GoodiesSettlementAdmin,TextInput,onChangeText,setAmount,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,44,GoodiesSettlementAdmin,TextInput,onChangeText,setCalendarCountry,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,44,GoodiesSettlementAdmin,TextInput,onChangeText,setCalendarCoverage,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,44,GoodiesSettlementAdmin,TextInput,onChangeText,setCalendarDays,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,46,GoodiesSettlementAdmin,Pressable,onPress,,submit,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,46,GoodiesSettlementAdmin,Pressable,onPress,,setAction;setDetails,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,48,GoodiesSettlementAdmin,Pressable,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,48,GoodiesSettlementAdmin,Pressable,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,49,GoodiesSettlementAdmin,Pressable,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,49,GoodiesSettlementAdmin,Pressable,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,50,GoodiesSettlementAdmin,Pressable,onPress,,select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,50,GoodiesSettlementAdmin,Pressable,onPress,,Number;select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,51,GoodiesSettlementAdmin,Pressable,onPress,,Number;select,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,52,GoodiesSettlementAdmin,Pressable,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx,52,GoodiesSettlementAdmin,Pressable,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,23,GoodiesSharedBillRefunds,Pressable,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,24,GoodiesSharedBillRefunds,Pressable,onPress,,setNotice;setReason;setSelected,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,25,GoodiesSharedBillRefunds,TextInput,onChangeText,setReason,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,25,GoodiesSharedBillRefunds,Pressable,onPress,,retry,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,25,GoodiesSharedBillRefunds,Pressable,onPress,,setSelected,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,26,GoodiesSharedBillRefunds,Pressable,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx,26,GoodiesSharedBillRefunds,Pressable,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,49,OperationsScreen.board.col,Deal,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,68,OperationsScreen.body,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,74,OperationsScreen.body,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,77,OperationsScreen.body,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,83,OperationsScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,84,OperationsScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,85,OperationsScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,87,OperationsScreen,SearchInput,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,88,OperationsScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,90,OperationsScreen,Btn,onPress,"guard(REQ.review, assignWork)",guard,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,91,OperationsScreen,Pill,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/operations/OperationsScreen.tsx,92,OperationsScreen,Pill,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,58,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,59,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,60,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,66,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,67,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,68,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,73,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,74,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,75,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,80,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,81,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,82,PeopleScreen.header,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,99,PeopleScreen.matrix,Pressable2,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,128,PeopleScreen.staffBody,Pressable,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,136,PeopleScreen.staffBody,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,150,PeopleScreen.accountsBody,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,161,PeopleScreen.restrictionsBody,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,167,PeopleScreen.customersBody,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,173,PeopleScreen.businessesBody,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,179,PeopleScreen.rolesBody,Btn,onPress,newRole,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,180,PeopleScreen.rolesBody,Object callback/action,onPress,,editRole,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,186,PeopleScreen.invitationsBody,Object callback/action,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,192,PeopleScreen.auditBody,Object callback/action,onPress,,String;open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,218,PeopleScreen,SelectMenu,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,221,PeopleScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,222,PeopleScreen,SelectMenu,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,227,PeopleScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,228,PeopleScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,231,PeopleScreen,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,234,PeopleScreen,SearchInput,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,235,PeopleScreen,Btn,onPress,invite,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/people/PeopleScreen.tsx,244,Pressable2,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,38,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,39,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,41,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,42,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,44,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,45,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,47,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,48,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,49,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,50,ServiceWorkspaceScreen.sourceRows,Object callback/action,action,,open,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,71,ServiceWorkspaceScreen,Pill,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,75,ServiceWorkspaceScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,76,ServiceWorkspaceScreen,Object callback/action,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,80,ServiceWorkspaceScreen,SelectMenu,onChange,setModule,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,80,ServiceWorkspaceScreen,Pill,onPress,,setModule,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,87,ServiceWorkspaceScreen,Object callback/action,onPress,,setModule,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,90,ServiceWorkspaceScreen,Pill,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,92,ServiceWorkspaceScreen,Object callback/action,onPress,row.action,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,99,ServiceWorkspaceScreen,Chips,onChange,,bump,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,121,ServiceWorkspaceScreen,SearchInput,onChangeText,,bump,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,122,ServiceWorkspaceScreen,Pill,onPress,,bump,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,124,ServiceWorkspaceScreen,Pill,onPress,,bump,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,128,ServiceWorkspaceScreen,Object callback/action,onPress,row.action,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,135,ServiceWorkspaceScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,136,ServiceWorkspaceScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,137,ServiceWorkspaceScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx,138,ServiceWorkspaceScreen,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/NotificationsSheet.tsx,69,NotificationsSheet,DrawerBody,onClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/NotificationsSheet.tsx,69,NotificationsSheet,OutlineBtn,onPress,,markServerAll,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/NotificationsSheet.tsx,71,NotificationsSheet,Chips,onChange,setF,,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/NotificationsSheet.tsx,76,NotificationsSheet,Object callback/action,onPress,,openNotice,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/ScreenHost.tsx,55,NoAccess,OutlineBtn,onPress,,request,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/shell/ScreenHost.tsx,56,NoAccess,OutlineBtn,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+admin,src/features/admin/ui/AdminSnapshotBoundary.tsx,24,AdminSnapshotBoundary,OutlineBtn,onPress,,retry,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,170,Stage,Pressable,onPress,bzUndo,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,189,OptTile,Pressable,onPress,,bzAdd,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,195,OptTile,Pressable,onPress,,bzSub,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,207,Options,Pressable,onPress,,bzSize,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,228,Review,Pressable,onPress,bzResetAsk,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,245,ByoFoot,Stepper,onMinus,,bzQty,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,245,ByoFoot,Stepper,onPlus,,bzQty,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,246,ByoFoot,Cta,onPress,bzAddOrder,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,248,ByoFoot,Cta,onPress,bzCancel,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,255,ByoScreen,Header,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,255,ByoScreen,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,261,ByoScreen,Header,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,270,ByoScreen,TextInput,onChangeText,bzNote,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,286,Header,Circ,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,299,ByoDone,Header,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,305,ByoDone,Cta,onPress,bzAnother,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,305,ByoDone,Cta,onPress,bzShop,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/Builder.tsx,305,ByoDone,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/builders/engine.tsx,268,ByoRow,Pressable,onPress,,byoOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,26,Dish,Pressable,onPress,,openProduct,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,36,Dish,Pressable,onPress,,openProduct,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,46,Dish,Pressable,onPress,,quickAdd,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,66,VCard,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,71,VCard,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,86,StoreCard,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,98,StoreCard,Pressable,onPress,,openProduct,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,106,StoreCard,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,123,ItemRow,Pressable,onPress,,openProduct,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,131,ItemRow,Pressable,onPress,,favp,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/cards.tsx,134,ItemRow,Pressable,onPress,,quickAdd,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Overlays.tsx,29,BottomSheet,Modal,onRequestClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Overlays.tsx,32,BottomSheet,Pressable,onPress,dismissOnBackdrop ? onClose : undefined,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Overlays.tsx,56,ConfirmDialog,Modal,onRequestClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Overlays.tsx,58,ConfirmDialog,Pressable,onPress,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,29,Sheets.stars,Pressable,onPress,,on,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,31,Sheets,Cta,onPress,A.addStop,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,31,Sheets,Cta,onPress,A.newCart,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,31,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,32,Sheets,Cta,onPress,bzLeave,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,32,Sheets,Pressable,onPress,bzDiscard,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,32,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,33,Sheets,Cta,onPress,bzReset2,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,33,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,34,Sheets,Cta,onPress,A.alcAccept,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,34,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,38,Sheets,Cta,onPress,A.runReorder,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,38,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,42,Sheets,Cta,onPress,,sheet.onConfirm,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,44,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,49,Sheets,Cta,onPress,,sheet.onConfirm,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,51,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,53,Sheets,Cta,onPress,,A.qty;String;close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,53,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,54,Sheets,Pressable,onPress,A.clearCart,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,54,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,55,Sheets,Pressable,onPress,,A.cancelOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,55,Sheets,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,62,Sheets,Cta,onPress,,A.go;A.promoGo;String;close;target.slice;target.startsWith,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,75,Sheets,Empty,onPress,,A.browse;close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,80,Sheets,Pressable,onPress,,A.go;close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,101,Sheets,Radio,onPress,,A.selectAddr,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,101,Sheets,Cta,onPress,,A.go;close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,108,Sheets,SheetBox,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,112,Sheets,ConfirmDialog,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,114,Sheets,BottomSheet,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,169,ScheduleSheet,SegSchedule,onChange,,A.setMode;setDeliveryMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,172,ScheduleSheet,Pressable,onPress,,pick,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,178,ScheduleSheet,Pressable,onPress,,DateTimePickerAndroid.open,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,178,ScheduleSheet,Object callback/action,onChange,changeTime,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,180,ScheduleSheet,DateTimePicker,onChange,changeTime,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,181,ScheduleSheet,Pressable,onPress,,pick,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,185,ScheduleSheet,Cta,onPress,choose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,193,SegSchedule,Pressable,onPress,,onChange,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,202,GroupOrderModal.handlePan,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,203,GroupOrderModal.handlePan,Object callback/action,onMoveShouldSetPanResponder,,Math.abs,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,204,GroupOrderModal.handlePan,Object callback/action,onPanResponderRelease,,close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,206,GroupOrderModal,BottomSheet,onClose,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,208,GroupOrderModal,Pressable,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,213,GroupOrderModal,Pressable,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,665,GroupOrderSheet,Cta,onPress,,loadInvites,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,670,GroupOrderSheet,Pressable,onPress,,declineInvite,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,671,GroupOrderSheet,Cta,onPress,,joinFromInvite,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,676,GroupOrderSheet,Input,onChange,setInviteCode,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,678,GroupOrderSheet,Pressable,onPress,,label;requestCameraPermission;setScannerOpen;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,684,GroupOrderSheet,Cta,onPress,,joinServerGroup,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,691,GroupOrderSheet,Cta,onPress,,createServerGroup,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,701,GroupOrderSheet,Cta,onPress,,setGroupReload,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,702,GroupOrderSheet,Cta,onPress,invite,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,709,GroupOrderSheet,Cta,onPress,,invite,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,711,GroupOrderSheet,Cta,onPress,,openFriends;setFriendsOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,714,GroupOrderSheet,Cta,onPress,,openFriends,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,718,GroupOrderSheet,Pressable,onPress,,list.filter;setPickedFriends,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,724,GroupOrderSheet,Cta,onPress,,sendFriendInvites,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,754,GroupOrderSheet,Pressable,onPress,,removeSharedItem,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,763,GroupOrderSheet,Cta,onPress,,reviewSharedOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,778,GroupOrderSheet,Seg,onPick,,selectGroupCheckoutType,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,781,GroupOrderSheet,Radio,onPress,,JSON.stringify;String;setCheckoutEstimate;setGroupAddressId;setGroupDeliveryQuote,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,785,GroupOrderSheet,Cta,onPress,,calculateGroupDeliveryQuote,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,791,GroupOrderSheet,Cta,onPress,,A.go;close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,806,GroupOrderSheet,Cta,onPress,,checkoutGroupOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,808,GroupOrderSheet,Cta,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,809,GroupOrderSheet,Cta,onPress,,endGroupOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,810,GroupOrderSheet,Modal,onRequestClose,,setScannerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,812,GroupOrderSheet,CameraView,onBarcodeScanned,,groupInviteCodeFromScan;label;setInviteCode;setScannerOpen;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,821,GroupOrderSheet,Cta,onPress,,setScannerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,831,GroupOrderPage,Bar,onBack,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,842,ReviewSheet,Input,onChange,setT,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,844,ReviewSheet,Cta,onPress,,(S.rev[o.sid] || []).filter;Error;S.orders.filter;S.rev[o.sid].unshift;emit;label;notifyStoreReviewsChanged;save;setSaving;supabase.rpc;t.trim;toast;ui.close,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,884,ContactsSheet,Radio,onPress,,close;emit;save,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,885,ContactsSheet,Pressable,onPress,,ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,886,ContactsSheet,Pressable,onPress,,"S.orders.some;String;done;friendlyError;label;removeGoodiesContactNumber;removeGoodiesContactNumber(String(r.id)).then;removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch;toast;ui.sheet",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,886,ContactsSheet,Object callback/action,onConfirm,,"String;friendlyError;label;removeGoodiesContactNumber;removeGoodiesContactNumber(String(r.id)).then;removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch;toast;ui.sheet",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,889,ContactsSheet,Cta,onPress,,ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,916,CtForm,Input,onChange,setL,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,917,CtForm,Input,onChange,setPh,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,920,CtForm,Cta,onPress,,save_,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/Sheets.tsx,921,CtForm,Cta,onPress,,ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,35,Circ,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,49,Bar,Pressable,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,64,Sh,Pressable,onPress,onLink,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,76,Chip,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,82,Chips,Chip,onPress,,onPick,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,88,Cta,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,109,Empty,Cta,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,117,Switch,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,126,Radio,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,138,Seg,Pressable,onPress,,onPick,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,148,Stepper.b,Pressable,onPress,f,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,158,Input,TextInput,onChangeText,onChange,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,158,Input,TextInput,onFocus,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,158,Input,TextInput,onBlur,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,174,SheetBox.pan,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,175,SheetBox.pan,Object callback/action,onMoveShouldSetPanResponderCapture,,Math.abs,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,176,SheetBox.pan,Object callback/action,onPanResponderRelease,,onClose,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,184,SheetBox,Pressable,onPress,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/components/ui.tsx,193,heartBtn,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,153,GoodiesApp.pan,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,154,GoodiesApp.pan,Object callback/action,onMoveShouldSetPanResponder,,Dimensions.get;Math.abs;cur,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,161,GoodiesApp.pan,Object callback/action,onPanResponderRelease,,Math.abs;handleBack,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,172,GoodiesApp,Home,onExit,handleBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,173,GoodiesApp,Home,onExit,handleBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,174,GoodiesApp,Bar,onBack,A.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,174,GoodiesApp,Pressable,onPress,,A.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,177,GoodiesApp,GroupOrderPage,onBack,handleBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,186,GoodiesApp,WalletAddNewCardScreen,onBack,A.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,186,GoodiesApp,WalletAddNewCardScreen,onSaved,,A.refreshPaymentOptions,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,187,GoodiesApp,CardAuthentication,onComplete,,A.completeCardOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,187,GoodiesApp,CardAuthentication,onCancel,,A.cancelPendingCardOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,187,GoodiesApp,Account,onOpenWallet,onUniversalAction?()=>onUniversalAction('wallet'):undefined,onUniversalAction,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,196,GoodiesApp,Account,onOpenWallet,onUniversalAction?()=>onUniversalAction('wallet'):undefined,onUniversalAction,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,198,GoodiesApp,Cta,onPress,,setStartupAttempt,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,217,GoodiesApp.cartBannerPan,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,218,GoodiesApp.cartBannerPan,Object callback/action,onMoveShouldSetPanResponderCapture,,Math.abs,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,219,GoodiesApp.cartBannerPan,Object callback/action,onPanResponderMove,,cartDragX.setValue,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,220,GoodiesApp.cartBannerPan,Object callback/action,onPanResponderRelease,,"Animated.spring;Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true, speed: 22, bounciness: 5}).start;Animated.timing;Animated.timing(cartDragX, {toValue: (g.dx > 0 ? 1 : -1) * Dimensions.get('window').width, duration: 260, useNativeDriver: true}).start;Dimensions.get;Math.abs;cartDragX.setValue;cnt;setDismissedCartCount",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,229,GoodiesApp.cartBannerPan,Object callback/action,onPanResponderTerminate,,"Animated.spring;Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,250,GoodiesApp,ScrollView,onScroll,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,250,GoodiesApp,RefreshControl,onRefresh,,"Promise.all;Promise.all([loadContent(), refreshLiveSchedules(), refreshGoodiesOrders()]).finally;loadContent;refreshGoodiesOrders;refreshLiveSchedules;setRefreshing",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,251,GoodiesApp,Cta,onPress,,refreshLiveSchedules,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,261,GoodiesApp,Pressable,onPress,,A.tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,266,GoodiesApp,Pressable,onPress,,cartDragX.setValue;cnt;setDismissedCartCount,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,273,GoodiesApp,Pressable,onPress,,setQuickMenuOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,274,GoodiesApp,GoodiesQuickMenu,onUniversalAction,onUniversalAction,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,283,TopBar,Bar,onBack,A.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,291,BottomNav.item,Pressable,onPress,,A.tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesApp.tsx,302,BottomNav,Pressable,onPress,,A.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,302,GoodiesCourierScreen,Pressable,onPress,,signOut,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,308,GoodiesCourierScreen,Pressable,onPress,,setPresence,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,311,GoodiesCourierScreen,Pressable,onPress,,setPresence,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,318,GoodiesCourierScreen,Pressable,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,324,GoodiesCourierScreen,Pressable,onPress,,openMap,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,327,GoodiesCourierScreen,Pressable,onPress,,openMap,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,330,GoodiesCourierScreen,Pressable,onPress,,respond,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,330,GoodiesCourierScreen,Pressable,onPress,,respond,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,331,GoodiesCourierScreen,Pressable,onPress,,advance,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesCourierScreen.tsx,332,GoodiesCourierScreen,Pressable,onPress,,advance,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesQuickMenu.tsx,29,GoodiesQuickMenu.tile,Pressable,onPress,,activate,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesQuickMenu.tsx,34,GoodiesQuickMenu,Modal,onRequestClose,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesQuickMenu.tsx,34,GoodiesQuickMenu,Pressable,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesQuickMenu.tsx,34,GoodiesQuickMenu,Pressable,onPress,inbox.retry,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/GoodiesQuickMenu.tsx,34,GoodiesQuickMenu,Pressable,onPress,close,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,32,LRow,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,44,Settings,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,47,Settings,Switch,onPress,,togglePref,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,48,Settings,Switch,onPress,,togglePref,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,50,Settings,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,51,Settings,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,52,Settings,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,54,Settings,LRow,onPress,,setTheme,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,54,Settings,Switch,onPress,,setTheme,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,55,Settings,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,64,Profile,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,67,Profile,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,68,Profile,LRow,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,69,Profile,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,70,Profile,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,71,Profile,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,72,Profile,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,174,Addresses.removeAddr,Object callback/action,onConfirm,,"(async () => {
+      if(actionLock.current||!current())return;
+      actionLock.current=true;setBusy(true);
+      try {
+        const {error} = await supabase.rpc('delete_user_address', {p_address_id: String(a.id)});
+        if (error) throw error;
+        if(!current())return;
+        await loadAddresses();if(!current())return;save(); emit();
+        ui.close();
+        toast(label(""lbl.cms.203961ea028d"", ""Address deleted.""));
+      } catch (e: any) { if(current())toast(friendlyError(e, label(""lbl.cms.1c6579e6b5f5"", ""Could not delete this address.""))); }
+      finally { actionLock.current=false;if(current())setBusy(false); }
+    });String;current;emit;friendlyError;label;loadAddresses;save;setBusy;supabase.rpc;toast;ui.close",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,190,Addresses,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,193,Addresses,Cta,onPress,,loadAddresses,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,199,Addresses,Pressable,onPress,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,200,Addresses,Pressable,onPress,,selectForGoodies,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,201,Addresses,Pressable,onPress,,Alert.alert;label,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,202,Addresses,Pressable,onPress,,removeAddr,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,209,Addresses,Chip,onPress,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,210,Addresses,Cta,onPress,,fillFromCurrentLocation,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,211,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,212,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,213,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,214,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,215,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,216,Addresses,Input,onChange,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,217,Addresses,Cta,onPress,,saveAddr,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,219,Addresses,Cta,onPress,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,297,StoreChat,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,299,StoreChat,Pressable,onPress,,setAttempt;setConversationId;setLoading;setProblem,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,301,StoreChat,ScrollView,onContentSizeChange,,listRef.current?.scrollToEnd,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,302,StoreChat,Cta,onPress,,"currentChat;friendlyError;label;loadMessages;loadMessages(conversationId,true).catch;setProblem",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,309,StoreChat,TextInput,onChangeText,setDraft,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,310,StoreChat,Pressable,onPress,send,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,381,Contact,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,385,Contact,Chip,onPress,,setTopic,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,388,Contact,Chip,onPress,,setOid,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,388,Contact,Chip,onPress,,setOid,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,390,Contact,Input,onChange,setMsg,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,391,Contact,Cta,onPress,,submit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,403,Account,LivePayments,onOpenWallet,onOpenWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,406,Account,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,406,Account,Cta,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,407,Account,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,407,Account,LRow,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,408,Account,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,408,Account,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,408,Account,Empty,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,409,Account,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,409,Account,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,409,Account,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Account.tsx,409,Account,Empty,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,30,CachedContentImage,Image,onError,,console.warn;onFail;setFailed;setReloadKey;setRetried,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,44,Mode,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,54,Mode.inner,CachedContentImage,onFail,,setImageFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,64,CategoryTile,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,66,CategoryTile,CachedContentImage,onFail,,setFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,88,PromoCard,Pressable,onPress,,target?.trim;ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,98,PromoCard,CachedContentImage,onFail,,setImageFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,143,Home,Circ,onPress,onExit || back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,144,Home,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,151,Home,Empty,onPress,,loadContent,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,152,Home,Empty,onPress,,refreshLiveSchedules,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,153,Home,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,157,Home,Mode,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,159,Home,Mode,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,160,Home,Mode,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,164,Home,CategoryTile,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,170,Home,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,175,Home,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,177,Home,Sh,onLink,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,182,Home,Pressable,onPress,,require;require('../actions').reorder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,193,Home,Sh,onLink,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,195,Home,Sh,onLink,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,197,Home,Sh,onLink,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,200,Home,Sh,onLink,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,201,Home,Chips,onPick,setFilter,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,231,Explore,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,233,Explore,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,243,Explore,Chips,onPick,setScope,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,246,Explore,Chips,onPick,setCategory,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,255,Explore,Empty,onPress,,setCategory;setScope,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,272,Cats,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,294,CatList,Mode,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,296,CatList,Chips,onPick,setSub,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,297,CatList,Chips,onPick,setFilter,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,304,CatList,Empty,onPress,clearFilters,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,319,Search,Chip,onPress,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,319,Search,Chip,onPress,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,320,Search,Chip,onPress,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,327,Search,Chip,onPress,,setQ,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,327,Search,Pressable,onPress,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,328,Search,Chip,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,345,Search,Empty,onPress,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,348,Search,Chip,onPress,,setQ,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,349,Search,Chip,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,352,Search,Pressable,onPress,,go;r.q.trim;rec,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,357,Search,Pressable,onPress,,go;r.q.trim;rec,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,367,Search,Circ,onPress,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,368,Search,TextInput,onChangeText,setQ,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,369,Search,Circ,onPress,,setQ,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,388,FlashDeals,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,406,Promos,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,412,Promos,Cta,onPress,,toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,412,Promos,Cta,onPress,,applyPromo,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,573,Notifs,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,573,Notifs,Pressable,onPress,,markAll,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,576,Notifs,Cta,onPress,,loadServer,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,578,Notifs,Pressable,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Browse.tsx,584,Notifs,Cta,onPress,,loadServer,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,44,CardAuthentication,Bar,onBack,onCancel,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,51,CardAuthentication,WebView,onError,networkFailed,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,51,CardAuthentication,WebView,onHttpError,networkFailed,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,51,CardAuthentication,WebView,onMessage,onMessage,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,51,CardAuthentication,WebView,onLoadStart,,setBusy,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,51,CardAuthentication,WebView,onLoadEnd,,setBusy,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,54,CardAuthentication,Cta,onPress,,setProblem;setRetry,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/CardAuthentication.tsx,55,CardAuthentication,Cta,onPress,onCancel,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,94,HelpPay.cancel,Object callback/action,onPress,,"(async()=>{setBusy(true);try{
+     const result=await cancelHelpPayRequest(snapshot.id);if(S.accountId!==accountId)return;await load(snapshot.id);
+     Alert.alert(label(""lbl.sharedPay.d353a99eb455"", ""Cancelled""),result.refunded?label(""lbl.sharedPay.d59713c10908"", ""All contributions have been returned to the Wallets that paid.""):label('lbl.helpPayRefundPending','Your Wallet refund is being processed. Check Wallet activity for confirmation.'));
+   }catch(e:any){if(S.accountId===accountId)Alert.alert(label(""lbl.sharedPay.b97f77e01cbd"", ""Unable to cancel""),label('lbl.helpPayCancelError','Could not confirm cancellation. Check the request status and retry.'));}finally{actionLock.current=false;if(S.accountId===accountId)setBusy(false);}});Alert.alert;cancelHelpPayRequest;label;load;setBusy",SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,101,HelpPay,Bar,onBack,,emit;navBack,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,104,HelpPay,Cta,onPress,,load;recover,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,109,HelpPay,Pressable,onPress,,setMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,126,HelpPay,Cta,onPress,,create,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,148,HelpPay,Pressable,onPress,,nativeShare,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,153,HelpPay,Cta,onPress,,setFriendsRetry,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,154,HelpPay,Pressable,onPress,,sendFriend,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,165,HelpPay,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,166,HelpPay,Pressable,onPress,cancel,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/HelpPay.tsx,170,HelpPay,Cta,onPress,,newCheckout,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,124,LivePayments,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,132,LivePayments,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,137,LivePayments,Cta,onPress,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,143,LivePayments,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,148,LivePayments,Cta,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,155,LivePayments,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,161,LivePayments,Pressable,onPress,,label;onOpenWallet;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,169,LivePayments,Cta,onPress,,makeWallet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,183,LivePayments,Pressable,onPress,,removeCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,187,LivePayments,Pressable,onPress,,makeDefault,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,188,LivePayments,Pressable,onPress,,removeCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,189,LivePayments,Pressable,onPress,,setConfirmId,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Payments.tsx,200,LivePayments,Cta,onPress,,push,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,31,Hero,Circ,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,94,Store,Pressable,onPress,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,102,Store,Hero,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,102,Store,Pressable,onPress,,openStoreShare,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,102,Store,Circ,onPress,,heart,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,104,Store,Pressable,onPress,,setShareOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,106,Store,Pressable,onPress,,Clipboard.setStringAsync;label;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,108,Store,TextInput,onChangeText,setShareQuery,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,109,Store,Pressable,onPress,,openStoreShare,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,109,Store,Pressable,onPress,,sendStoreToFriend,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,116,Store,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,119,Store,Cta,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,120,Store,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,121,Store,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,123,Store,Input,onChange,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,125,Store,Chips,onPick,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,128,Store,Cta,onPress,,loadBuilders,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,139,Store,Empty,onPress,reviewState.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,140,Store,Cta,onPress,reviewState.more,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,150,StoreReviews,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,150,StoreReviews,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,154,StoreReviews,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,164,StoreReviews,Empty,onPress,reviewState.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,170,StoreReviews,Cta,onPress,reviewState.more,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,171,StoreReviews,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,181,Product,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,181,Product,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,188,Product,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,188,Product,Circ,onPress,,favp,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,190,Product,ScrollView,onMomentumScrollEnd,,Math.round;setPhotoIndex,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,199,Product,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,212,Product,Radio,onPress,,setSize,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,213,Product,Radio,onPress,,setSize,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,215,Product,Radio,onPress,toggleDrink,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,216,Product,Input,onChange,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,228,ProductFoot,Stepper,onMinus,,productQty,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,228,ProductFoot,Stepper,onPlus,,productQty,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,228,ProductFoot,Cta,onPress,productAdd,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,250,Cart,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,250,Cart,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,250,Cart,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,252,Cart,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,252,Cart,Empty,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,261,Cart,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,261,Cart,Circ,onPress,clearAsk,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,263,Cart,Cta,onPress,,refreshLiveSchedules,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,273,Cart,Pressable,onPress,,setScheduleOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,275,Cart,Pressable,onPress,,setSch;setScheduleOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,292,Cart,Pressable,onPress,,bzEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,292,Cart,Pressable,onPress,,bzRemove,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,294,Cart,Stepper,onMinus,,qty;require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,294,Cart,Stepper,onPlus,,qty,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,299,Cart,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,300,Cart,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,309,Cart,Pressable,onPress,promoClear,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,311,Cart,Input,onChange,,setCode;v.toUpperCase,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,311,Cart,Cta,onPress,,promoApply,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,312,Cart,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,316,Cart,Pressable,onPress,,Promise.all;refreshFirstDeliveryEligibility;refreshGoodiesDeliveryQuote,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,317,Cart,Cta,onPress,!isPk() && !addressKey ? () => go('addresses') : goCheckout,go;isPk,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,365,Checkout,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,365,Checkout,Empty,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,366,Checkout,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,366,Checkout,Empty,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,369,Checkout,Seg,onPick,,label;setMode;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,373,Checkout,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,375,Checkout,Cta,onPress,createWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,377,Checkout,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,381,Checkout,Radio,onPress,,setSch;setScheduleOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,387,Checkout,Pressable,onPress,,setScheduleOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,397,Checkout,Pressable,onPress,,setTip,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,398,Checkout,Input,onChange,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,401,Checkout,Cta,onPress,,setCashRetry,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,402,Checkout,Cta,onPress,,refreshPaymentOptions,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,404,Checkout,Radio,onPress,,setPay,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,405,Checkout,Cta,onPress,createWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,409,Checkout,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,411,Checkout,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,414,Checkout,Pressable,onPress,,setCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,431,Checkout,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,437,Checkout,Cta,onPress,,refreshPaymentOptions,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,442,Checkout,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,445,Checkout,Pressable,onPress,,setConsent,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,450,Checkout,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,465,CheckoutFoot,Cta,onPress,S.cs === 3 ? () => {void placeOrder();} : checkoutNext,placeOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,470,Confirm,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,470,Confirm,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,478,Confirm,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,478,Confirm,Cta,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,641,Track,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,641,Track,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,647,Track,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,659,Track,Cta,onPress,,label;receiptCall,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,661,Track,Input,onChange,setReportText,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,662,Track,Cta,onPress,,label;receiptCall,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,663,Track,Pressable,onPress,,setReportOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,672,Track,Cta,onPress,,setTrackingRetry,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,677,Track,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,677,Track,Pressable,onPress,,require;require('../store').ui.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,684,Track,Pressable,onPress,,cancelAsk,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,685,Track,Cta,onPress,,reorder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,686,Track,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,687,Track,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,688,Track,Cta,onPress,,tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,700,Orders,Bar,onBack,,require;require('../actions').back,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,702,Orders,Seg,onPick,setOrdersTab,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,705,Orders,Cta,onPress,,refreshGoodiesOrders,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,710,Orders,Pressable,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,715,Orders,Cta,onPress,,reorder,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,715,Orders,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,718,Orders,Empty,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,719,Orders,Cta,onPress,,loadOlderGoodiesOrders,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,729,Favs,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,730,Favs,Seg,onPick,,emit,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,731,Favs,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,732,Favs,Empty,onPress,browse,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,742,Help,Bar,onBack,back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,745,Help,Pressable,onPress,,setOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,750,Help,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,751,Help,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/features/Goodies/screens/Shop.tsx,752,Help,Cta,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,Pg,onRefresh,,app.bump;setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,ErrBox,retry,p.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,27,GoodiesPromotionsPage,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,123,RegistrationPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,123,RegistrationPage,Pg,onRefresh,,app.bump;applicationDocs.reload,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,127,RegistrationPage,ErrBox,retry,applicationDocs.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,129,RegistrationPage,Btn,onPress,startApplication,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,139,RegistrationPage,Btn,onPress,,uploadApplicationDocument,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,142,RegistrationPage,Btn,onPress,,a.run;app.bump;applicationDocs.reload;rpc,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,144,RegistrationPage,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,152,RegistrationPage,ErrBox,retry,r.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,153,RegistrationPage,Btn,onPress,,upload,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,155,RegistrationPage,Btn,onPress,,a.run;rpc,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,156,RegistrationPage,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,169,AuditPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,169,AuditPage,Pg,onRefresh,,app.bump;setCursors,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,170,AuditPage,ErrBox,retry,l.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,171,AuditPage,Btn,onPress,,c.slice;setCursors,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,171,AuditPage,Btn,onPress,,setCursors,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,180,HelpPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,180,HelpPage,Row,onPress,,mail,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,187,SecurityPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,188,SecurityPage,ErrBox,retry,f.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,190,SecurityPage,Row,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,191,SecurityPage,Toggle,onValueChange,,Alert.alert;a.run;app.sheet;f.reload;supabase.auth.mfa.unenroll,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,191,SecurityPage,Object callback/action,onPress,,a.run;f.reload;supabase.auth.mfa.unenroll,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,192,SecurityPage,Row,onPress,,Alert.alert;a.run;supabase.auth.signOut,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,192,SecurityPage,Object callback/action,onPress,,a.run;supabase.auth.signOut,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,196,SecurityPage,Row,onPress,,a.run;requestBusinessData,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,197,SecurityPage,Row,onPress,,Alert.alert;a.run;requestBusinessData,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,197,SecurityPage,Object callback/action,onPress,,a.run;requestBusinessData,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,240,BusinessInfoPage.tfield,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,243,BusinessInfoPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,259,BusinessInfoPage,Pressable,onPress,logo,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,260,BusinessInfoPage,Pressable,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,264,BusinessInfoPage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,267,BusinessInfoPage,Pressable,onPress,,setPicker,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,268,BusinessInfoPage,TextInput,onChangeText,,set;v.replace,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,277,BusinessInfoPage,Pressable,onPress,,setPicker,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,279,BusinessInfoPage,ErrBox,retry,stores.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,279,BusinessInfoPage,Pressable,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,280,BusinessInfoPage,Wrap,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,280,BusinessInfoPage,Toggle,onValueChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,280,BusinessInfoPage,TextInput,onChangeText,,set;v.replace,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,282,BusinessInfoPage,Pressable,onPress,,DAYS.map;Object.fromEntries;set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,286,BusinessInfoPage,DateField,onChange,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,286,BusinessInfoPage,DateField,onChange,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,287,BusinessInfoPage,Toggle,onValueChange,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,290,BusinessInfoPage,Btn,onPress,save,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,291,BusinessInfoPage,Btn,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,297,BusinessInfoPage,Pressable,onPress,,setCq;setPicker,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,298,BusinessInfoPage,TextInput,onChangeText,setCq,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceAccountScreens.tsx,299,BusinessInfoPage,Pressable,onPress,,set;setCq;setPicker,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,26,ActionsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,26,ActionsPage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,27,ActionsPage,ErrBox,retry,a.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,46,ActivityPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,46,ActivityPage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,48,ActivityPage,Chips,onChange,setKind,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,49,ActivityPage,ErrBox,retry,,fetchPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,52,ActivityPage,Btn,onPress,,fetchPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,59,ExplorePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,62,ExplorePage,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,89,ChartsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,89,ChartsPage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,91,ChartsPage,ErrBox,retry,sum.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceActivityScreens.tsx,103,ChartsPage,Rect,onPress,,setCi,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,38,MessagesPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,38,MessagesPage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,39,MessagesPage,Chips,onChange,setStatusFilter,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,40,MessagesPage,Chips,onChange,setF,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,41,MessagesPage,ErrBox,retry,c.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,42,MessagesPage,Row,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,44,MessagesPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,44,MessagesPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,74,ConversationPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,76,ConversationPage,ErrBox,retry,conv.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,77,ConversationPage,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,78,ConversationPage,ScrollView,onContentSizeChange,,ref.current?.scrollToEnd,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,79,ConversationPage,ErrBox,retry,ms.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,81,ConversationPage,TextInput,onChangeText,setText,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,81,ConversationPage,TextInput,onSubmitEditing,send,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,81,ConversationPage,Btn,onPress,send,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,119,NotificationsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,119,NotificationsPage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,119,NotificationsPage,Pressable,onPress,,"app.bump;app.toast;errText;q;supabase.from;supabase.from('notifications').update;supabase.from('notifications').update({ read: true }).eq;supabase.from('notifications').update({ read: true }).eq('user_id', app.userId).contains;supabase.from('notifications').update({ read: true }).eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id }).eq",SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,120,NotificationsPage,ErrBox,retry,n.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,120,NotificationsPage,Row,onPress,,open,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,122,NotificationsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,122,NotificationsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,140,SearchPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,141,SearchPage,TextInput,onChangeText,setQs,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,142,SearchPage,Chips,onChange,setSc,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,144,SearchPage,Row,onPress,,go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,159,SearchHandle,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,160,SearchHandle,Object callback/action,onPanResponderGrant,,pos.stopAnimation;setDrag,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,161,SearchHandle,Object callback/action,onPanResponderMove,,Math.hypot;Math.max;Math.min;clearTimeout;pos.setValue;setDrag,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx,167,SearchHandle,Object callback/action,onPanResponderRelease,,"Animated.spring;Animated.spring(pos, { toValue: { x: xFor(sd, true), y: y0.current }, useNativeDriver: false, bounciness: 6 }).start;Math.hypot;Math.max;Math.min;onOpen;reveal;setDrag;setOpen;setSide;xFor",SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,220,GoodiesToolsCard.R,Row,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,238,GoodiesToolsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,272,GoodiesStorePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,272,GoodiesStorePage,ErrBox,retry,load,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,273,GoodiesStorePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,414,GoodiesStorePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,418,GoodiesStorePage,Btn,onPress,chooseCover,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,422,GoodiesStorePage,Btn,onPress,chooseThumbnail,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,423,GoodiesStorePage,Toggle,onValueChange,,app.toast;label;set;setSameAsCover,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,424,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,426,GoodiesStorePage,Chips,onChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,428,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,430,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,431,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,432,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,437,GoodiesStorePage,Btn,onPress,captureStoreLocation,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,442,GoodiesStorePage,Btn,onPress,saveStoreLocation,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,443,GoodiesStorePage,Btn,onPress,,setCapturedLocation,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,449,GoodiesStorePage,Toggle,onValueChange,setCustomProducts,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,456,GoodiesStorePage,Toggle,onValueChange,,newBuilder;prev.map;prev.some;setCustomTypes,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,465,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,466,GoodiesStorePage,Toggle,onValueChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,469,GoodiesStorePage,Pressable,onPress,,setTimePickerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,473,GoodiesStorePage,Modal,onRequestClose,,setTimePickerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,473,GoodiesStorePage,SheetShell,onClose,,setTimePickerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,474,GoodiesStorePage,DateTimePicker,onChange,,date.getHours;date.getHours().toString;date.getHours().toString().padStart;date.getMinutes;date.getMinutes().toString;date.getMinutes().toString().padStart;set;setTimePickerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,475,GoodiesStorePage,Btn,onPress,,setTimePickerOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,480,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,480,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,480,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,480,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,480,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,481,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,481,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,482,GoodiesStorePage,Toggle,onValueChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,483,GoodiesStorePage,Toggle,onValueChange,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,484,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,487,GoodiesStorePage,Pressable,onPress,,setLanguageOpen;setLanguageQuery,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,492,GoodiesStorePage,Field,onChangeText,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,493,GoodiesStorePage,Pressable,onPress,,set,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,496,GoodiesStorePage,Modal,onRequestClose,,setLanguageOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,496,GoodiesStorePage,SheetShell,onClose,,setLanguageOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,497,GoodiesStorePage,TextInput,onChangeText,setLanguageQuery,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,499,GoodiesStorePage,Pressable,onPress,,set;setLanguageOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,502,GoodiesStorePage,Btn,onPress,save,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,525,GoLiveCard,ErrBox,retry,st.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,530,GoLiveCard,Btn,onPress,toggle,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,533,GoLiveCard,ErrBox,retry,st.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,625,ProductSheet.del,Object callback/action,onPress,,app.toast;errText;goodiesApi.deleteProduct;label;onSaved;requireManage;setBusy;text,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,628,ProductSheet,Modal,onRequestClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,630,ProductSheet,SheetShell,onClose,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,632,ProductSheet,ErrBox,retry,,setCustomAttempt,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,636,ProductSheet,Btn,onPress,,setProductMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,637,ProductSheet,Btn,onPress,,setProductMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,641,ProductSheet,Btn,onPress,,openCustom,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,650,ProductSheet,Pressable,onPress,,removePhotoAt,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,652,ProductSheet,Pressable,onPress,choosePhoto,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,654,ProductSheet,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,655,ProductSheet,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,655,ProductSheet,Field,onChangeText,,setF;v.replace,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,657,ProductSheet,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,659,ProductSheet,Chips,onChange,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,661,ProductSheet,Btn,onPress,save,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,662,ProductSheet,Btn,onPress,del,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,702,GoodiesProductsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,702,GoodiesProductsPage,Pg,onRefresh,lst.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,703,GoodiesProductsPage,Btn,onPress,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,706,GoodiesProductsPage,ErrBox,retry,lst.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,709,GoodiesProductsPage,Row,onPress,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,709,GoodiesProductsPage,Toggle,onValueChange,,toggle,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,712,GoodiesProductsPage,ErrBox,retry,builders.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,713,GoodiesProductsPage,Row,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,713,GoodiesProductsPage,Toggle,onValueChange,,toggleCustom,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,714,GoodiesProductsPage,Empty,onCta,canManage?()=>setEdit(BLANK):undefined,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,715,GoodiesProductsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,715,GoodiesProductsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,717,GoodiesProductsPage,ProductSheet,onClose,,setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,717,GoodiesProductsPage,ProductSheet,onSaved,,lst.reload;setEdit,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,765,GoodiesBuilderEditPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,766,GoodiesBuilderEditPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,766,GoodiesBuilderEditPage,ErrBox,retry,,setLoadAttempt;setLoadError;setLoading,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,767,GoodiesBuilderEditPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,767,GoodiesBuilderEditPage,Empty,onCta,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,798,GoodiesBuilderEditPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,800,GoodiesBuilderEditPage,Field,onChangeText,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,801,GoodiesBuilderEditPage,Field,onChangeText,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,802,GoodiesBuilderEditPage,Field,onChangeText,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,803,GoodiesBuilderEditPage,Toggle,onValueChange,,up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,805,GoodiesBuilderEditPage,Section,onRight,,uid;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,808,GoodiesBuilderEditPage,Field,onChangeText,,b.sizes.map;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,809,GoodiesBuilderEditPage,Field,onChangeText,,b.sizes.map;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,810,GoodiesBuilderEditPage,Toggle,onValueChange,,b.sizes.map;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,811,GoodiesBuilderEditPage,Btn,onPress,,b.sizes.filter;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,815,GoodiesBuilderEditPage,Section,onRight,,setExpandedGroup;setSelectedItem;uid;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,819,GoodiesBuilderEditPage,Pressable,onPress,,setExpandedGroup;setSelectedItem,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,827,GoodiesBuilderEditPage,Field,onChangeText,,upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,830,GoodiesBuilderEditPage,Toggle,onValueChange,,upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,832,GoodiesBuilderEditPage,Field,onChangeText,,num;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,832,GoodiesBuilderEditPage,Field,onChangeText,,num;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,833,GoodiesBuilderEditPage,Field,onChangeText,,num;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,833,GoodiesBuilderEditPage,Field,onChangeText,,num;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,839,GoodiesBuilderEditPage,Pressable,onPress,,setSelectedItem,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,848,GoodiesBuilderEditPage,Field,onChangeText,,upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,849,GoodiesBuilderEditPage,Field,onChangeText,,parseFloat;upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,849,GoodiesBuilderEditPage,Field,onChangeText,,num;upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,850,GoodiesBuilderEditPage,Toggle,onValueChange,,upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,851,GoodiesBuilderEditPage,Toggle,onValueChange,,upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,852,GoodiesBuilderEditPage,Field,onChangeText,,upI,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,853,GoodiesBuilderEditPage,Btn,onPress,,move;setSelectedItem;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,853,GoodiesBuilderEditPage,Btn,onPress,,move;setSelectedItem;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,853,GoodiesBuilderEditPage,Btn,onPress,,g.items.filter;setSelectedItem;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,858,GoodiesBuilderEditPage,Btn,onPress,,setSelectedItem;uid;upG,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,858,GoodiesBuilderEditPage,Btn,onPress,,b.groups.filter;setExpandedGroup;setSelectedItem;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,859,GoodiesBuilderEditPage,Btn,onPress,,Math.max;move;setExpandedGroup;setSelectedItem;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,859,GoodiesBuilderEditPage,Btn,onPress,,Math.min;move;setExpandedGroup;setSelectedItem;up,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,864,GoodiesBuilderEditPage,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,865,GoodiesBuilderEditPage,Btn,onPress,save,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,912,GoodiesRequestsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,914,GoodiesRequestsPage,Btn,onPress,,setOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,916,GoodiesRequestsPage,ErrBox,retry,load,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,917,GoodiesRequestsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,917,GoodiesRequestsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,919,GoodiesRequestsPage,Modal,onRequestClose,,setOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,921,GoodiesRequestsPage,SheetShell,onClose,,setOpen,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,923,GoodiesRequestsPage,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,925,GoodiesRequestsPage,Chips,onChange,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,926,GoodiesRequestsPage,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,927,GoodiesRequestsPage,Field,onChangeText,,setF,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,932,GoodiesRequestsPage,Btn,onPress,choose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,934,GoodiesRequestsPage,Btn,onPress,,setAck,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,935,GoodiesRequestsPage,Btn,onPress,send,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,953,GoodiesReviewsPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,953,GoodiesReviewsPage,Pg,onRefresh,reviews.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,954,GoodiesReviewsPage,ErrBox,retry,reviews.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,955,GoodiesReviewsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodies.tsx,955,GoodiesReviewsPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx,12,GoodiesVendorError,Btn,onPress,retry,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts,59,vendorSegmentProps,Object callback/action,onChange,,items.includes;onChange,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,47,GoodiesVendorDeliveryProof,ErrBox,retry,,proof.reload;setImageFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,48,GoodiesVendorDeliveryProof,Image,onError,,setImageFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,257,GoodiesOrdersPage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,257,GoodiesOrdersPage,Pg,onRefresh,orders.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,263,GoodiesOrdersPage,ErrBox,retry,,setCashAttempt,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,264,GoodiesOrdersPage,Btn,onPress,,toggleCash,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,271,GoodiesOrdersPage,ErrBox,retry,orders.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,325,GoodiesOrdersPage,Btn,onPress,,openDispatch,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,326,GoodiesOrdersPage,ErrBox,retry,dispatchWaits.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,328,GoodiesOrdersPage,Btn,onPress,,setDriverName;setDriverPhone;setOwnDriverOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,332,GoodiesOrdersPage,Btn,onPress,,markOwnDelivered,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,337,GoodiesOrdersPage,Btn,onPress,,act,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,339,GoodiesOrdersPage,Btn,onPress,,act,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,340,GoodiesOrdersPage,Btn,onPress,,setCancel;setDecline;setDetail;setReason,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,342,GoodiesOrdersPage,Btn,onPress,,setCancel;setDecline;setDetail;setReason,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,346,GoodiesOrdersPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,346,GoodiesOrdersPage,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,348,GoodiesOrdersPage,SheetShell,onClose,,setOwnDriverOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,350,GoodiesOrdersPage,Field,onChangeText,setDriverName,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,352,GoodiesOrdersPage,Field,onChangeText,setDriverPhone,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,354,GoodiesOrdersPage,Btn,onPress,,submitOwnDriver,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,356,GoodiesOrdersPage,SheetShell,onClose,,setDispatchOrder,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,363,GoodiesOrdersPage,Btn,onPress,,assignCourier,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,366,GoodiesOrdersPage,SheetShell,onClose,,setDecline,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,369,GoodiesOrdersPage,Pressable,onPress,,setReason,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,372,GoodiesOrdersPage,Field,onChangeText,setDetail,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,374,GoodiesOrdersPage,Btn,onPress,,act,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,377,GoodiesOrdersPage,SheetShell,onClose,,setCancel,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,380,GoodiesOrdersPage,Pressable,onPress,,setReason,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,383,GoodiesOrdersPage,Field,onChangeText,setDetail,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx,385,GoodiesOrdersPage,Btn,onPress,,act,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,34,GoodiesPayoutsPanel,ErrBox,retry,sum.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,36,GoodiesPayoutsPanel,Btn,onPress,,ensureGoodiesWallet;run,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,40,GoodiesPayoutsPanel,Btn,onPress,app.onWallet||app.onBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,40,GoodiesPayoutsPanel,Btn,onPress,,Error;payGoodiesCommission;run,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,42,GoodiesPayoutsPanel,ErrBox,retry,,rows.reload;setFailure;sum.reload,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,43,GoodiesPayoutsPanel,Btn,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,44,GoodiesPayoutsPanel,Btn,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,45,GoodiesPayoutsPanel,Seg,onChange,,setPage;setTab,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,46,GoodiesPayoutsPanel,Chips,onChange,,setFilter;setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,47,GoodiesPayoutsPanel,ErrBox,retry,rows.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,48,GoodiesPayoutsPanel,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,48,GoodiesPayoutsPanel,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,75,GoodiesPayoutRequestSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,76,GoodiesPayoutRequestSheet,ErrBox,retry,,options.reload;summary.reload,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,78,GoodiesPayoutRequestSheet,Row,onPress,,setDestination;setMethod,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,79,GoodiesPayoutRequestSheet,Row,onPress,,setDestination,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,80,GoodiesPayoutRequestSheet,Field,onChangeText,setAmount,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,81,GoodiesPayoutRequestSheet,ErrBox,retry,options.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,83,GoodiesPayoutRequestSheet,Btn,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,84,GoodiesPayoutRequestSheet,Btn,onPress,,app.bump;app.closeSheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,85,GoodiesPayoutRequestSheet,Btn,onPress,,createWallet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,86,GoodiesPayoutRequestSheet,Btn,onPress,,send,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,95,GoodiesPayoutSetupSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,96,GoodiesPayoutSetupSheet,ErrBox,retry,options.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,100,GoodiesPayoutSetupSheet,Chips,onChange,,setMethod,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,101,GoodiesPayoutSetupSheet,Chips,onChange,,setCountry,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,102,GoodiesPayoutSetupSheet,Field,onChangeText,setHolder,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,103,GoodiesPayoutSetupSheet,Field,onChangeText,setAccount,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,104,GoodiesPayoutSetupSheet,Field,onChangeText,setBank,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,104,GoodiesPayoutSetupSheet,Field,onChangeText,setRouting,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx,107,GoodiesPayoutSetupSheet,Btn,onPress,,save,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,51,Home,RefreshControl,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,53,Home,Banner,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,53,Home,Banner,onClose,app.dismissReg,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,54,Home,Banner,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,55,Home,Banner,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,56,Home,Banner,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,57,Home,ErrBox,retry,,app.bump;sum.reload,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,58,Home,ErrBox,retry,act.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,59,Home,ErrBox,retry,cnt.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,65,Home,Empty,onCta,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,71,Home,ErrBox,retry,sum.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,101,Home,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,107,Home,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,112,Home,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,117,Home,Section,onRight,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceHomeScreen.tsx,119,Home,ErrBox,retry,feed.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,30,FeaturePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,31,FeaturePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,31,FeaturePage,Btn,onPress,,a.run;rpc,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,38,FeaturePage,Pg,onBack,app.back,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,38,FeaturePage,Pg,onRefresh,app.bump,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,43,FeaturePage,Btn,onPress,,app.wizard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,43,FeaturePage,Btn,onPress,,a.run;rpc,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,44,FeaturePage,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,50,FeaturePage,Chips,onChange,setOf,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,51,FeaturePage,ErrBox,retry,orders.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,57,FeaturePage,Chips,onChange,setLf,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,58,FeaturePage,ErrBox,retry,lst.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,60,FeaturePage,Empty,onCta,,app.wizard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,75,FeaturesPanel,Row,onPress,"f.key === 'goodies' ? () => app.go(on.has(f.key) ? 'goodiesTools' : 'feature', on.has(f.key) ? undefined : { k: f.key }) : undefined",app.go;on.has,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,77,FeaturesPanel,Pressable,onPress,,app.go;app.wizard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,78,FeaturesPanel,Btn,onPress,,a.run;on.has;rpc,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,121,OrdersPanel,Chips,onChange,,setF;setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,123,OrdersPanel,Btn,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,124,OrdersPanel,ErrBox,retry,goodies.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,132,OrdersPanel,Btn,onPress,,advanceGoodies,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,135,OrdersPanel,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,135,OrdersPanel,Btn,onPress,,setPage,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx,137,OrdersPanel,ErrBox,retry,o.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,61,BusinessSpaceScreen,Gate,onSignOut,signOut,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,61,BusinessSpaceScreen,Gate,onBuyer,onSwitchToBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,61,BusinessSpaceScreen,Gate,onWallet,onOpenWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,61,BusinessSpaceScreen,Gate,onGoodiesNotificationHandled,onGoodiesNotificationHandled,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,61,BusinessSpaceScreen,Gate,onGoodiesWorkspaceActive,onGoodiesWorkspaceActive,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,87,Gate,ErrBox,retry,onSignOut,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,89,Gate,ErrBox,retry,mem.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,91,Gate,FirstBusiness,onCreated,reloadBiz,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,91,Gate,FirstBusiness,onBuyer,onBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,92,Gate,Workspace,onSignOut,onSignOut,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,92,Gate,Workspace,onBuyer,onBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,92,Gate,Workspace,onWallet,onWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,92,Gate,Workspace,onGoodiesNotificationHandled,onGoodiesNotificationHandled,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,92,Gate,Workspace,onGoodiesWorkspaceActive,onGoodiesWorkspaceActive,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,112,FirstBusiness,ErrBox,retry,,setAttempt;setError,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,246,Workspace,Object callback/action,onBuyer,onBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,246,Workspace,Object callback/action,onWallet,onWallet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,246,Workspace,Object callback/action,onSignOut,onSignOut,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,268,Workspace,ErrBox,retry,meta.reload,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,271,Workspace,Pressable,onPress,,app.tab,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,275,Workspace,SearchHandle,onOpen,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,278,Workspace,PanelSheet,onClose,closePanel,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,283,Workspace,ListingWizard,onToast,toast,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,283,Workspace,ListingWizard,onClose,,bump;setWiz,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceScreen.tsx,283,Workspace,ListingWizard,onDone,,bump;setWiz;toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,459,Btn,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,501,ErrBox,Btn,onPress,retry,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,515,Row,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,525,Pg,Pressable,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,529,Pg,RefreshControl,onRefresh,onRefresh,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,542,SheetShell,Object callback/action,onStartShouldSetPanResponder,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,543,SheetShell,Object callback/action,onMoveShouldSetPanResponder,,Math.abs,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,544,SheetShell,Object callback/action,onPanResponderGrant,,translateY.stopAnimation,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,545,SheetShell,Object callback/action,onPanResponderMove,,Math.max;translateY.setValue,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,546,SheetShell,Object callback/action,onPanResponderRelease,,"Animated.spring;Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start;close",SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,550,SheetShell,Object callback/action,onPanResponderTerminate,,"Animated.spring;Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start",SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,554,SheetShell,Pressable,onPress,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,562,SheetShell,Pressable,onPress,onClose,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,638,DateField,Pressable,onPress,open,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,639,DateField,DateTimePicker,onChange,pick,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,640,DateField,Btn,onPress,,setShow,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,940,RangeBar,Pressable,onPress,,app.setRange;app.sheet;presetRange,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,958,ActionRow,Btn,onPress,,actionTarget,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,965,Header.btn,Pressable,onPress,onPress,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,968,Header,Avatar,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,971,Header,Pressable,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,997,WalletCard,Pressable,onPress,,app.panel,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,1024,Checklist,Btn,onPress,x.on,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceShared.tsx,1034,ActionCard,Pressable,onPress,,app.go,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,27,ProfileSheet.R,Row,onPress,on,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,29,ProfileSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,31,ProfileSheet,Btn,onPress,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,41,ProfileSheet,Toggle,onValueChange,,app.setPref,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,42,ProfileSheet,Toggle,onValueChange,,app.setPref,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,43,ProfileSheet,Toggle,onValueChange,app.setDark,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,45,ProfileSheet,Btn,onPress,app.onBuyer,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,45,ProfileSheet,Btn,onPress,,action.run;app.onSignOut,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,52,SwitchSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,54,SwitchSheet,Row,onPress,,app.selectBiz,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,55,SwitchSheet,Row,onPress,,app.sheet;app.toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,67,AddBusinessSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,67,AddBusinessSheet,Field,onChangeText,setName,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,67,AddBusinessSheet,Btn,onPress,create,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,70,GoodiesClosureSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,70,GoodiesClosureSheet,Btn,onPress,,a.run;app.closeSheet;requestBusinessData,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,96,LanguageSheet,SheetShell,onClose,,app.sheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,96,LanguageSheet,Row,onPress,,app.setLang;app.sheet;app.toast,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,109,CustomRangeSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,110,CustomRangeSheet,Chips,onChange,preset,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,111,CustomRangeSheet,DateField,onChange,setFrom,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,111,CustomRangeSheet,DateField,onChange,setTo,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,112,CustomRangeSheet,Btn,onPress,apply,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,206,PasswordSheet,SheetShell,onClose,,app.closeSheet,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,207,PasswordSheet,Field,onChangeText,setPw,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,207,PasswordSheet,Field,onChangeText,setPw2,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,209,PasswordSheet,Btn,onPress,,a.run;app.closeSheet;supabase.auth.updateUser,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,223,MfaSheet,SheetShell,onClose,app.closeSheet,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,229,MfaSheet,Field,onChangeText,setCode,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/businessSpace/BusinessSpaceSheets.tsx,230,MfaSheet,Btn,onPress,verify,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,237,AddCardScreen,Object callback/action,onMoveShouldSetPanResponder,,Math.abs,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,238,AddCardScreen,Object callback/action,onPanResponderGrant,,angle.stopAnimation;setSettled,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,239,AddCardScreen,Object callback/action,onPanResponderMove,,Math.max;Math.min;angle.setValue,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,240,AddCardScreen,Object callback/action,onPanResponderRelease,,blurCard;flipTo,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,245,AddCardScreen,Object callback/action,onPanResponderTerminate,,flipTo,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,340,AddCardScreen,View,onLayout,,setBox,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,353,AddCardScreen,Pressable,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,390,AddCardScreen,Pressable,onPress,,nameRef.current?.focus,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,396,AddCardScreen,Pressable,onPress,,focusCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,410,AddCardScreen,Pressable,onPress,,focusCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,432,AddCardScreen,Pressable,onPress,,focusCard,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,461,AddCardScreen,WebView,onError,webFailure,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,462,AddCardScreen,WebView,onHttpError,webFailure,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,463,AddCardScreen,WebView,onMessage,onWebMessage,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,464,AddCardScreen,WebView,onLoadEnd,,webRef.current?.injectJavaScript,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,503,AddCardScreen,TextInput,onChangeText,,setBad;setName;t.replace,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,504,AddCardScreen,TextInput,onFocus,,flipTo;setFocused,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,505,AddCardScreen,TextInput,onBlur,,setFocused,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,506,AddCardScreen,TextInput,onSubmitEditing,onSave,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,524,AddCardScreen,Pressable,onPress,,setErr;setWebAttempt;setWebFailed,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,531,AddCardScreen,Pressable,onPress,onSave,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,554,AddCardScreen,Pressable,onPress,onDone,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,576,WalletAddNewCardScreen,AddCardScreen,onBack,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletAddNewCardScreen.tsx,577,WalletAddNewCardScreen,AddCardScreen,onDone,,onBack;onSaved,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,61,WalletHelpPayScreen.confirm,Object callback/action,onPress,,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,62,WalletHelpPayScreen.confirm,Object callback/action,onPress,,"(async()=>{setBusy(true);try{
+         const result=await payRecoverableHelpPay(requestId,value,key,actor);if(!active())return;
+         setReceipt(receiptText(result));await load();
+       }catch{if(active()){Alert.alert(label(""lbl.sharedPay.d5dc6f809720"", ""Payment not confirmed""),label('lbl.helpPayPaymentUnconfirmed','Payment not confirmed. Check Wallet activity before trying again.'));await load();}}
+       finally{if(active()){submitting.current=false;setBusy(false);}}});Alert.alert;active;label;load;payRecoverableHelpPay;receiptText;setBusy;setReceipt",SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,75,WalletHelpPayScreen,Pressable,onPress,onBack,,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,85,WalletHelpPayScreen,Pressable,onPress,,load,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,102,WalletHelpPayScreen,Pressable,onPress,,String;setMode;setPercent,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,104,WalletHelpPayScreen,Pressable,onPress,,setMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,105,WalletHelpPayScreen,TextInput,onChangeText,,setMode;setPercent,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,106,WalletHelpPayScreen,Pressable,onPress,,setMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,107,WalletHelpPayScreen,TextInput,onChangeText,,setEnteredAmount;setMode,SOURCE_TRACE,NOT VERIFIED
+customer,src/screens/Wallet/WalletHelpPayScreen.tsx,113,WalletHelpPayScreen,Pressable,onPress,confirm,,SOURCE_TRACE,NOT VERIFIED

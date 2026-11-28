@@ -1,5 +1,7 @@
 # Goodies — operating guide
 
+Latest verification: [28 November cross-role audit](../../../docs/goodies/re-audit-20261128/README.md), including screen/control registers and explicit acceptance limits.
+
 This is the guide to the existing Goodies customer app, vendor dashboard, courier workspace and admin panel. It describes the implemented rules and the live configuration observed on **22 November 2026**. Amounts and switches below are a dated snapshot, not permanent defaults.
 
 **Readiness:** Goodies has real backend workflows and enabled Wallet operations, but is **not certified for production release**. Installed cross-role/device acceptance, payment-provider reconciliation and recovery checks remain open. Owner-deferred work is listed separately below. See the [confirmed-gap repairs](../../../docs/goodies/confirmed-gap-repairs-20261122.md) and [audit and evidence](../../../docs/goodies/operating-guide-audit-20261122/README.md); older reports are historical snapshots.
