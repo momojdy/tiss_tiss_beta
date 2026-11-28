@@ -152,7 +152,7 @@ async function main(){
   pg(table+'\n'+rpc);pg("insert into public.account_modes(user_id,mode) select id,'buyer' from auth.users on conflict do nothing;insert into public.account_modes(user_id,mode) select user_id,'business' from public.business_members on conflict do nothing;");
   pg("notify pgrst,'reload schema';");
   let refreshed=false;for(let attempt=0;attempt<40;attempt++){const r=await actors.customer.sdk.rpc('get_my_account_modes');if(!r.error&&r.data?.buyer===true){refreshed=true;break;}await new Promise(resolve=>setTimeout(resolve,100));}assert.ok(refreshed,'Shared account-mode RPC did not enter the real local API schema cache');
-  await require('./goodies-browser-acceptance.cjs')({exportRoot:value('--browser-root'),actors,base,anonKey,pg,scenario,report});
+  await require('./goodies-browser-acceptance.cjs')({exportRoot:value('--browser-root'),actors,base,anonKey,pg,scenario,report,redact});
  }
  await require('./goodies-local-recovery.cjs')({pg,state,nativeBin,env,docker,auth,rest,storage,api,ready,scenario,report,afterRestore,setActiveDirectory:value=>{activeDataDirectory=value;}});
  console.log('All local API scenarios passed; no hosted Supabase project or physical device was used.'+(sandbox?' Actual Stripe sandbox requests were verified.':' No payment provider was used.'));
