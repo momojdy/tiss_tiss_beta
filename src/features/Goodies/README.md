@@ -1,6 +1,6 @@
 # Goodies — operating guide
 
-Latest verification: [28 November cross-role audit](../../../docs/goodies/re-audit-20261128/README.md), including screen/control registers and explicit acceptance limits.
+Latest verification: [28 November cross-role audit](../../../docs/goodies/re-audit-20261128/README.md), including screen/control registers and explicit acceptance limits. [Device/configuration follow-up](../../../docs/goodies/re-audit-20261128/device-follow-up.md) records the home loading-card removal, development signing and local browser acceptance.
 
 This is the guide to the existing Goodies customer app, vendor dashboard, courier workspace and admin panel. It describes the implemented rules and the live configuration observed on **22 November 2026**. Amounts and switches below are a dated snapshot, not permanent defaults.
 
@@ -57,7 +57,7 @@ There are **34 registered Goodies customer routes**, including the `wantiss` Hom
 | `help`, `contact`, `storechat`, `supdone` | Help, real support submissions, authorized store conversation and confirmed submission receipts. |
 | `policies`, `policy` | Published policy content; unfinished text is not evidence of an approved policy. |
 
-Normal Goodies entry restores owned local state and refreshes backend data without the branded entry loader. **Only a shared shop opened from messages uses “Opening store.”** The shell consumes that destination once so a later normal visit does not reopen the previous shop. Real section loading, empty, error and retry states remain necessary.
+Normal Goodies entry restores owned local state and refreshes backend data without the branded entry loader. **Only a shared shop opened from messages uses “Opening store.”** The shell consumes that destination once so a later normal visit does not reopen the previous shop. Catalogue refresh does not insert a “Loading stores…” card above the home content. Store-load errors still expose the existing retry control. Real section loading, empty, error and retry states remain necessary.
 
 Scheduled checkout selects the earliest valid five-minute slot across the existing seven-day picker. It checks every participating store's hours, configured minimum local clock time and time zone, plus the existing fifteen-minute client safety margin. Unavailable days are disabled; earlier/closed times are clamped to valid slots. Checkout applies the displayed choice directly. The separate Cart/modal Apply action remains. Android opens its clock only on a tap; iPhone keeps the wheel. The server validates the submitted schedule again.
 
@@ -228,7 +228,7 @@ Order/payment/moderation/message/support events create real backend notification
 
 ## 12. Content editor and five languages
 
-The source-derived editor catalogue covers **34 routes, 73 page/shared groups and 1,921 current text fields**. Group/card/shared Wallet copy is included where referenced. Platform headings, buttons, empty/error/success text and platform artwork belong in the CMS. Vendor business/product data, customer addresses/identity, and protected financial configuration keep their existing owners and controls.
+The source-derived editor catalogue covers **34 routes, 73 page/shared groups and 1,920 current text fields**. Group/card/shared Wallet copy is included where referenced. Platform headings, buttons, empty/error/success text and platform artwork belong in the CMS. Vendor business/product data, customer addresses/identity, and protected financial configuration keep their existing owners and controls.
 
 The exact locales are **`en`, `fr`, `ht`, `es`, `zh-Hans`**. Other languages can be nested inside one English `goodies.content` payload; separate published rows are not required. At this audit, published bundle version **6** contains **2,091 label records**, including **all 1,921 current source label IDs** plus historical/additional keys. Only 647 English labels are marked reviewed; the four other locales each contain 129 nonempty labels and none marked reviewed. Key presence does not establish translated screen acceptance.
 
