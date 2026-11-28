@@ -14,3 +14,16 @@ export function finishStroke(raw:ScreenPoint[]):ScreenPoint[]{
  return a.length>=3&&screenArea(a)>=50?a:[];
 }
 export function boundaryCoordinatesValid(a:Point[]){return a.length>=3&&a.length<=120&&a.every(p=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)&&Math.abs(p.latitude)<=90&&Math.abs(p.longitude)<=180)}
+
+// History stores geography, never screen pixels or camera state. Clear is reversible.
+export type BoundaryHistory=Point[][];
+export const currentBoundary=(history:BoundaryHistory):Point[]=>history[history.length-1]??[];
+export function recordBoundary(history:BoundaryHistory,points:Point[]):BoundaryHistory{
+ if(JSON.stringify(currentBoundary(history))===JSON.stringify(points))return history;
+ return [...history,points.map(p=>({...p}))].slice(-31);
+}
+export function undoBoundary(history:BoundaryHistory):BoundaryHistory{return history.length>1?history.slice(0,-1):history;}
+export function zoomRegion<T extends {latitudeDelta:number;longitudeDelta:number}>(region:T,factor:number):T{
+ const longitudeDelta=Math.max(.002,Math.min(40,region.longitudeDelta*factor));
+ return {...region,longitudeDelta,latitudeDelta:region.latitudeDelta*longitudeDelta/region.longitudeDelta};
+}
