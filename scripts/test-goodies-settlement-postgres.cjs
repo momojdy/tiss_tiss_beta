@@ -85,7 +85,7 @@ async function raceAfterLock(first,second,name,actors){
  console.log('PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.');
  if(sharedBill)await require('./goodies-shared-bill-races.cjs')({sql,race});
  if(reaudit)await require('./goodies-restriction-races.cjs')({sql,raceAfterLock,uid,business,product});
- if(reaudit)await require('./goodies-courier-races.cjs')({sql,race,raceAfterLock});
+ if(reaudit)await require('./goodies-courier-races.cjs')({sql,race,raceAfterLock,root,order});
  if(reaudit)await require('./goodies-push-races.cjs')({sql,race,request});
  if(reaudit)await require('./goodies-fx-checks.cjs')({sql,race,root});
  if(process.argv.includes('--catalog-output')){

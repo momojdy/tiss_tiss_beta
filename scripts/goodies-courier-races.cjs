@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');
 
-module.exports=async({sql,race,raceAfterLock})=>{
+module.exports=async({sql,race,raceAfterLock,root,order})=>{
  const vendor='80000000-0000-4000-8000-000000000001',customer='80000000-0000-4000-8000-000000000002',business='80000000-0000-4000-8000-000000000003';
  const courier='c0000000-0000-4000-8000-000000000001',admin='c0000000-0000-4000-8000-000000000002',replacement='c0000000-0000-4000-8000-000000000003';
  const as=(actor,statement)=>sql(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${actor}',true);${statement};commit;`).split('\n').at(-1);
@@ -26,6 +26,7 @@ module.exports=async({sql,race,raceAfterLock})=>{
  const cancel=id=>`select public.goodies_admin_cancel_order('${id}','Synthetic courier concurrency cancellation')`;
  const initialBalance=Number(sql(`select balance from public.wallets where user_id='${customer}'`));
  const offered=prepare(false);
+ require('./goodies-input-validation-checks.cjs')({sql,root,order,vendor,courier,offered});
  let values=await raceAfterLock(`${lockedOrder(offered)};${cancel(offered)}`,`select public.goodies_courier_respond_assignment('${offered}',true)`,'courier_offer_cancel',[admin,courier]);
  noDeadlock(values);assert.equal(values[0].code,0,JSON.stringify(values));assert.notEqual(values[1].code,0);assert.equal(sql(`select status||'/'||payment_status from public.goodies_orders where id='${offered}'`),'cancelled/refunded');assert.equal(Number(sql(`select balance from public.wallets where user_id='${customer}'`)),initialBalance);
  console.log('PASS: offer acceptance racing cancellation never deadlocks, resurrects the order or loses its refund.');

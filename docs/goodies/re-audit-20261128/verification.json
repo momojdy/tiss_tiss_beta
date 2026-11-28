@@ -13,5 +13,44 @@
   },
   "localPostgres": "PASS: isolated financial/Shared Bill/courier/restriction/FX races and separate promotion/rollback checks",
   "localEdge": "NOT VERIFIED: assertion package not cached; invocation had no network permission",
-  "scope": "Local source/test evidence; not installed-device or real-provider acceptance"
+  "scope": "Local source/test evidence; not installed-device or real-provider acceptance",
+  "edgeCi": {
+    "passed": 113,
+    "steps": 71,
+    "failed": 0,
+    "run": 46167677203,
+    "sha": "54607b441285f367666033752621bb7bfbbd7c33"
+  },
+  "localApiCi": {
+    "status": "PASS",
+    "run": 46167677203,
+    "scope": "Local synthetic Auth/PostgREST/Storage/Edge/CMS/recovery; no hosted project/device/provider"
+  },
+  "adminCi": {
+    "run": 46167873341,
+    "sha": "35a70cff92f9cf097fc2d8070187bfefe8cc8c13",
+    "goodiesTests": "PASS",
+    "typecheck": "PASS",
+    "androidIosExports": "PASS",
+    "overall": "FAIL: unrelated Konsoliss preview drift"
+  },
+  "customerFinalCi": {
+    "sha": "f47e5f87194446231ceecf88eb6b032b41ace360",
+    "expoValidation": {
+      "run": 46168137555,
+      "status": "PASS"
+    },
+    "typecheckAndBuild": {
+      "run": 46168137470,
+      "status": "PASS"
+    }
+  },
+  "backendPatch": {
+    "version": "20261128171138",
+    "name": "goodies_reject_null_order_decisions",
+    "status": "PASS: local reproduction/regression/replay/recovery, then deployed exact-body/owner/ACL readback",
+    "productionFinancialTests": false,
+    "productionDomainRecordsModified": false,
+    "appDeployed": false
+  }
 }
