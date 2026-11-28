@@ -7,24 +7,24 @@ import Svg,{Path} from 'react-native-svg';
 import Animated,{useAnimatedProps,useSharedValue,runOnJS} from 'react-native-reanimated';
 import {Gesture,GestureDetector,GestureHandlerRootView} from 'react-native-gesture-handler';
 import {nativeMapAppearance,boundaryInk} from './nativeMapStyle';
-import {finishStroke,boundaryCoordinatesValid,currentBoundary,recordBoundary,undoBoundary,zoomRegion,type BoundaryHistory,type ScreenPoint} from './drawGeometry';
+import {finishStroke,boundaryCoordinatesValid,currentBoundary,recordBoundary,undoBoundary,zoomRegion,pinchRegion,type BoundaryHistory,type ScreenPoint} from './drawGeometry';
 import {validPolygon,type Point,type Region} from './model';
 const AnimatedPath=Animated.createAnimatedComponent(Path);
 export type DrawStart={region:Region;camera?:Camera};
 type Props={start:DrawStart;dark:boolean;onCancel:()=>void;onApply:(points:Point[])=>void;t:(key:string)=>string};
 export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props){
- const insets=useSafeAreaInsets(),{width,height}=useWindowDimensions(),map=useRef<MapView>(null),initial=useRef(start),alive=useRef(true),epoch=useRef(0),busy=useRef(false),tracingRef=useRef(false),cameraRef=useRef(start.region),cameraMovingRef=useRef(false),zoomTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const insets=useSafeAreaInsets(),{width,height}=useWindowDimensions(),map=useRef<MapView>(null),initial=useRef(start),alive=useRef(true),epoch=useRef(0),busy=useRef(false),tracingRef=useRef(false),cameraRef=useRef(start.region),cameraMovingRef=useRef(false),zoomTimer=useRef<ReturnType<typeof setTimeout>|null>(null),pinchBase=useRef<Region|null>(null),pinchFrame=useRef<number|null>(null),pinchTarget=useRef<Region|null>(null),pinchActive=useRef(false);
  const [ready,setReady]=useState(false),[history,setHistory]=useState<BoundaryHistory>([[]]),[converting,setConverting]=useState(false),[tracing,setTracing]=useState(false),[mode,setMode]=useState<'draw'|'move'>('draw'),[cameraMoving,setCameraMoving]=useState(false),[settledRegion,setSettledRegion]=useState(start.region),[layout,setLayout]=useState({width:0,height:0});
- const path=useSharedValue(''),samples=useSharedValue<ScreenPoint[]>([]),blocked=useSharedValue(true),ink=dark?'#F3E8D0':'#3B2F2F',bg=dark?'#211918':'#FCF8EF',stroke=boundaryInk(dark);
+ const path=useSharedValue(''),samples=useSharedValue<ScreenPoint[]>([]),blocked=useSharedValue(true),pinching=useSharedValue(false),ink=dark?'#F3E8D0':'#3B2F2F',bg=dark?'#211918':'#FCF8EF',stroke=boundaryInk(dark);
  const shape=currentBoundary(history),locked=!ready||converting||tracing||cameraMoving,canUndo=history.length>1&&!locked;
  const appearance=useMemo(()=>nativeMapAppearance(dark,'standard'),[dark]);
- useEffect(()=>{alive.current=true;return()=>{alive.current=false;epoch.current++;if(zoomTimer.current)clearTimeout(zoomTimer.current)}},[]);
+ useEffect(()=>{alive.current=true;return()=>{alive.current=false;epoch.current++;if(zoomTimer.current)clearTimeout(zoomTimer.current);if(pinchFrame.current!==null)cancelAnimationFrame(pinchFrame.current)}},[]);
  useEffect(()=>{blocked.value=!ready||converting||cameraMoving||mode!=='draw'||layout.width<=0||layout.height<=0},[ready,converting,cameraMoving,mode,layout,blocked]);
- const begin=useCallback(()=>{if(!alive.current||busy.current||cameraMovingRef.current)return;tracingRef.current=true;setTracing(true)},[]);
+ const begin=useCallback(()=>{if(!alive.current||busy.current||cameraMovingRef.current||pinchActive.current)return;tracingRef.current=true;setTracing(true)},[]);
  const finish=useCallback(async(raw:ScreenPoint[])=>{
   if(!alive.current)return;tracingRef.current=false;setTracing(false);
   const screen=finishStroke(raw),native=map.current;
-  if(!screen.length||!native||busy.current||cameraMovingRef.current){path.value='';if(!busy.current&&!cameraMovingRef.current)blocked.value=false;return}
+  if(!screen.length||!native||busy.current||cameraMovingRef.current||pinchActive.current){path.value='';if(!busy.current&&!cameraMovingRef.current&&!pinchActive.current)blocked.value=false;return}
   const ticket=++epoch.current;busy.current=true;blocked.value=true;setConverting(true);
   try{
    const points:Point[]=[];
@@ -38,19 +38,25 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
  // Keep the gesture identity stable while the parent and CMS callback re-render.
  const finishRef=useRef(finish);finishRef.current=finish;
  const finishStable=useCallback((raw:ScreenPoint[])=>{void finishRef.current(raw)},[]);
- const gesture=useMemo(()=>Gesture.Pan().minDistance(0).maxPointers(1).onBegin(e=>{if(blocked.value)return;samples.value=[{x:e.x,y:e.y}];path.value='M'+e.x+' '+e.y;runOnJS(begin)()}).onUpdate(e=>{if(blocked.value||!samples.value.length)return;const a=samples.value,last=a[a.length-1];if(a.length<2000&&Math.hypot(e.x-last.x,e.y-last.y)>=2){samples.value=[...a,{x:e.x,y:e.y}];path.value+=' L'+e.x+' '+e.y}}).onEnd((e,success)=>{if(!success||blocked.value||!samples.value.length)return;path.value+=' Z';runOnJS(finishStable)([...samples.value,{x:e.x,y:e.y}]);samples.value=[];blocked.value=true}).onFinalize(()=>{if(samples.value.length){samples.value=[];path.value='';runOnJS(cancelled)()}}),[blocked,samples,path,begin,finishStable,cancelled]);
+ const drawGesture=useMemo(()=>Gesture.Pan().minDistance(0).maxPointers(1).onTouchesDown(e=>{if(e.numberOfTouches>1){samples.value=[];path.value='';runOnJS(cancelled)()}}).onBegin(e=>{if(blocked.value)return;samples.value=[{x:e.x,y:e.y}];path.value='M'+e.x+' '+e.y;runOnJS(begin)()}).onUpdate(e=>{if(blocked.value||!samples.value.length)return;const a=samples.value,last=a[a.length-1];if(a.length<2000&&Math.hypot(e.x-last.x,e.y-last.y)>=2){samples.value=[...a,{x:e.x,y:e.y}];path.value+=' L'+e.x+' '+e.y}}).onEnd((e,success)=>{if(!success||blocked.value||pinching.value||!samples.value.length)return;path.value+=' Z';runOnJS(finishStable)([...samples.value,{x:e.x,y:e.y}]);samples.value=[];blocked.value=true}).onFinalize(()=>{if(samples.value.length){samples.value=[];path.value='';runOnJS(cancelled)()}}),[blocked,samples,path,begin,finishStable,cancelled,pinching]);
+ const startPinch=useCallback(()=>{if(!alive.current||busy.current||!map.current)return;pinchActive.current=true;pinchBase.current={...cameraRef.current};tracingRef.current=false;setTracing(false);cameraMovingRef.current=true;setCameraMoving(true)},[]);
+ const flushPinch=useCallback(()=>{pinchFrame.current=null;const target=pinchTarget.current;pinchTarget.current=null;if(alive.current&&target&&map.current){cameraRef.current=target;map.current.animateToRegion(target,0)}},[]);
+ const updatePinch=useCallback((scale:number)=>{if(!pinchActive.current||!pinchBase.current)return;pinchTarget.current=pinchRegion(pinchBase.current,scale);if(pinchFrame.current===null)pinchFrame.current=requestAnimationFrame(flushPinch)},[flushPinch]);
+ const finishPinch=useCallback(()=>{if(!pinchActive.current)return;if(pinchFrame.current!==null){cancelAnimationFrame(pinchFrame.current);flushPinch()}pinchActive.current=false;pinchBase.current=null;cameraMovingRef.current=false;setCameraMoving(false);setSettledRegion(cameraRef.current);blocked.value=false},[flushPinch,blocked]);
+ const pinchGesture=useMemo(()=>Gesture.Pinch().onStart(()=>{if(blocked.value&&!pinching.value)return;pinching.value=true;blocked.value=true;samples.value=[];path.value='';runOnJS(startPinch)()}).onUpdate(e=>{if(pinching.value)runOnJS(updatePinch)(e.scale)}).onFinalize(()=>{if(pinching.value){pinching.value=false;runOnJS(finishPinch)()}}),[blocked,pinching,samples,path,startPinch,updatePinch,finishPinch]);
+ const gesture=useMemo(()=>Gesture.Simultaneous(drawGesture,pinchGesture),[drawGesture,pinchGesture]);
  const animatedProps=useAnimatedProps(()=>({d:path.value}));
  const cancel=()=>{epoch.current++;onCancel()};
  const clear=()=>{if(locked||busy.current||tracingRef.current)return;setHistory(h=>recordBoundary(h,[]));path.value=''};
  const undo=()=>{if(!canUndo||busy.current||tracingRef.current)return;setHistory(undoBoundary);path.value=''};
  const changeMode=()=>{if(locked||busy.current||tracingRef.current||cameraMovingRef.current)return;blocked.value=true;setMode(m=>m==='draw'?'move':'draw')};
  const startMoving=()=>{cameraMovingRef.current=true;setCameraMoving(true);blocked.value=true};
- const settle=(r:Region)=>{cameraRef.current=r;setSettledRegion(r);cameraMovingRef.current=false;setCameraMoving(false);if(zoomTimer.current){clearTimeout(zoomTimer.current);zoomTimer.current=null}};
+ const settle=(r:Region)=>{if(pinchActive.current)return;cameraRef.current=r;setSettledRegion(r);cameraMovingRef.current=false;setCameraMoving(false);if(zoomTimer.current){clearTimeout(zoomTimer.current);zoomTimer.current=null}};
  const zoom=(factor:number)=>{
   if(locked||busy.current||tracingRef.current||!map.current)return;
   const next=zoomRegion(cameraRef.current,factor);if(next.longitudeDelta===cameraRef.current.longitudeDelta)return;
-  // Zoom switches to native navigation; Draw resumes freehand on the settled camera.
-  setMode('move');startMoving();cameraRef.current=next;map.current.animateToRegion(next,280);
+  // Buttons preserve the selected interaction mode; native navigation remains available.
+  startMoving();cameraRef.current=next;map.current.animateToRegion(next,280);
   // Fallback if a provider omits its completion event (e.g. at a zoom limit).
   zoomTimer.current=setTimeout(()=>{if(!alive.current)return;cameraMovingRef.current=false;setCameraMoving(false);zoomTimer.current=null},650);
  };

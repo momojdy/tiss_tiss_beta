@@ -27,3 +27,5 @@ export function zoomRegion<T extends {latitudeDelta:number;longitudeDelta:number
  const longitudeDelta=Math.max(.002,Math.min(40,region.longitudeDelta*factor));
  return {...region,longitudeDelta,latitudeDelta:region.latitudeDelta*longitudeDelta/region.longitudeDelta};
 }
+
+export function pinchRegion<T extends {latitudeDelta:number;longitudeDelta:number}>(region:T,scale:number):T{return Number.isFinite(scale)&&scale>0?zoomRegion(region,1/scale):region;}
