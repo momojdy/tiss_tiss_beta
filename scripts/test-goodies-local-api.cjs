@@ -135,7 +135,8 @@ async function main(){
   const created=await admin.auth.admin.createUser({email,password,email_confirm:true,role:'authenticated'});assert.equal(created.error,null,created.error?.message);
   assert.equal(created.data.user.role,'authenticated');
   const sdk=client(anonKey),signed=await sdk.auth.signInWithPassword({email,password});assert.equal(signed.error,null,signed.error?.message);
-  const user=await sdk.auth.getUser();assert.equal(user.error,null);assert.equal(user.data.user.id,created.data.user.id);actors[role]={id:created.data.user.id,sdk};
+  const user=await sdk.auth.getUser();assert.equal(user.error,null);assert.equal(user.data.user.id,created.data.user.id);actors[role]={id:created.data.user.id,sdk,email,password};
+  privateValues.push(password,signed.data.session.access_token,signed.data.session.refresh_token);
  }
  report.actorRoles=Object.keys(actors);
  await scenario('Ten distinct role accounts sign in through real local Auth and retrieve their own account',async()=>assert.equal(new Set(Object.values(actors).map(actor=>actor.id)).size,10));
@@ -144,6 +145,15 @@ async function main(){
  const afterRestore=await require('./goodies-local-api-scenarios.cjs')({actors,anonymous,service:admin,pg,scenario,report,storageProof});
  if(useCms)await require('./goodies-local-cms-scenarios.cjs')({actors,anonymous,pg,scenario,report});
  if(sandbox)await sandbox.run({actors,pg,scenario,state,env,base,api,anonKey,serviceKey,denoBin:fs.realpathSync(value('--deno-bin'))});
+ if(args.includes('--browser-root')){
+  const modes=fs.readFileSync(path.join(root,'supabase/migrations/20261010104513_separate_account_modes.sql'),'utf8');
+  const table=modes.split('-- Preserve legacy Buyer access')[0],rpc=modes.slice(modes.indexOf('-- Read-only mode check'));
+  assert.ok(table.includes('create table if not exists public.account_modes')&&rpc.includes('public.get_my_account_modes()'),'Reconcile the actual shared account-mode contract');
+  pg(table+'\n'+rpc);pg("insert into public.account_modes(user_id,mode) select id,'buyer' from auth.users on conflict do nothing;insert into public.account_modes(user_id,mode) select user_id,'business' from public.business_members on conflict do nothing;");
+  pg("notify pgrst,'reload schema';");
+  let refreshed=false;for(let attempt=0;attempt<40;attempt++){const r=await actors.customer.sdk.rpc('get_my_account_modes');if(!r.error&&r.data?.buyer===true){refreshed=true;break;}await new Promise(resolve=>setTimeout(resolve,100));}assert.ok(refreshed,'Shared account-mode RPC did not enter the real local API schema cache');
+  await require('./goodies-browser-acceptance.cjs')({exportRoot:value('--browser-root'),actors,base,anonKey,pg,scenario,report});
+ }
  await require('./goodies-local-recovery.cjs')({pg,state,nativeBin,env,docker,auth,rest,storage,api,ready,scenario,report,afterRestore,setActiveDirectory:value=>{activeDataDirectory=value;}});
  console.log('All local API scenarios passed; no hosted Supabase project or physical device was used.'+(sandbox?' Actual Stripe sandbox requests were verified.':' No payment provider was used.'));
 }

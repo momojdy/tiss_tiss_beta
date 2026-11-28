@@ -114,6 +114,7 @@ jobs:
         run: docker rm -f "$GOODIES_TEST_CONTAINER"
 
   goodies-local-api:
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -130,6 +131,11 @@ jobs:
           deno-version: v2.9.6
       - name: Install locked application dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Download the actual verified customer export
+        uses: actions/download-artifact@v4
+        with:
+          name: goodies-customer-web-verification-${{ github.sha }}
+          path: tiss_tiss_beta/goodies-browser-export
       - name: Install isolated local database test tools outside the application
         run: |
           npm install --prefix "$RUNNER_TEMP/goodies-api-tools" --no-audit --no-fund --no-package-lock --ignore-scripts pg@8.23.1 @embedded-postgres/linux-x64@17.6.0-beta.15
@@ -147,6 +153,7 @@ jobs:
           set -euo pipefail
           node scripts/test-goodies-local-api.cjs \
             --storage \
+            --browser-root goodies-browser-export \
             --native-bin "$RUNNER_TEMP/goodies-api-tools/node_modules/@embedded-postgres/linux-x64/native/bin" \
             --deno-bin "$(command -v deno)" \
             --report goodies-local-api.json | tee goodies-local-api.log
