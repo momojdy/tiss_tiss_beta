@@ -84,7 +84,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'businessRegistration' | 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'saved' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'walletHelpPay' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz' | 'artsLits' | 'artsLitsHelp' | 'artsLitsFeedback';
+type BuyerScreen = 'businessRegistration' | 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'saved' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'walletHelpPay' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz' | 'habita' | 'artsLits' | 'artsLitsHelp' | 'artsLitsFeedback';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -207,7 +207,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Continue to registration',
-            onPress: () => { setBusinessRegistrationReturnScreen(origin==='artsLits'?'artsLits':'gatherz'); setBuyerScreen('businessRegistration'); },
+            onPress: () => { setBusinessRegistrationReturnScreen(origin==='habita'?'habita':origin==='artsLits'?'artsLits':'gatherz'); setBuyerScreen('businessRegistration'); },
           },
         ],
       );
@@ -322,6 +322,17 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzMyTrips') return <FlyzMyTripsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onWalletPress={() => setBuyerScreen('wallet')} onDealsPress={() => setBuyerScreen('flyzDeals')} onMorePress={() => {}} />;
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'habita') {
+        if (!__DEV__) return <AppError title="Habita is not released" error={new Error('Homepage development preview only')} />;
+        const HabitaHomeScreen = require('./src/screens/Habita/HabitaHomeScreen').default;
+        return <HabitaHomeScreen onBack={()=>setBuyerScreen('home')} onUniversalAction={(action: import('./src/shared/quickMenu/menuContract').QuickMenuAction)=>{
+          if(action==='home')setBuyerScreen('home');
+          else if(action==='messages'||action==='notifications'){setNotificationConversationId(undefined);setNotificationFriendId(undefined);setInboxReturnScreen('habita');setBuyerScreen(action);}
+          else if(action==='wallet'){setQuickMenuReturnScreen('habita');setBuyerScreen('wallet');}
+          else if(action==='activity'){setQuickMenuReturnScreen('habita');setBuyerScreen('universalActivity');}
+          else if(action==='business')void handleOpenBusinessSpace('habita');
+        }}/>;
+      }
       if (buyerScreen === 'artsLits') return <ArtsLitsHomeScreen onBack={()=>setBuyerScreen('home')} inbox={inbox} onUniversalAction={action=>{
         if(action==='home')setBuyerScreen('home');
         else if(action==='messages'||action==='notifications'){setNotificationConversationId(undefined);setNotificationFriendId(undefined);setInboxReturnScreen('artsLits');setBuyerScreen(action);}
@@ -378,7 +389,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletPaymentMethods') return <WalletPaymentMethodsScreen onBack={() => setBuyerScreen('walletSettings')} onBankCardPress={() => setBuyerScreen('walletBankCards')} />;
-      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => { setBuyerScreen(quickMenuReturnScreen === 'goodies' ? 'goodies' : quickMenuReturnScreen === 'konsoliss' ? 'konsoliss' : quickMenuReturnScreen === 'artsLits' ? 'artsLits' : 'gatherz'); setQuickMenuReturnScreen('me'); }} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
+      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => { setBuyerScreen(quickMenuReturnScreen === 'goodies' ? 'goodies' : quickMenuReturnScreen === 'konsoliss' ? 'konsoliss' : quickMenuReturnScreen === 'artsLits' ? 'artsLits' : quickMenuReturnScreen === 'habita' ? 'habita' : 'gatherz'); setQuickMenuReturnScreen('me'); }} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
       if (buyerScreen === 'walletRecentActivity') return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
       if (buyerScreen === 'walletHistory') return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={(token) => { setWalletQrDisplayToken(token ?? null); setQrLaunchToken(null); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
@@ -426,7 +437,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/Main/mainMeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={()=>handleOpenBusinessSpace()} />; }
       const HomeScreen = require('./src/screens/Main/mainHomeScreen').default;
-      return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => { setKonsolissVisitId(id => id + 1); setBuyerScreen('konsoliss'); }} onGoodiesPress={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('goodies'); }} onWoulibPress={() => setBuyerScreen('woulib')} onStayzPress={() => setBuyerScreen('stayz')} onGlowzPress={() => setBuyerScreen('glowz')} onPrezoPress={() => setBuyerScreen('prezo')} onGatherzPress={() => setBuyerScreen('gatherz')} onArtsLitsPress={() => setBuyerScreen('artsLits')} />;
+      return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => { setKonsolissVisitId(id => id + 1); setBuyerScreen('konsoliss'); }} onGoodiesPress={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('goodies'); }} onWoulibPress={() => setBuyerScreen('woulib')} onStayzPress={() => setBuyerScreen('stayz')} onGlowzPress={() => setBuyerScreen('glowz')} onPrezoPress={() => setBuyerScreen('prezo')} onGatherzPress={() => setBuyerScreen('gatherz')} onArtsLitsPress={() => setBuyerScreen('artsLits')} onHabitaPress={__DEV__ ? () => setBuyerScreen('habita') : undefined} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
