@@ -1,0 +1,27 @@
+name: Habita homepage validation
+on:
+  push:
+    branches: ['habita/native-homepage-v17']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-homepage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Habita pure-model and source tests
+        run: node --test tests/habita-homepage.test.cjs
+      - name: Full application TypeScript check
+        run: npx tsc --noEmit
+      - name: Native export smoke checks
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://ycbirmgppwavorwudlrv.supabase.co
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_offline_verification_only
+        run: npx expo export --platform android --output-dir /tmp/habita-android && npx expo export --platform ios --output-dir /tmp/habita-ios
