@@ -70,7 +70,9 @@
     "exactBodyMatches": 220,
     "whitespaceOnlyDifferences": 1,
     "securityMetadataDifferences": 0,
-    "scope": "Function signatures, source, execution grants, SECURITY DEFINER flags and search_path; not full shared-schema or all runtime paths"
+    "scope": "Function signatures, source, execution grants, SECURITY DEFINER flags and search_path; not full shared-schema or all runtime paths",
+    "defaultArgumentDifferences": 0,
+    "returnDeclarationDifferences": 0
   },
   "androidDevelopment": {
     "sha": "f47e5f87194446231ceecf88eb6b032b41ace360",
@@ -79,5 +81,16 @@
     "status": "PASS: ARM64 development APK compilation and debug signature verification",
     "productionSigning": "NOT VERIFIED",
     "physicalDevice": "NOT VERIFIED"
+  },
+  "finalCodeCi": {
+    "sha": "6629a0e3d4a42da4d4c63b0c32d3a12d48b46b07",
+    "expoValidation": {
+      "run": 46169758796,
+      "status": "PASS"
+    },
+    "typecheckAndBuild": {
+      "run": 46169758786,
+      "status": "PASS"
+    }
   }
 }
