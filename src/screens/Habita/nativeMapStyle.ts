@@ -39,6 +39,6 @@ const dark=[
  {featureType:'water',elementType:'labels.text.fill',stylers:[{color:'#a9c5ca'}]},
 ];
 export const boundaryInk=(isDark:boolean)=>isDark?'#9bcdd8':'#438fae';
-export function nativeMapAppearance(isDark:boolean,layer:HabitaMapLayer):Pick<MapViewProps,'mapType'|'customMapStyle'|'userInterfaceStyle'|'showsPointsOfInterest'|'showsBuildings'>{
- return {mapType:layer==='satellite'?'hybrid':Platform.OS==='ios'?'mutedStandard':'standard',customMapStyle:Platform.OS==='android'&&layer==='standard'?(isDark?dark:light):undefined,userInterfaceStyle:isDark?'dark':'light',showsPointsOfInterest:true,showsBuildings:true};
+export function nativeMapAppearance(isDark:boolean,layer:HabitaMapLayer):Pick<MapViewProps,'mapType'|'customMapStyle'|'userInterfaceStyle'|'showsPointsOfInterests'|'showsBuildings'>{
+ return {mapType:layer==='satellite'?'hybrid':Platform.OS==='ios'?'mutedStandard':'standard',customMapStyle:Platform.OS==='android'&&layer==='standard'?(isDark?dark:light):undefined,userInterfaceStyle:isDark?'dark':'light',showsPointsOfInterests:true,showsBuildings:true};
 }

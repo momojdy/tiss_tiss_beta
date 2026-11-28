@@ -31,7 +31,7 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
  const locked=!ready||applying||tracing||shape.length<3;
  return <Modal visible animationType="none" presentationStyle="fullScreen" onRequestClose={cancel} statusBarTranslucent navigationBarTranslucent>
   <GestureHandlerRootView style={{flex:1,backgroundColor:bg}}>
-   <StatusBar translucent backgroundColor="transparent" barStyle={dark?'light-content':'dark-content'}/>
+   <StatusBar barStyle={dark?'light-content':'dark-content'}/>
    <View style={{paddingTop:insets.top,backgroundColor:bg}}><View style={styles.toolbar}>
     <View style={{flex:1,flexDirection:'row',alignItems:'center',gap:14}}><Pressable testID="habita-draw-cancel" accessibilityRole="button" accessibilityLabel={t('Cancel')} onPress={cancel} hitSlop={8}><Feather name="x" size={22} color={ink}/></Pressable><Pressable testID="habita-draw-clear" accessibilityRole="button" disabled={applying||tracing} onPress={reset}><Text style={{fontSize:14,color:ink}}>{t('Clear')}</Text></Pressable></View>
     <Text accessibilityRole="header" style={{fontWeight:'600',fontSize:15,color:ink}}>{t('Draw')}</Text>
