@@ -13,13 +13,14 @@ import {useFeatureTheme} from '../../shared/quickMenu/useFeatureTheme';
 import {useHabitaHomeContent,initialContent} from './useHabitaHomeContent';
 import {translate} from './cms';
 import {habitaPagePalette} from './pagePalette';
-import MapView,{Marker,Polygon} from 'react-native-maps';
+import {geographicCells} from './boundaryFill';
+import MapView,{Marker,Polygon,Polyline} from 'react-native-maps';
 import {FloatingQuickMenuButton} from '../../shared/quickMenu/FloatingQuickMenuButton';
 import {type QuickMenuAction} from '../../shared/quickMenu/menuContract';
 import Panorama from './Panorama';
 import {fixture} from './fixture';
 import {media} from './media';
-import {type Listing,type Filters,type Region,type Unit,type Point,units,defaultFilters,overview,categories,place,specs,pricePerArea,areaText,areaNumber,toM2,fromM2,validRange,changeType,isSearching,results,panorama,discovery,regionGeo} from './model';
+import {type Listing,type Filters,type Region,type Unit,type Point,units,defaultFilters,overview,categories,place,specs,pricePerArea,areaText,areaNumber,toM2,fromM2,validRange,validPolygon,changeType,isSearching,results,panorama,discovery,regionGeo} from './model';
 
 const E='#3B2F2F',S='#F3E8D0',C='#FCF8EF',line='#aa9b88',hair=Math.min(.5,StyleSheet.hairlineWidth);
 type Tab='Explore'|'Saved'|'Visits'|'Inquiries'|'Me';
@@ -85,6 +86,8 @@ export default function HabitaHomeScreen({onBack,onUniversalAction}:Props){
  const matching=useMemo(()=>results(fixture,f),[f]),rail=useMemo(()=>panorama(matching,pin),[matching,pin]),searching=isSearching(f);
  const rows=useMemo(()=>discovery(fixture,results(fixture,defaultFilters).slice(0,3).map(p=>p.id)),[]);
  const markerProperty=markerPick?matching.find(p=>p.id===markerPick.id):undefined;
+ const polygon=f.geo?.kind==='polygon'?f.geo.points:null;
+ const polygonCells=useMemo(()=>polygon&&!validPolygon(polygon)?geographicCells(polygon):null,[polygon]);
  const active=markerProperty?.id??(matching.some(p=>p.id===selected)?selected:matching[0]?.id);
  const releaseMarker=useCallback(()=>setMarkerPick(null),[]);
  const update=(patch:Partial<Filters>)=>{setMarkerPick(null);setF(old=>({...old,...patch}));};
@@ -126,7 +129,7 @@ export default function HabitaHomeScreen({onBack,onUniversalAction}:Props){
     {mode!=='list'&&Platform.OS==='web'&&<View style={[StyleSheet.absoluteFill,{alignItems:'center',justifyContent:'center'}]}><Text style={{color:controlInk}}>{t('Native map unavailable on web')}</Text></View>}
     {mode!=='list'&&Platform.OS!=='web'&&<MapView testID="habita-native-live-map" ref={map} style={StyleSheet.absoluteFill} initialRegion={initialNativeRegion} {...mapAppearance} showsUserLocation={false} showsMyLocationButton={false} showsCompass={false} rotateEnabled={false} pitchEnabled={false} scrollEnabled zoomEnabled zoomTapEnabled onMapReady={()=>setMapReady(true)} onTouchStart={lockMapTouch} onTouchEnd={e=>{if(!e.nativeEvent.touches.length)releaseMapTouch()}} onTouchCancel={releaseMapTouch} onRegionChangeComplete={settleCamera}>
      {clusters.map(group=>{const a=group[0],latitude=group.reduce((s,p)=>s+p.lat,0)/group.length,longitude=group.reduce((s,p)=>s+p.lon,0)/group.length,isActive=group.some(p=>p.id===active);return <HabitaPriceMarker key={group.map(p=>p.id).join('-')} latitude={latitude} longitude={longitude} selected={isActive} label={group.length>1?String(group.length):a.price>=1000?'$'+Math.round(a.price/1000)+'k':money(a.price)} onPress={()=>onCluster(group)}/>})}
-     {f.geo?.kind==='polygon'&&<Polygon coordinates={f.geo.points} strokeColor={boundaryInk(theme.dark)} fillColor={theme.dark?'#9bcdd815':'#438fae12'} strokeWidth={3}/>}
+     {polygon&&(polygonCells===null?<Polygon coordinates={polygon} strokeColor={boundaryInk(theme.dark)} fillColor={theme.dark?'#9bcdd815':'#438fae12'} strokeWidth={3}/>:<>{polygonCells.map((coordinates,i)=><Polygon key={'boundary-fill-'+i} coordinates={coordinates} strokeColor="transparent" strokeWidth={0} fillColor={theme.dark?'#9bcdd815':'#438fae12'}/>)}<Polyline coordinates={[...polygon,polygon[0]]} strokeColor={boundaryInk(theme.dark)} strokeWidth={3}/></>)}
      {f.geo?.kind==='rect'&&<Polygon coordinates={[{latitude:f.geo.north,longitude:f.geo.west},{latitude:f.geo.north,longitude:f.geo.east},{latitude:f.geo.south,longitude:f.geo.east},{latitude:f.geo.south,longitude:f.geo.west}]} strokeColor={boundaryInk(theme.dark)} fillColor={theme.dark?'#9bcdd815':'#438fae12'} strokeWidth={3}/>}
     </MapView>}
     <View pointerEvents="box-none" style={[styles.searchOverlay,{paddingHorizontal:small?11:17}]}>

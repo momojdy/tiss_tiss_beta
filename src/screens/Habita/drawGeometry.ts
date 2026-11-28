@@ -1,4 +1,5 @@
 import type {Point} from './model';
+import {enclosedArea} from './boundaryFill';
 export type ScreenPoint={x:number;y:number};
 const distance=(a:ScreenPoint,b:ScreenPoint)=>Math.hypot(a.x-b.x,a.y-b.y);
 function segmentDistance(p:ScreenPoint,a:ScreenPoint,b:ScreenPoint){const dx=b.x-a.x,dy=b.y-a.y,d=dx*dx+dy*dy;const t=d?Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/d)):0;return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy)}
@@ -11,7 +12,7 @@ export function finishStroke(raw:ScreenPoint[]):ScreenPoint[]{
  if(clean.length<3)return [];
  let a=simplify(clean,2.5),tol=2.5;
  while(a.length>120){tol*=1.5;a=simplify(clean,tol)}
- return a.length>=3&&screenArea(a)>=50?a:[];
+ return a.length>=3&&enclosedArea(a)>=50?a:[];
 }
 export function boundaryCoordinatesValid(a:Point[]){return a.length>=3&&a.length<=120&&a.every(p=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)&&Math.abs(p.latitude)<=90&&Math.abs(p.longitude)<=180)}
 

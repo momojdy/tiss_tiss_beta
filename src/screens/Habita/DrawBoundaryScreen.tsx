@@ -2,13 +2,14 @@ import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {Alert,Modal,Pressable,StatusBar,StyleSheet,Text,View,useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Feather} from '@expo/vector-icons';
-import MapView,{Polygon,Circle,type Camera} from 'react-native-maps';
+import MapView,{Polygon,Polyline,Circle,type Camera} from 'react-native-maps';
 import Svg,{Path} from 'react-native-svg';
 import Animated,{useAnimatedProps,useSharedValue,runOnJS} from 'react-native-reanimated';
 import {Gesture,GestureDetector,GestureHandlerRootView} from 'react-native-gesture-handler';
 import {nativeMapAppearance,boundaryInk} from './nativeMapStyle';
 import {finishStroke,boundaryCoordinatesValid,currentBoundary,recordBoundary,undoBoundary,zoomRegion,pinchRegion,type BoundaryHistory,type ScreenPoint} from './drawGeometry';
 import {validPolygon,type Point,type Region} from './model';
+import {geographicCells} from './boundaryFill';
 const AnimatedPath=Animated.createAnimatedComponent(Path);
 export type DrawStart={region:Region;camera?:Camera};
 type Props={start:DrawStart;dark:boolean;onCancel:()=>void;onApply:(points:Point[])=>void;t:(key:string)=>string};
@@ -16,7 +17,7 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
  const insets=useSafeAreaInsets(),{width,height}=useWindowDimensions(),map=useRef<MapView>(null),initial=useRef(start),alive=useRef(true),epoch=useRef(0),busy=useRef(false),tracingRef=useRef(false),cameraRef=useRef(start.region),cameraMovingRef=useRef(false),zoomTimer=useRef<ReturnType<typeof setTimeout>|null>(null),pinchBase=useRef<Region|null>(null),pinchFrame=useRef<number|null>(null),pinchTarget=useRef<Region|null>(null),pinchActive=useRef(false);
  const [ready,setReady]=useState(false),[history,setHistory]=useState<BoundaryHistory>([[]]),[converting,setConverting]=useState(false),[tracing,setTracing]=useState(false),[mode,setMode]=useState<'draw'|'move'>('draw'),[cameraMoving,setCameraMoving]=useState(false),[settledRegion,setSettledRegion]=useState(start.region),[layout,setLayout]=useState({width:0,height:0});
  const path=useSharedValue(''),samples=useSharedValue<ScreenPoint[]>([]),blocked=useSharedValue(true),pinching=useSharedValue(false),ink=dark?'#F3E8D0':'#3B2F2F',bg=dark?'#211918':'#FCF8EF',stroke=boundaryInk(dark);
- const shape=currentBoundary(history),locked=!ready||converting||tracing||cameraMoving,canUndo=history.length>1&&!locked;
+ const shape=currentBoundary(history),cells=useMemo(()=>shape.length>=3&&!validPolygon(shape)?geographicCells(shape):null,[shape]),locked=!ready||converting||tracing||cameraMoving,canUndo=history.length>1&&!locked;
  const appearance=useMemo(()=>nativeMapAppearance(dark,'standard'),[dark]);
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;epoch.current++;if(zoomTimer.current)clearTimeout(zoomTimer.current);if(pinchFrame.current!==null)cancelAnimationFrame(pinchFrame.current)}},[]);
  useEffect(()=>{blocked.value=!ready||converting||cameraMoving||mode!=='draw'||layout.width<=0||layout.height<=0},[ready,converting,cameraMoving,mode,layout,blocked]);
@@ -29,7 +30,7 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
   try{
    const points:Point[]=[];
    for(let i=0;i<screen.length;i+=12){const batch=await Promise.all(screen.slice(i,i+12).map(p=>native.coordinateForPoint(p)));if(!alive.current||ticket!==epoch.current)return;points.push(...batch)}
-   if(!boundaryCoordinatesValid(points)||!validPolygon(points)){Alert.alert(t('Draw a valid area'),t('Choose at least three distinct points without crossed edges.'));return}
+   if(!boundaryCoordinatesValid(points)||(!validPolygon(points)&&!geographicCells(points).length))return;
    setHistory(h=>recordBoundary(h,points));
   }catch{if(alive.current&&ticket===epoch.current)Alert.alert(t('Draw a valid area'),t('The map could not convert this boundary. Try again.'))}
   finally{if(alive.current&&ticket===epoch.current){busy.current=false;setConverting(false);path.value='';blocked.value=false}}
@@ -60,8 +61,8 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
   // Fallback if a provider omits its completion event (e.g. at a zoom limit).
   zoomTimer.current=setTimeout(()=>{if(!alive.current)return;cameraMovingRef.current=false;setCameraMoving(false);zoomTimer.current=null},650);
  };
- const apply=()=>{if(locked||busy.current||tracingRef.current||cameraMovingRef.current||!boundaryCoordinatesValid(shape)||!validPolygon(shape))return;onApply(shape)};
- const canApply=!locked&&shape.length>=3;
+ const apply=()=>{if(locked||busy.current||tracingRef.current||cameraMovingRef.current||!boundaryCoordinatesValid(shape)||(cells!==null&&!cells.length))return;onApply(shape)};
+ const canApply=!locked&&shape.length>=3&&(cells===null||cells.length>0);
  const controlBg=dark?'#3B2F2F':'#F3E8D0';
  const vertexRadius=Math.max(.2,settledRegion.latitudeDelta*111000*2.7/Math.max(1,layout.height));
  const vertices=shape.filter((_,i)=>i%Math.max(1,Math.ceil(shape.length/24))===0);
@@ -75,7 +76,7 @@ export default function DrawBoundaryScreen({start,dark,onCancel,onApply,t}:Props
    </View></View>
    <View style={{flex:1,backgroundColor:dark?'#293f47':'#b5cbd0'}} onLayout={e=>{const {width:w,height:h}=e.nativeEvent.layout;setLayout(old=>old.width===w&&old.height===h?old:{width:w,height:h})}}>
     <MapView ref={map} style={StyleSheet.absoluteFill} {...(initial.current.camera?{initialCamera:initial.current.camera}:{initialRegion:initial.current.region})} {...appearance} showsUserLocation={false} showsMyLocationButton={false} showsCompass={false} rotateEnabled={false} pitchEnabled={false} scrollEnabled={mode==='move'} zoomEnabled={mode==='move'} zoomTapEnabled={mode==='move'} onRegionChange={()=>{if(mode==='move'&&!cameraMovingRef.current)startMoving()}} onRegionChangeComplete={settle} onMapReady={()=>setReady(true)}>
-      {shape.length>=3&&<Polygon coordinates={shape} fillColor={dark?'#9bcdd815':'#438fae12'} strokeColor={stroke} strokeWidth={3}/>}
+      {shape.length>=3&&(cells===null?<Polygon coordinates={shape} fillColor={dark?'#9bcdd815':'#438fae12'} strokeColor={stroke} strokeWidth={3}/>:<>{cells.map((coordinates,i)=><Polygon key={'fill-'+i} coordinates={coordinates} fillColor={dark?'#9bcdd815':'#438fae12'} strokeColor="transparent" strokeWidth={0}/>)}<Polyline coordinates={[...shape,shape[0]]} strokeColor={stroke} strokeWidth={3}/></>)}
       {shape.length>=3&&vertices.map((p,i)=><Circle key={i} center={p} radius={vertexRadius} fillColor={dark?'#e7ddc9':'#30373a'} strokeWidth={0}/>)}
     </MapView>
     {mode==='draw'&&<GestureDetector gesture={gesture}><Animated.View testID="habita-freehand-map-surface" collapsable={false} style={StyleSheet.absoluteFill}><Svg pointerEvents="none" width={layout.width||width} height={layout.height||height}><AnimatedPath animatedProps={animatedProps} stroke={stroke} strokeWidth={3} fill="none" strokeLinejoin="round" strokeLinecap="round"/></Svg></Animated.View></GestureDetector>}
